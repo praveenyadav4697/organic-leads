@@ -10,55 +10,73 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
-import { Route as AppIndexRouteImport } from './routes/_app.index'
-import { Route as AppBusinessProfileRouteImport } from './routes/_app.business-profile'
-import { Route as AppCompetitorsRouteImport } from './routes/_app.competitors'
-import { Route as AppGoogleProductsRouteImport } from './routes/_app.google-products'
-import { Route as AppKeywordsRouteImport } from './routes/_app.keywords'
-import { Route as AppMobileRouteImport } from './routes/_app.mobile'
-import { Route as AppPerformanceRouteImport } from './routes/_app.performance'
-import { Route as AppReportsRouteImport } from './routes/_app.reports'
-import { Route as AppSearchConsoleRouteImport } from './routes/_app.search-console'
-import { Route as AppSearchKnowledgeRouteImport } from './routes/_app.search-knowledge'
-import { Route as AppSeoAnalyzerRouteImport } from './routes/_app.seo-analyzer'
-import { Route as AppSettingsRouteImport } from './routes/_app.settings'
-import { Route as AppTrackingRouteImport } from './routes/_app.tracking'
-import { Route as AppWebsiteFoundationRouteImport } from './routes/_app.website-foundation'
-import { Route as AppSearchConsoleIndexRouteImport } from './routes/_app.search-console._index'
-import { Route as AppSearchConsoleAmpRouteImport } from './routes/_app.search-console.amp'
-import { Route as AppSearchConsoleCountriesRouteImport } from './routes/_app.search-console.countries'
-import { Route as AppSearchConsoleCoverageRouteImport } from './routes/_app.search-console.coverage'
-import { Route as AppSearchConsoleCwvRouteImport } from './routes/_app.search-console.cwv'
-import { Route as AppSearchConsoleDevicesRouteImport } from './routes/_app.search-console.devices'
-import { Route as AppSearchConsoleLinksRouteImport } from './routes/_app.search-console.links'
-import { Route as AppSearchConsoleManualActionsRouteImport } from './routes/_app.search-console.manual-actions'
-import { Route as AppSearchConsoleMobileUsabilityRouteImport } from './routes/_app.search-console.mobile-usability'
-import { Route as AppSearchConsolePagesRouteImport } from './routes/_app.search-console.pages'
-import { Route as AppSearchConsolePerformanceRouteImport } from './routes/_app.search-console.performance'
-import { Route as AppSearchConsolePropertyDetailsRouteImport } from './routes/_app.search-console.property-details'
-import { Route as AppSearchConsoleQueriesRouteImport } from './routes/_app.search-console.queries'
-import { Route as AppSearchConsoleSitemapsRouteImport } from './routes/_app.search-console.sitemaps'
-import { Route as AppSearchConsoleUrlInspectionRouteImport } from './routes/_app.search-console.url-inspection'
-import { Route as AppSearchConsoleVerificationRouteImport } from './routes/_app.search-console.verification'
-import { Route as AppSearchKnowledgeIndexRouteImport } from './routes/_app.search-knowledge._index'
-import { Route as AppSearchKnowledgeAiSearchOverviewRouteImport } from './routes/_app.search-knowledge.ai-search-overview'
-import { Route as AppSearchKnowledgeFeaturedSnippetsRouteImport } from './routes/_app.search-knowledge.featured-snippets'
-import { Route as AppSearchKnowledgeFutureTrendsRouteImport } from './routes/_app.search-knowledge.future-trends'
-import { Route as AppSearchKnowledgeGoogleAlgorithmUpdatesRouteImport } from './routes/_app.search-knowledge.google-algorithm-updates'
-import { Route as AppSearchKnowledgeGoogleRankingFactorsRouteImport } from './routes/_app.search-knowledge.google-ranking-factors'
-import { Route as AppSearchKnowledgeGoogleSearchArchitectureRouteImport } from './routes/_app.search-knowledge.google-search-architecture'
-import { Route as AppSearchKnowledgeImageSearchRouteImport } from './routes/_app.search-knowledge.image-search'
-import { Route as AppSearchKnowledgeKnowledgeGraphRouteImport } from './routes/_app.search-knowledge.knowledge-graph'
-import { Route as AppSearchKnowledgeLocalSearchRouteImport } from './routes/_app.search-knowledge.local-search'
-import { Route as AppSearchKnowledgeNewsSearchRouteImport } from './routes/_app.search-knowledge.news-search'
-import { Route as AppSearchKnowledgePeopleAlsoAskRouteImport } from './routes/_app.search-knowledge.people-also-ask'
-import { Route as AppSearchKnowledgeRichResultsRouteImport } from './routes/_app.search-knowledge.rich-results'
-import { Route as AppSearchKnowledgeSearchIntentRouteImport } from './routes/_app.search-knowledge.search-intent'
-import { Route as AppSearchKnowledgeSearchOperatorsRouteImport } from './routes/_app.search-knowledge.search-operators'
-import { Route as AppSearchKnowledgeSerpLayoutRouteImport } from './routes/_app.search-knowledge.serp-layout'
-import { Route as AppSearchKnowledgeShoppingSearchRouteImport } from './routes/_app.search-knowledge.shopping-search'
-import { Route as AppSearchKnowledgeVideoSearchRouteImport } from './routes/_app.search-knowledge.video-search'
-import { Route as AppSearchKnowledgeVoiceSearchRouteImport } from './routes/_app.search-knowledge.voice-search'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppSearchConsoleRouteImport } from './routes/_app/search-console'
+import { Route as AppSearchKnowledgeRouteImport } from './routes/_app/search-knowledge'
+import { Route as AppWebsiteFoundationRouteImport } from './routes/_app/website-foundation'
+import { Route as AppBusinessProfileIndexRouteImport } from './routes/_app/business-profile/index'
+import { Route as AppCompetitorsIndexRouteImport } from './routes/_app/competitors/index'
+import { Route as AppGoogleProductsIndexRouteImport } from './routes/_app/google-products/index'
+import { Route as AppKeywordsIndexRouteImport } from './routes/_app/keywords/index'
+import { Route as AppMobileIndexRouteImport } from './routes/_app/mobile/index'
+import { Route as AppPerformanceIndexRouteImport } from './routes/_app/performance/index'
+import { Route as AppReportsIndexRouteImport } from './routes/_app/reports/index'
+import { Route as AppSearchConsoleIndexRouteImport } from './routes/_app/search-console/index'
+import { Route as AppSearchConsoleAmpRouteImport } from './routes/_app/search-console/amp'
+import { Route as AppSearchConsoleCountriesRouteImport } from './routes/_app/search-console/countries'
+import { Route as AppSearchConsoleCoverageRouteImport } from './routes/_app/search-console/coverage'
+import { Route as AppSearchConsoleCwvRouteImport } from './routes/_app/search-console/cwv'
+import { Route as AppSearchConsoleDevicesRouteImport } from './routes/_app/search-console/devices'
+import { Route as AppSearchConsoleLinksRouteImport } from './routes/_app/search-console/links'
+import { Route as AppSearchConsoleManualActionsRouteImport } from './routes/_app/search-console/manual-actions'
+import { Route as AppSearchConsoleMobileUsabilityRouteImport } from './routes/_app/search-console/mobile-usability'
+import { Route as AppSearchConsolePagesRouteImport } from './routes/_app/search-console/pages'
+import { Route as AppSearchConsolePerformanceRouteImport } from './routes/_app/search-console/performance'
+import { Route as AppSearchConsolePropertyDetailsRouteImport } from './routes/_app/search-console/property-details'
+import { Route as AppSearchConsoleQueriesRouteImport } from './routes/_app/search-console/queries'
+import { Route as AppSearchConsoleSitemapsRouteImport } from './routes/_app/search-console/sitemaps'
+import { Route as AppSearchConsoleUrlInspectionRouteImport } from './routes/_app/search-console/url-inspection'
+import { Route as AppSearchConsoleVerificationRouteImport } from './routes/_app/search-console/verification'
+import { Route as AppSearchKnowledgeIndexRouteImport } from './routes/_app/search-knowledge/index'
+import { Route as AppSearchKnowledgeAiSearchOverviewRouteImport } from './routes/_app/search-knowledge/ai-search-overview'
+import { Route as AppSearchKnowledgeFeaturedSnippetsRouteImport } from './routes/_app/search-knowledge/featured-snippets'
+import { Route as AppSearchKnowledgeFutureTrendsRouteImport } from './routes/_app/search-knowledge/future-trends'
+import { Route as AppSearchKnowledgeGoogleAlgorithmUpdatesRouteImport } from './routes/_app/search-knowledge/google-algorithm-updates'
+import { Route as AppSearchKnowledgeGoogleRankingFactorsRouteImport } from './routes/_app/search-knowledge/google-ranking-factors'
+import { Route as AppSearchKnowledgeGoogleSearchArchitectureRouteImport } from './routes/_app/search-knowledge/google-search-architecture'
+import { Route as AppSearchKnowledgeImageSearchRouteImport } from './routes/_app/search-knowledge/image-search'
+import { Route as AppSearchKnowledgeKnowledgeGraphRouteImport } from './routes/_app/search-knowledge/knowledge-graph'
+import { Route as AppSearchKnowledgeLocalSearchRouteImport } from './routes/_app/search-knowledge/local-search'
+import { Route as AppSearchKnowledgeNewsSearchRouteImport } from './routes/_app/search-knowledge/news-search'
+import { Route as AppSearchKnowledgePeopleAlsoAskRouteImport } from './routes/_app/search-knowledge/people-also-ask'
+import { Route as AppSearchKnowledgeRichResultsRouteImport } from './routes/_app/search-knowledge/rich-results'
+import { Route as AppSearchKnowledgeSearchIntentRouteImport } from './routes/_app/search-knowledge/search-intent'
+import { Route as AppSearchKnowledgeSearchOperatorsRouteImport } from './routes/_app/search-knowledge/search-operators'
+import { Route as AppSearchKnowledgeSerpLayoutRouteImport } from './routes/_app/search-knowledge/serp-layout'
+import { Route as AppSearchKnowledgeShoppingSearchRouteImport } from './routes/_app/search-knowledge/shopping-search'
+import { Route as AppSearchKnowledgeVideoSearchRouteImport } from './routes/_app/search-knowledge/video-search'
+import { Route as AppSearchKnowledgeVoiceSearchRouteImport } from './routes/_app/search-knowledge/voice-search'
+import { Route as AppSeoAnalyzerIndexRouteImport } from './routes/_app/seo-analyzer/index'
+import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
+import { Route as AppTrackingIndexRouteImport } from './routes/_app/tracking/index'
+import { Route as AppWebsiteFoundationIndexRouteImport } from './routes/_app/website-foundation/index'
+import { Route as AppWebsiteFoundationApprovalsRouteImport } from './routes/_app/website-foundation/approvals'
+import { Route as AppWebsiteFoundationAuditRouteImport } from './routes/_app/website-foundation/audit'
+import { Route as AppWebsiteFoundationAutomationRouteImport } from './routes/_app/website-foundation/automation'
+import { Route as AppWebsiteFoundationBacklogRouteImport } from './routes/_app/website-foundation/backlog'
+import { Route as AppWebsiteFoundationBrandRouteImport } from './routes/_app/website-foundation/brand'
+import { Route as AppWebsiteFoundationDeploymentsRouteImport } from './routes/_app/website-foundation/deployments'
+import { Route as AppWebsiteFoundationFormsRouteImport } from './routes/_app/website-foundation/forms'
+import { Route as AppWebsiteFoundationInventoryRouteImport } from './routes/_app/website-foundation/inventory'
+import { Route as AppWebsiteFoundationLogsRouteImport } from './routes/_app/website-foundation/logs'
+import { Route as AppWebsiteFoundationOverviewRouteImport } from './routes/_app/website-foundation/overview'
+import { Route as AppWebsiteFoundationPerformanceRouteImport } from './routes/_app/website-foundation/performance'
+import { Route as AppWebsiteFoundationPluginsRouteImport } from './routes/_app/website-foundation/plugins'
+import { Route as AppWebsiteFoundationResponsiveRouteImport } from './routes/_app/website-foundation/responsive'
+import { Route as AppWebsiteFoundationRollbackRouteImport } from './routes/_app/website-foundation/rollback'
+import { Route as AppWebsiteFoundationThemesRouteImport } from './routes/_app/website-foundation/themes'
+import { Route as AppWebsiteFoundationWizardRouteImport } from './routes/_app/website-foundation/wizard'
+import { Route as AppWebsiteFoundationWordpressRouteImport } from './routes/_app/website-foundation/wordpress'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -67,41 +85,6 @@ const AppRoute = AppRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppBusinessProfileRoute = AppBusinessProfileRouteImport.update({
-  id: '/business-profile',
-  path: '/business-profile',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppCompetitorsRoute = AppCompetitorsRouteImport.update({
-  id: '/competitors',
-  path: '/competitors',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppGoogleProductsRoute = AppGoogleProductsRouteImport.update({
-  id: '/google-products',
-  path: '/google-products',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppKeywordsRoute = AppKeywordsRouteImport.update({
-  id: '/keywords',
-  path: '/keywords',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppMobileRoute = AppMobileRouteImport.update({
-  id: '/mobile',
-  path: '/mobile',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppPerformanceRoute = AppPerformanceRouteImport.update({
-  id: '/performance',
-  path: '/performance',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppReportsRoute = AppReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSearchConsoleRoute = AppSearchConsoleRouteImport.update({
@@ -114,28 +97,49 @@ const AppSearchKnowledgeRoute = AppSearchKnowledgeRouteImport.update({
   path: '/search-knowledge',
   getParentRoute: () => AppRoute,
 } as any)
-const AppSeoAnalyzerRoute = AppSeoAnalyzerRouteImport.update({
-  id: '/seo-analyzer',
-  path: '/seo-analyzer',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppSettingsRoute = AppSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppTrackingRoute = AppTrackingRouteImport.update({
-  id: '/tracking',
-  path: '/tracking',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppWebsiteFoundationRoute = AppWebsiteFoundationRouteImport.update({
   id: '/website-foundation',
   path: '/website-foundation',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBusinessProfileIndexRoute = AppBusinessProfileIndexRouteImport.update({
+  id: '/business-profile/',
+  path: '/business-profile/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCompetitorsIndexRoute = AppCompetitorsIndexRouteImport.update({
+  id: '/competitors/',
+  path: '/competitors/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGoogleProductsIndexRoute = AppGoogleProductsIndexRouteImport.update({
+  id: '/google-products/',
+  path: '/google-products/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppKeywordsIndexRoute = AppKeywordsIndexRouteImport.update({
+  id: '/keywords/',
+  path: '/keywords/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMobileIndexRoute = AppMobileIndexRouteImport.update({
+  id: '/mobile/',
+  path: '/mobile/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPerformanceIndexRoute = AppPerformanceIndexRouteImport.update({
+  id: '/performance/',
+  path: '/performance/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReportsIndexRoute = AppReportsIndexRouteImport.update({
+  id: '/reports/',
+  path: '/reports/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSearchConsoleIndexRoute = AppSearchConsoleIndexRouteImport.update({
-  id: '/_index',
+  id: '/',
+  path: '/',
   getParentRoute: () => AppSearchConsoleRoute,
 } as any)
 const AppSearchConsoleAmpRoute = AppSearchConsoleAmpRouteImport.update({
@@ -223,7 +227,8 @@ const AppSearchConsoleVerificationRoute =
     getParentRoute: () => AppSearchConsoleRoute,
   } as any)
 const AppSearchKnowledgeIndexRoute = AppSearchKnowledgeIndexRouteImport.update({
-  id: '/_index',
+  id: '/',
+  path: '/',
   getParentRoute: () => AppSearchKnowledgeRoute,
 } as any)
 const AppSearchKnowledgeAiSearchOverviewRoute =
@@ -334,22 +339,135 @@ const AppSearchKnowledgeVoiceSearchRoute =
     path: '/voice-search',
     getParentRoute: () => AppSearchKnowledgeRoute,
   } as any)
+const AppSeoAnalyzerIndexRoute = AppSeoAnalyzerIndexRouteImport.update({
+  id: '/seo-analyzer/',
+  path: '/seo-analyzer/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingIndexRoute = AppTrackingIndexRouteImport.update({
+  id: '/tracking/',
+  path: '/tracking/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppWebsiteFoundationIndexRoute =
+  AppWebsiteFoundationIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationApprovalsRoute =
+  AppWebsiteFoundationApprovalsRouteImport.update({
+    id: '/approvals',
+    path: '/approvals',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationAuditRoute =
+  AppWebsiteFoundationAuditRouteImport.update({
+    id: '/audit',
+    path: '/audit',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationAutomationRoute =
+  AppWebsiteFoundationAutomationRouteImport.update({
+    id: '/automation',
+    path: '/automation',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationBacklogRoute =
+  AppWebsiteFoundationBacklogRouteImport.update({
+    id: '/backlog',
+    path: '/backlog',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationBrandRoute =
+  AppWebsiteFoundationBrandRouteImport.update({
+    id: '/brand',
+    path: '/brand',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationDeploymentsRoute =
+  AppWebsiteFoundationDeploymentsRouteImport.update({
+    id: '/deployments',
+    path: '/deployments',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationFormsRoute =
+  AppWebsiteFoundationFormsRouteImport.update({
+    id: '/forms',
+    path: '/forms',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationInventoryRoute =
+  AppWebsiteFoundationInventoryRouteImport.update({
+    id: '/inventory',
+    path: '/inventory',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationLogsRoute =
+  AppWebsiteFoundationLogsRouteImport.update({
+    id: '/logs',
+    path: '/logs',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationOverviewRoute =
+  AppWebsiteFoundationOverviewRouteImport.update({
+    id: '/overview',
+    path: '/overview',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationPerformanceRoute =
+  AppWebsiteFoundationPerformanceRouteImport.update({
+    id: '/performance',
+    path: '/performance',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationPluginsRoute =
+  AppWebsiteFoundationPluginsRouteImport.update({
+    id: '/plugins',
+    path: '/plugins',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationResponsiveRoute =
+  AppWebsiteFoundationResponsiveRouteImport.update({
+    id: '/responsive',
+    path: '/responsive',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationRollbackRoute =
+  AppWebsiteFoundationRollbackRouteImport.update({
+    id: '/rollback',
+    path: '/rollback',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationThemesRoute =
+  AppWebsiteFoundationThemesRouteImport.update({
+    id: '/themes',
+    path: '/themes',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationWizardRoute =
+  AppWebsiteFoundationWizardRouteImport.update({
+    id: '/wizard',
+    path: '/wizard',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
+const AppWebsiteFoundationWordpressRoute =
+  AppWebsiteFoundationWordpressRouteImport.update({
+    id: '/wordpress',
+    path: '/wordpress',
+    getParentRoute: () => AppWebsiteFoundationRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
-  '/business-profile': typeof AppBusinessProfileRoute
-  '/competitors': typeof AppCompetitorsRoute
-  '/google-products': typeof AppGoogleProductsRoute
-  '/keywords': typeof AppKeywordsRoute
-  '/mobile': typeof AppMobileRoute
-  '/performance': typeof AppPerformanceRoute
-  '/reports': typeof AppReportsRoute
   '/search-console': typeof AppSearchConsoleRouteWithChildren
   '/search-knowledge': typeof AppSearchKnowledgeRouteWithChildren
-  '/seo-analyzer': typeof AppSeoAnalyzerRoute
-  '/settings': typeof AppSettingsRoute
-  '/tracking': typeof AppTrackingRoute
-  '/website-foundation': typeof AppWebsiteFoundationRoute
+  '/website-foundation': typeof AppWebsiteFoundationRouteWithChildren
   '/search-console/amp': typeof AppSearchConsoleAmpRoute
   '/search-console/countries': typeof AppSearchConsoleCountriesRoute
   '/search-console/coverage': typeof AppSearchConsoleCoverageRoute
@@ -383,21 +501,38 @@ export interface FileRoutesByFullPath {
   '/search-knowledge/shopping-search': typeof AppSearchKnowledgeShoppingSearchRoute
   '/search-knowledge/video-search': typeof AppSearchKnowledgeVideoSearchRoute
   '/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
+  '/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
+  '/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
+  '/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
+  '/website-foundation/backlog': typeof AppWebsiteFoundationBacklogRoute
+  '/website-foundation/brand': typeof AppWebsiteFoundationBrandRoute
+  '/website-foundation/deployments': typeof AppWebsiteFoundationDeploymentsRoute
+  '/website-foundation/forms': typeof AppWebsiteFoundationFormsRoute
+  '/website-foundation/inventory': typeof AppWebsiteFoundationInventoryRoute
+  '/website-foundation/logs': typeof AppWebsiteFoundationLogsRoute
+  '/website-foundation/overview': typeof AppWebsiteFoundationOverviewRoute
+  '/website-foundation/performance': typeof AppWebsiteFoundationPerformanceRoute
+  '/website-foundation/plugins': typeof AppWebsiteFoundationPluginsRoute
+  '/website-foundation/responsive': typeof AppWebsiteFoundationResponsiveRoute
+  '/website-foundation/rollback': typeof AppWebsiteFoundationRollbackRoute
+  '/website-foundation/themes': typeof AppWebsiteFoundationThemesRoute
+  '/website-foundation/wizard': typeof AppWebsiteFoundationWizardRoute
+  '/website-foundation/wordpress': typeof AppWebsiteFoundationWordpressRoute
+  '/business-profile/': typeof AppBusinessProfileIndexRoute
+  '/competitors/': typeof AppCompetitorsIndexRoute
+  '/google-products/': typeof AppGoogleProductsIndexRoute
+  '/keywords/': typeof AppKeywordsIndexRoute
+  '/mobile/': typeof AppMobileIndexRoute
+  '/performance/': typeof AppPerformanceIndexRoute
+  '/reports/': typeof AppReportsIndexRoute
+  '/search-console/': typeof AppSearchConsoleIndexRoute
+  '/search-knowledge/': typeof AppSearchKnowledgeIndexRoute
+  '/seo-analyzer/': typeof AppSeoAnalyzerIndexRoute
+  '/settings/': typeof AppSettingsIndexRoute
+  '/tracking/': typeof AppTrackingIndexRoute
+  '/website-foundation/': typeof AppWebsiteFoundationIndexRoute
 }
 export interface FileRoutesByTo {
-  '/business-profile': typeof AppBusinessProfileRoute
-  '/competitors': typeof AppCompetitorsRoute
-  '/google-products': typeof AppGoogleProductsRoute
-  '/keywords': typeof AppKeywordsRoute
-  '/mobile': typeof AppMobileRoute
-  '/performance': typeof AppPerformanceRoute
-  '/reports': typeof AppReportsRoute
-  '/search-console': typeof AppSearchConsoleRouteWithChildren
-  '/search-knowledge': typeof AppSearchKnowledgeRouteWithChildren
-  '/seo-analyzer': typeof AppSeoAnalyzerRoute
-  '/settings': typeof AppSettingsRoute
-  '/tracking': typeof AppTrackingRoute
-  '/website-foundation': typeof AppWebsiteFoundationRoute
   '/': typeof AppIndexRoute
   '/search-console/amp': typeof AppSearchConsoleAmpRoute
   '/search-console/countries': typeof AppSearchConsoleCountriesRoute
@@ -432,25 +567,44 @@ export interface FileRoutesByTo {
   '/search-knowledge/shopping-search': typeof AppSearchKnowledgeShoppingSearchRoute
   '/search-knowledge/video-search': typeof AppSearchKnowledgeVideoSearchRoute
   '/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
+  '/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
+  '/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
+  '/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
+  '/website-foundation/backlog': typeof AppWebsiteFoundationBacklogRoute
+  '/website-foundation/brand': typeof AppWebsiteFoundationBrandRoute
+  '/website-foundation/deployments': typeof AppWebsiteFoundationDeploymentsRoute
+  '/website-foundation/forms': typeof AppWebsiteFoundationFormsRoute
+  '/website-foundation/inventory': typeof AppWebsiteFoundationInventoryRoute
+  '/website-foundation/logs': typeof AppWebsiteFoundationLogsRoute
+  '/website-foundation/overview': typeof AppWebsiteFoundationOverviewRoute
+  '/website-foundation/performance': typeof AppWebsiteFoundationPerformanceRoute
+  '/website-foundation/plugins': typeof AppWebsiteFoundationPluginsRoute
+  '/website-foundation/responsive': typeof AppWebsiteFoundationResponsiveRoute
+  '/website-foundation/rollback': typeof AppWebsiteFoundationRollbackRoute
+  '/website-foundation/themes': typeof AppWebsiteFoundationThemesRoute
+  '/website-foundation/wizard': typeof AppWebsiteFoundationWizardRoute
+  '/website-foundation/wordpress': typeof AppWebsiteFoundationWordpressRoute
+  '/business-profile': typeof AppBusinessProfileIndexRoute
+  '/competitors': typeof AppCompetitorsIndexRoute
+  '/google-products': typeof AppGoogleProductsIndexRoute
+  '/keywords': typeof AppKeywordsIndexRoute
+  '/mobile': typeof AppMobileIndexRoute
+  '/performance': typeof AppPerformanceIndexRoute
+  '/reports': typeof AppReportsIndexRoute
+  '/search-console': typeof AppSearchConsoleIndexRoute
+  '/search-knowledge': typeof AppSearchKnowledgeIndexRoute
+  '/seo-analyzer': typeof AppSeoAnalyzerIndexRoute
+  '/settings': typeof AppSettingsIndexRoute
+  '/tracking': typeof AppTrackingIndexRoute
+  '/website-foundation': typeof AppWebsiteFoundationIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
-  '/_app/business-profile': typeof AppBusinessProfileRoute
-  '/_app/competitors': typeof AppCompetitorsRoute
-  '/_app/google-products': typeof AppGoogleProductsRoute
-  '/_app/keywords': typeof AppKeywordsRoute
-  '/_app/mobile': typeof AppMobileRoute
-  '/_app/performance': typeof AppPerformanceRoute
-  '/_app/reports': typeof AppReportsRoute
   '/_app/search-console': typeof AppSearchConsoleRouteWithChildren
   '/_app/search-knowledge': typeof AppSearchKnowledgeRouteWithChildren
-  '/_app/seo-analyzer': typeof AppSeoAnalyzerRoute
-  '/_app/settings': typeof AppSettingsRoute
-  '/_app/tracking': typeof AppTrackingRoute
-  '/_app/website-foundation': typeof AppWebsiteFoundationRoute
+  '/_app/website-foundation': typeof AppWebsiteFoundationRouteWithChildren
   '/_app/': typeof AppIndexRoute
-  '/_app/search-console/_index': typeof AppSearchConsoleIndexRoute
   '/_app/search-console/amp': typeof AppSearchConsoleAmpRoute
   '/_app/search-console/countries': typeof AppSearchConsoleCountriesRoute
   '/_app/search-console/coverage': typeof AppSearchConsoleCoverageRoute
@@ -466,7 +620,6 @@ export interface FileRoutesById {
   '/_app/search-console/sitemaps': typeof AppSearchConsoleSitemapsRoute
   '/_app/search-console/url-inspection': typeof AppSearchConsoleUrlInspectionRoute
   '/_app/search-console/verification': typeof AppSearchConsoleVerificationRoute
-  '/_app/search-knowledge/_index': typeof AppSearchKnowledgeIndexRoute
   '/_app/search-knowledge/ai-search-overview': typeof AppSearchKnowledgeAiSearchOverviewRoute
   '/_app/search-knowledge/featured-snippets': typeof AppSearchKnowledgeFeaturedSnippetsRoute
   '/_app/search-knowledge/future-trends': typeof AppSearchKnowledgeFutureTrendsRoute
@@ -485,23 +638,43 @@ export interface FileRoutesById {
   '/_app/search-knowledge/shopping-search': typeof AppSearchKnowledgeShoppingSearchRoute
   '/_app/search-knowledge/video-search': typeof AppSearchKnowledgeVideoSearchRoute
   '/_app/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
+  '/_app/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
+  '/_app/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
+  '/_app/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
+  '/_app/website-foundation/backlog': typeof AppWebsiteFoundationBacklogRoute
+  '/_app/website-foundation/brand': typeof AppWebsiteFoundationBrandRoute
+  '/_app/website-foundation/deployments': typeof AppWebsiteFoundationDeploymentsRoute
+  '/_app/website-foundation/forms': typeof AppWebsiteFoundationFormsRoute
+  '/_app/website-foundation/inventory': typeof AppWebsiteFoundationInventoryRoute
+  '/_app/website-foundation/logs': typeof AppWebsiteFoundationLogsRoute
+  '/_app/website-foundation/overview': typeof AppWebsiteFoundationOverviewRoute
+  '/_app/website-foundation/performance': typeof AppWebsiteFoundationPerformanceRoute
+  '/_app/website-foundation/plugins': typeof AppWebsiteFoundationPluginsRoute
+  '/_app/website-foundation/responsive': typeof AppWebsiteFoundationResponsiveRoute
+  '/_app/website-foundation/rollback': typeof AppWebsiteFoundationRollbackRoute
+  '/_app/website-foundation/themes': typeof AppWebsiteFoundationThemesRoute
+  '/_app/website-foundation/wizard': typeof AppWebsiteFoundationWizardRoute
+  '/_app/website-foundation/wordpress': typeof AppWebsiteFoundationWordpressRoute
+  '/_app/business-profile/': typeof AppBusinessProfileIndexRoute
+  '/_app/competitors/': typeof AppCompetitorsIndexRoute
+  '/_app/google-products/': typeof AppGoogleProductsIndexRoute
+  '/_app/keywords/': typeof AppKeywordsIndexRoute
+  '/_app/mobile/': typeof AppMobileIndexRoute
+  '/_app/performance/': typeof AppPerformanceIndexRoute
+  '/_app/reports/': typeof AppReportsIndexRoute
+  '/_app/search-console/': typeof AppSearchConsoleIndexRoute
+  '/_app/search-knowledge/': typeof AppSearchKnowledgeIndexRoute
+  '/_app/seo-analyzer/': typeof AppSeoAnalyzerIndexRoute
+  '/_app/settings/': typeof AppSettingsIndexRoute
+  '/_app/tracking/': typeof AppTrackingIndexRoute
+  '/_app/website-foundation/': typeof AppWebsiteFoundationIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/business-profile'
-    | '/competitors'
-    | '/google-products'
-    | '/keywords'
-    | '/mobile'
-    | '/performance'
-    | '/reports'
     | '/search-console'
     | '/search-knowledge'
-    | '/seo-analyzer'
-    | '/settings'
-    | '/tracking'
     | '/website-foundation'
     | '/search-console/amp'
     | '/search-console/countries'
@@ -536,21 +709,38 @@ export interface FileRouteTypes {
     | '/search-knowledge/shopping-search'
     | '/search-knowledge/video-search'
     | '/search-knowledge/voice-search'
+    | '/website-foundation/approvals'
+    | '/website-foundation/audit'
+    | '/website-foundation/automation'
+    | '/website-foundation/backlog'
+    | '/website-foundation/brand'
+    | '/website-foundation/deployments'
+    | '/website-foundation/forms'
+    | '/website-foundation/inventory'
+    | '/website-foundation/logs'
+    | '/website-foundation/overview'
+    | '/website-foundation/performance'
+    | '/website-foundation/plugins'
+    | '/website-foundation/responsive'
+    | '/website-foundation/rollback'
+    | '/website-foundation/themes'
+    | '/website-foundation/wizard'
+    | '/website-foundation/wordpress'
+    | '/business-profile/'
+    | '/competitors/'
+    | '/google-products/'
+    | '/keywords/'
+    | '/mobile/'
+    | '/performance/'
+    | '/reports/'
+    | '/search-console/'
+    | '/search-knowledge/'
+    | '/seo-analyzer/'
+    | '/settings/'
+    | '/tracking/'
+    | '/website-foundation/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/business-profile'
-    | '/competitors'
-    | '/google-products'
-    | '/keywords'
-    | '/mobile'
-    | '/performance'
-    | '/reports'
-    | '/search-console'
-    | '/search-knowledge'
-    | '/seo-analyzer'
-    | '/settings'
-    | '/tracking'
-    | '/website-foundation'
     | '/'
     | '/search-console/amp'
     | '/search-console/countries'
@@ -585,24 +775,43 @@ export interface FileRouteTypes {
     | '/search-knowledge/shopping-search'
     | '/search-knowledge/video-search'
     | '/search-knowledge/voice-search'
+    | '/website-foundation/approvals'
+    | '/website-foundation/audit'
+    | '/website-foundation/automation'
+    | '/website-foundation/backlog'
+    | '/website-foundation/brand'
+    | '/website-foundation/deployments'
+    | '/website-foundation/forms'
+    | '/website-foundation/inventory'
+    | '/website-foundation/logs'
+    | '/website-foundation/overview'
+    | '/website-foundation/performance'
+    | '/website-foundation/plugins'
+    | '/website-foundation/responsive'
+    | '/website-foundation/rollback'
+    | '/website-foundation/themes'
+    | '/website-foundation/wizard'
+    | '/website-foundation/wordpress'
+    | '/business-profile'
+    | '/competitors'
+    | '/google-products'
+    | '/keywords'
+    | '/mobile'
+    | '/performance'
+    | '/reports'
+    | '/search-console'
+    | '/search-knowledge'
+    | '/seo-analyzer'
+    | '/settings'
+    | '/tracking'
+    | '/website-foundation'
   id:
     | '__root__'
     | '/_app'
-    | '/_app/business-profile'
-    | '/_app/competitors'
-    | '/_app/google-products'
-    | '/_app/keywords'
-    | '/_app/mobile'
-    | '/_app/performance'
-    | '/_app/reports'
     | '/_app/search-console'
     | '/_app/search-knowledge'
-    | '/_app/seo-analyzer'
-    | '/_app/settings'
-    | '/_app/tracking'
     | '/_app/website-foundation'
     | '/_app/'
-    | '/_app/search-console/_index'
     | '/_app/search-console/amp'
     | '/_app/search-console/countries'
     | '/_app/search-console/coverage'
@@ -618,7 +827,6 @@ export interface FileRouteTypes {
     | '/_app/search-console/sitemaps'
     | '/_app/search-console/url-inspection'
     | '/_app/search-console/verification'
-    | '/_app/search-knowledge/_index'
     | '/_app/search-knowledge/ai-search-overview'
     | '/_app/search-knowledge/featured-snippets'
     | '/_app/search-knowledge/future-trends'
@@ -637,6 +845,36 @@ export interface FileRouteTypes {
     | '/_app/search-knowledge/shopping-search'
     | '/_app/search-knowledge/video-search'
     | '/_app/search-knowledge/voice-search'
+    | '/_app/website-foundation/approvals'
+    | '/_app/website-foundation/audit'
+    | '/_app/website-foundation/automation'
+    | '/_app/website-foundation/backlog'
+    | '/_app/website-foundation/brand'
+    | '/_app/website-foundation/deployments'
+    | '/_app/website-foundation/forms'
+    | '/_app/website-foundation/inventory'
+    | '/_app/website-foundation/logs'
+    | '/_app/website-foundation/overview'
+    | '/_app/website-foundation/performance'
+    | '/_app/website-foundation/plugins'
+    | '/_app/website-foundation/responsive'
+    | '/_app/website-foundation/rollback'
+    | '/_app/website-foundation/themes'
+    | '/_app/website-foundation/wizard'
+    | '/_app/website-foundation/wordpress'
+    | '/_app/business-profile/'
+    | '/_app/competitors/'
+    | '/_app/google-products/'
+    | '/_app/keywords/'
+    | '/_app/mobile/'
+    | '/_app/performance/'
+    | '/_app/reports/'
+    | '/_app/search-console/'
+    | '/_app/search-knowledge/'
+    | '/_app/seo-analyzer/'
+    | '/_app/settings/'
+    | '/_app/tracking/'
+    | '/_app/website-foundation/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -659,55 +897,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/business-profile': {
-      id: '/_app/business-profile'
-      path: '/business-profile'
-      fullPath: '/business-profile'
-      preLoaderRoute: typeof AppBusinessProfileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/competitors': {
-      id: '/_app/competitors'
-      path: '/competitors'
-      fullPath: '/competitors'
-      preLoaderRoute: typeof AppCompetitorsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/google-products': {
-      id: '/_app/google-products'
-      path: '/google-products'
-      fullPath: '/google-products'
-      preLoaderRoute: typeof AppGoogleProductsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/keywords': {
-      id: '/_app/keywords'
-      path: '/keywords'
-      fullPath: '/keywords'
-      preLoaderRoute: typeof AppKeywordsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/mobile': {
-      id: '/_app/mobile'
-      path: '/mobile'
-      fullPath: '/mobile'
-      preLoaderRoute: typeof AppMobileRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/performance': {
-      id: '/_app/performance'
-      path: '/performance'
-      fullPath: '/performance'
-      preLoaderRoute: typeof AppPerformanceRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/reports': {
-      id: '/_app/reports'
-      path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof AppReportsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/search-console': {
       id: '/_app/search-console'
       path: '/search-console'
@@ -722,27 +911,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSearchKnowledgeRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/seo-analyzer': {
-      id: '/_app/seo-analyzer'
-      path: '/seo-analyzer'
-      fullPath: '/seo-analyzer'
-      preLoaderRoute: typeof AppSeoAnalyzerRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/settings': {
-      id: '/_app/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AppSettingsRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/tracking': {
-      id: '/_app/tracking'
-      path: '/tracking'
-      fullPath: '/tracking'
-      preLoaderRoute: typeof AppTrackingRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/website-foundation': {
       id: '/_app/website-foundation'
       path: '/website-foundation'
@@ -750,10 +918,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWebsiteFoundationRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/search-console/_index': {
-      id: '/_app/search-console/_index'
-      path: ''
-      fullPath: '/search-console'
+    '/_app/business-profile/': {
+      id: '/_app/business-profile/'
+      path: '/business-profile'
+      fullPath: '/business-profile/'
+      preLoaderRoute: typeof AppBusinessProfileIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/competitors/': {
+      id: '/_app/competitors/'
+      path: '/competitors'
+      fullPath: '/competitors/'
+      preLoaderRoute: typeof AppCompetitorsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/google-products/': {
+      id: '/_app/google-products/'
+      path: '/google-products'
+      fullPath: '/google-products/'
+      preLoaderRoute: typeof AppGoogleProductsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/keywords/': {
+      id: '/_app/keywords/'
+      path: '/keywords'
+      fullPath: '/keywords/'
+      preLoaderRoute: typeof AppKeywordsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/mobile/': {
+      id: '/_app/mobile/'
+      path: '/mobile'
+      fullPath: '/mobile/'
+      preLoaderRoute: typeof AppMobileIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/performance/': {
+      id: '/_app/performance/'
+      path: '/performance'
+      fullPath: '/performance/'
+      preLoaderRoute: typeof AppPerformanceIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/reports/': {
+      id: '/_app/reports/'
+      path: '/reports'
+      fullPath: '/reports/'
+      preLoaderRoute: typeof AppReportsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/search-console/': {
+      id: '/_app/search-console/'
+      path: '/'
+      fullPath: '/search-console/'
       preLoaderRoute: typeof AppSearchConsoleIndexRouteImport
       parentRoute: typeof AppSearchConsoleRoute
     }
@@ -862,10 +1079,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSearchConsoleVerificationRouteImport
       parentRoute: typeof AppSearchConsoleRoute
     }
-    '/_app/search-knowledge/_index': {
-      id: '/_app/search-knowledge/_index'
-      path: ''
-      fullPath: '/search-knowledge'
+    '/_app/search-knowledge/': {
+      id: '/_app/search-knowledge/'
+      path: '/'
+      fullPath: '/search-knowledge/'
       preLoaderRoute: typeof AppSearchKnowledgeIndexRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
@@ -995,11 +1212,157 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSearchKnowledgeVoiceSearchRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
+    '/_app/seo-analyzer/': {
+      id: '/_app/seo-analyzer/'
+      path: '/seo-analyzer'
+      fullPath: '/seo-analyzer/'
+      preLoaderRoute: typeof AppSeoAnalyzerIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings/': {
+      id: '/_app/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AppSettingsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/': {
+      id: '/_app/tracking/'
+      path: '/tracking'
+      fullPath: '/tracking/'
+      preLoaderRoute: typeof AppTrackingIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/website-foundation/': {
+      id: '/_app/website-foundation/'
+      path: '/'
+      fullPath: '/website-foundation/'
+      preLoaderRoute: typeof AppWebsiteFoundationIndexRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/approvals': {
+      id: '/_app/website-foundation/approvals'
+      path: '/approvals'
+      fullPath: '/website-foundation/approvals'
+      preLoaderRoute: typeof AppWebsiteFoundationApprovalsRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/audit': {
+      id: '/_app/website-foundation/audit'
+      path: '/audit'
+      fullPath: '/website-foundation/audit'
+      preLoaderRoute: typeof AppWebsiteFoundationAuditRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/automation': {
+      id: '/_app/website-foundation/automation'
+      path: '/automation'
+      fullPath: '/website-foundation/automation'
+      preLoaderRoute: typeof AppWebsiteFoundationAutomationRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/backlog': {
+      id: '/_app/website-foundation/backlog'
+      path: '/backlog'
+      fullPath: '/website-foundation/backlog'
+      preLoaderRoute: typeof AppWebsiteFoundationBacklogRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/brand': {
+      id: '/_app/website-foundation/brand'
+      path: '/brand'
+      fullPath: '/website-foundation/brand'
+      preLoaderRoute: typeof AppWebsiteFoundationBrandRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/deployments': {
+      id: '/_app/website-foundation/deployments'
+      path: '/deployments'
+      fullPath: '/website-foundation/deployments'
+      preLoaderRoute: typeof AppWebsiteFoundationDeploymentsRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/forms': {
+      id: '/_app/website-foundation/forms'
+      path: '/forms'
+      fullPath: '/website-foundation/forms'
+      preLoaderRoute: typeof AppWebsiteFoundationFormsRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/inventory': {
+      id: '/_app/website-foundation/inventory'
+      path: '/inventory'
+      fullPath: '/website-foundation/inventory'
+      preLoaderRoute: typeof AppWebsiteFoundationInventoryRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/logs': {
+      id: '/_app/website-foundation/logs'
+      path: '/logs'
+      fullPath: '/website-foundation/logs'
+      preLoaderRoute: typeof AppWebsiteFoundationLogsRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/overview': {
+      id: '/_app/website-foundation/overview'
+      path: '/overview'
+      fullPath: '/website-foundation/overview'
+      preLoaderRoute: typeof AppWebsiteFoundationOverviewRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/performance': {
+      id: '/_app/website-foundation/performance'
+      path: '/performance'
+      fullPath: '/website-foundation/performance'
+      preLoaderRoute: typeof AppWebsiteFoundationPerformanceRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/plugins': {
+      id: '/_app/website-foundation/plugins'
+      path: '/plugins'
+      fullPath: '/website-foundation/plugins'
+      preLoaderRoute: typeof AppWebsiteFoundationPluginsRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/responsive': {
+      id: '/_app/website-foundation/responsive'
+      path: '/responsive'
+      fullPath: '/website-foundation/responsive'
+      preLoaderRoute: typeof AppWebsiteFoundationResponsiveRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/rollback': {
+      id: '/_app/website-foundation/rollback'
+      path: '/rollback'
+      fullPath: '/website-foundation/rollback'
+      preLoaderRoute: typeof AppWebsiteFoundationRollbackRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/themes': {
+      id: '/_app/website-foundation/themes'
+      path: '/themes'
+      fullPath: '/website-foundation/themes'
+      preLoaderRoute: typeof AppWebsiteFoundationThemesRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/wizard': {
+      id: '/_app/website-foundation/wizard'
+      path: '/wizard'
+      fullPath: '/website-foundation/wizard'
+      preLoaderRoute: typeof AppWebsiteFoundationWizardRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/wordpress': {
+      id: '/_app/website-foundation/wordpress'
+      path: '/wordpress'
+      fullPath: '/website-foundation/wordpress'
+      preLoaderRoute: typeof AppWebsiteFoundationWordpressRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
   }
 }
 
 interface AppSearchConsoleRouteChildren {
-  AppSearchConsoleIndexRoute: typeof AppSearchConsoleIndexRoute
   AppSearchConsoleAmpRoute: typeof AppSearchConsoleAmpRoute
   AppSearchConsoleCountriesRoute: typeof AppSearchConsoleCountriesRoute
   AppSearchConsoleCoverageRoute: typeof AppSearchConsoleCoverageRoute
@@ -1015,10 +1378,10 @@ interface AppSearchConsoleRouteChildren {
   AppSearchConsoleSitemapsRoute: typeof AppSearchConsoleSitemapsRoute
   AppSearchConsoleUrlInspectionRoute: typeof AppSearchConsoleUrlInspectionRoute
   AppSearchConsoleVerificationRoute: typeof AppSearchConsoleVerificationRoute
+  AppSearchConsoleIndexRoute: typeof AppSearchConsoleIndexRoute
 }
 
 const AppSearchConsoleRouteChildren: AppSearchConsoleRouteChildren = {
-  AppSearchConsoleIndexRoute: AppSearchConsoleIndexRoute,
   AppSearchConsoleAmpRoute: AppSearchConsoleAmpRoute,
   AppSearchConsoleCountriesRoute: AppSearchConsoleCountriesRoute,
   AppSearchConsoleCoverageRoute: AppSearchConsoleCoverageRoute,
@@ -1034,13 +1397,13 @@ const AppSearchConsoleRouteChildren: AppSearchConsoleRouteChildren = {
   AppSearchConsoleSitemapsRoute: AppSearchConsoleSitemapsRoute,
   AppSearchConsoleUrlInspectionRoute: AppSearchConsoleUrlInspectionRoute,
   AppSearchConsoleVerificationRoute: AppSearchConsoleVerificationRoute,
+  AppSearchConsoleIndexRoute: AppSearchConsoleIndexRoute,
 }
 
 const AppSearchConsoleRouteWithChildren =
   AppSearchConsoleRoute._addFileChildren(AppSearchConsoleRouteChildren)
 
 interface AppSearchKnowledgeRouteChildren {
-  AppSearchKnowledgeIndexRoute: typeof AppSearchKnowledgeIndexRoute
   AppSearchKnowledgeAiSearchOverviewRoute: typeof AppSearchKnowledgeAiSearchOverviewRoute
   AppSearchKnowledgeFeaturedSnippetsRoute: typeof AppSearchKnowledgeFeaturedSnippetsRoute
   AppSearchKnowledgeFutureTrendsRoute: typeof AppSearchKnowledgeFutureTrendsRoute
@@ -1059,10 +1422,10 @@ interface AppSearchKnowledgeRouteChildren {
   AppSearchKnowledgeShoppingSearchRoute: typeof AppSearchKnowledgeShoppingSearchRoute
   AppSearchKnowledgeVideoSearchRoute: typeof AppSearchKnowledgeVideoSearchRoute
   AppSearchKnowledgeVoiceSearchRoute: typeof AppSearchKnowledgeVoiceSearchRoute
+  AppSearchKnowledgeIndexRoute: typeof AppSearchKnowledgeIndexRoute
 }
 
 const AppSearchKnowledgeRouteChildren: AppSearchKnowledgeRouteChildren = {
-  AppSearchKnowledgeIndexRoute: AppSearchKnowledgeIndexRoute,
   AppSearchKnowledgeAiSearchOverviewRoute:
     AppSearchKnowledgeAiSearchOverviewRoute,
   AppSearchKnowledgeFeaturedSnippetsRoute:
@@ -1087,43 +1450,89 @@ const AppSearchKnowledgeRouteChildren: AppSearchKnowledgeRouteChildren = {
   AppSearchKnowledgeShoppingSearchRoute: AppSearchKnowledgeShoppingSearchRoute,
   AppSearchKnowledgeVideoSearchRoute: AppSearchKnowledgeVideoSearchRoute,
   AppSearchKnowledgeVoiceSearchRoute: AppSearchKnowledgeVoiceSearchRoute,
+  AppSearchKnowledgeIndexRoute: AppSearchKnowledgeIndexRoute,
 }
 
 const AppSearchKnowledgeRouteWithChildren =
   AppSearchKnowledgeRoute._addFileChildren(AppSearchKnowledgeRouteChildren)
 
+interface AppWebsiteFoundationRouteChildren {
+  AppWebsiteFoundationApprovalsRoute: typeof AppWebsiteFoundationApprovalsRoute
+  AppWebsiteFoundationAuditRoute: typeof AppWebsiteFoundationAuditRoute
+  AppWebsiteFoundationAutomationRoute: typeof AppWebsiteFoundationAutomationRoute
+  AppWebsiteFoundationBacklogRoute: typeof AppWebsiteFoundationBacklogRoute
+  AppWebsiteFoundationBrandRoute: typeof AppWebsiteFoundationBrandRoute
+  AppWebsiteFoundationDeploymentsRoute: typeof AppWebsiteFoundationDeploymentsRoute
+  AppWebsiteFoundationFormsRoute: typeof AppWebsiteFoundationFormsRoute
+  AppWebsiteFoundationInventoryRoute: typeof AppWebsiteFoundationInventoryRoute
+  AppWebsiteFoundationLogsRoute: typeof AppWebsiteFoundationLogsRoute
+  AppWebsiteFoundationOverviewRoute: typeof AppWebsiteFoundationOverviewRoute
+  AppWebsiteFoundationPerformanceRoute: typeof AppWebsiteFoundationPerformanceRoute
+  AppWebsiteFoundationPluginsRoute: typeof AppWebsiteFoundationPluginsRoute
+  AppWebsiteFoundationResponsiveRoute: typeof AppWebsiteFoundationResponsiveRoute
+  AppWebsiteFoundationRollbackRoute: typeof AppWebsiteFoundationRollbackRoute
+  AppWebsiteFoundationThemesRoute: typeof AppWebsiteFoundationThemesRoute
+  AppWebsiteFoundationWizardRoute: typeof AppWebsiteFoundationWizardRoute
+  AppWebsiteFoundationWordpressRoute: typeof AppWebsiteFoundationWordpressRoute
+  AppWebsiteFoundationIndexRoute: typeof AppWebsiteFoundationIndexRoute
+}
+
+const AppWebsiteFoundationRouteChildren: AppWebsiteFoundationRouteChildren = {
+  AppWebsiteFoundationApprovalsRoute: AppWebsiteFoundationApprovalsRoute,
+  AppWebsiteFoundationAuditRoute: AppWebsiteFoundationAuditRoute,
+  AppWebsiteFoundationAutomationRoute: AppWebsiteFoundationAutomationRoute,
+  AppWebsiteFoundationBacklogRoute: AppWebsiteFoundationBacklogRoute,
+  AppWebsiteFoundationBrandRoute: AppWebsiteFoundationBrandRoute,
+  AppWebsiteFoundationDeploymentsRoute: AppWebsiteFoundationDeploymentsRoute,
+  AppWebsiteFoundationFormsRoute: AppWebsiteFoundationFormsRoute,
+  AppWebsiteFoundationInventoryRoute: AppWebsiteFoundationInventoryRoute,
+  AppWebsiteFoundationLogsRoute: AppWebsiteFoundationLogsRoute,
+  AppWebsiteFoundationOverviewRoute: AppWebsiteFoundationOverviewRoute,
+  AppWebsiteFoundationPerformanceRoute: AppWebsiteFoundationPerformanceRoute,
+  AppWebsiteFoundationPluginsRoute: AppWebsiteFoundationPluginsRoute,
+  AppWebsiteFoundationResponsiveRoute: AppWebsiteFoundationResponsiveRoute,
+  AppWebsiteFoundationRollbackRoute: AppWebsiteFoundationRollbackRoute,
+  AppWebsiteFoundationThemesRoute: AppWebsiteFoundationThemesRoute,
+  AppWebsiteFoundationWizardRoute: AppWebsiteFoundationWizardRoute,
+  AppWebsiteFoundationWordpressRoute: AppWebsiteFoundationWordpressRoute,
+  AppWebsiteFoundationIndexRoute: AppWebsiteFoundationIndexRoute,
+}
+
+const AppWebsiteFoundationRouteWithChildren =
+  AppWebsiteFoundationRoute._addFileChildren(AppWebsiteFoundationRouteChildren)
+
 interface AppRouteChildren {
-  AppBusinessProfileRoute: typeof AppBusinessProfileRoute
-  AppCompetitorsRoute: typeof AppCompetitorsRoute
-  AppGoogleProductsRoute: typeof AppGoogleProductsRoute
-  AppKeywordsRoute: typeof AppKeywordsRoute
-  AppMobileRoute: typeof AppMobileRoute
-  AppPerformanceRoute: typeof AppPerformanceRoute
-  AppReportsRoute: typeof AppReportsRoute
   AppSearchConsoleRoute: typeof AppSearchConsoleRouteWithChildren
   AppSearchKnowledgeRoute: typeof AppSearchKnowledgeRouteWithChildren
-  AppSeoAnalyzerRoute: typeof AppSeoAnalyzerRoute
-  AppSettingsRoute: typeof AppSettingsRoute
-  AppTrackingRoute: typeof AppTrackingRoute
-  AppWebsiteFoundationRoute: typeof AppWebsiteFoundationRoute
+  AppWebsiteFoundationRoute: typeof AppWebsiteFoundationRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
+  AppBusinessProfileIndexRoute: typeof AppBusinessProfileIndexRoute
+  AppCompetitorsIndexRoute: typeof AppCompetitorsIndexRoute
+  AppGoogleProductsIndexRoute: typeof AppGoogleProductsIndexRoute
+  AppKeywordsIndexRoute: typeof AppKeywordsIndexRoute
+  AppMobileIndexRoute: typeof AppMobileIndexRoute
+  AppPerformanceIndexRoute: typeof AppPerformanceIndexRoute
+  AppReportsIndexRoute: typeof AppReportsIndexRoute
+  AppSeoAnalyzerIndexRoute: typeof AppSeoAnalyzerIndexRoute
+  AppSettingsIndexRoute: typeof AppSettingsIndexRoute
+  AppTrackingIndexRoute: typeof AppTrackingIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppBusinessProfileRoute: AppBusinessProfileRoute,
-  AppCompetitorsRoute: AppCompetitorsRoute,
-  AppGoogleProductsRoute: AppGoogleProductsRoute,
-  AppKeywordsRoute: AppKeywordsRoute,
-  AppMobileRoute: AppMobileRoute,
-  AppPerformanceRoute: AppPerformanceRoute,
-  AppReportsRoute: AppReportsRoute,
   AppSearchConsoleRoute: AppSearchConsoleRouteWithChildren,
   AppSearchKnowledgeRoute: AppSearchKnowledgeRouteWithChildren,
-  AppSeoAnalyzerRoute: AppSeoAnalyzerRoute,
-  AppSettingsRoute: AppSettingsRoute,
-  AppTrackingRoute: AppTrackingRoute,
-  AppWebsiteFoundationRoute: AppWebsiteFoundationRoute,
+  AppWebsiteFoundationRoute: AppWebsiteFoundationRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
+  AppBusinessProfileIndexRoute: AppBusinessProfileIndexRoute,
+  AppCompetitorsIndexRoute: AppCompetitorsIndexRoute,
+  AppGoogleProductsIndexRoute: AppGoogleProductsIndexRoute,
+  AppKeywordsIndexRoute: AppKeywordsIndexRoute,
+  AppMobileIndexRoute: AppMobileIndexRoute,
+  AppPerformanceIndexRoute: AppPerformanceIndexRoute,
+  AppReportsIndexRoute: AppReportsIndexRoute,
+  AppSeoAnalyzerIndexRoute: AppSeoAnalyzerIndexRoute,
+  AppSettingsIndexRoute: AppSettingsIndexRoute,
+  AppTrackingIndexRoute: AppTrackingIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

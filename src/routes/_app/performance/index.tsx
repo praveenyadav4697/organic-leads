@@ -7,7 +7,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianG
 import { ProgressRing } from "@/components/kpi-card";
 import { Sparkles } from "lucide-react";
 
-export const Route = createFileRoute("/_app/performance")({
+export const Route = createFileRoute("/_app/performance/")({
   head: () => ({ meta: [{ title: "Performance Center — Nebula" }] }),
   component: Performance,
 });

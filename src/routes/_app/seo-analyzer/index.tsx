@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { ProgressRing } from "@/components/kpi-card";
 import { StatusBadge } from "@/components/status-badge";
 
-export const Route = createFileRoute("/_app/seo-analyzer")({
+export const Route = createFileRoute("/_app/seo-analyzer/")({
   head: () => ({
     meta: [{ title: "SEO Audit — Nebula" }],
   }),

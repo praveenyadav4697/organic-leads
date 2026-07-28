@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Copy, KeyRound, ShieldCheck, Bell, Building2, User } from "lucide-react";
 
-export const Route = createFileRoute("/_app/settings")({
+export const Route = createFileRoute("/_app/settings/")({
   head: () => ({
     meta: [
       { title: "Settings — Nebula" },

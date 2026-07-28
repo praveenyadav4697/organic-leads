@@ -24,7 +24,7 @@ import {
   Sparkles as SparklesIcon,
 } from "lucide-react";
 
-export const Route = createFileRoute("/_app/search-knowledge/_index")({
+export const Route = createFileRoute("/_app/search-knowledge/")({
   head: () => ({
     meta: [
       { title: "Search Knowledge — Nebula" },

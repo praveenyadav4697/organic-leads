@@ -16,7 +16,7 @@ import { KpiCard } from "@/components/kpi-card";
 import { ConsolePage, ConsoleFilters, ConsoleTable } from "@/components/search-console-page";
 import { StatusBadge } from "@/components/status-badge";
 
-export const Route = createFileRoute("/_app/search-console/_index")({
+export const Route = createFileRoute("/_app/search-console/")({
   head: () => ({ meta: [{ title: "Search Console — Nebula" }] }),
   component: Page,
 });

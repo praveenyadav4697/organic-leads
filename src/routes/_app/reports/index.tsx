@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Download, FileText, Mail, Calendar, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 
-export const Route = createFileRoute("/_app/reports")({
+export const Route = createFileRoute("/_app/reports/")({
   head: () => ({
     meta: [
       { title: "Reports — Nebula" },

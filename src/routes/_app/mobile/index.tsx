@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/status-badge";
 import { Sparkles } from "lucide-react";
 
-export const Route = createFileRoute("/_app/mobile")({
+export const Route = createFileRoute("/_app/mobile/")({
   head: () => ({ meta: [{ title: "Mobile Readiness — Nebula" }] }),
   component: Mobile,
 });

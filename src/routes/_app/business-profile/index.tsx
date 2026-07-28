@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Save, Upload, Building2, Globe2, Phone, Mail, MapPin, Clock, Sparkles, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 
-export const Route = createFileRoute("/_app/business-profile")({
+export const Route = createFileRoute("/_app/business-profile/")({
   head: () => ({
     meta: [
       { title: "Business Profile — Nebula" },

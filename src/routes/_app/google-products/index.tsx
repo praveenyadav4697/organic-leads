@@ -34,7 +34,7 @@ const googleProducts: {
   { key: "groups", name: "Google Groups", status: "connected", health: 100, sync: "1d ago", owner: "Org Admin", scopes: "groups.readonly", description: "Team mailing lists and permissions sync.", icon: Users },
 ];
 
-export const Route = createFileRoute("/_app/google-products")({
+export const Route = createFileRoute("/_app/google-products/")({
   head: () => ({
     meta: [
       { title: "Google Product Registry — Nebula" },

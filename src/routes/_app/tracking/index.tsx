@@ -8,7 +8,7 @@ import {
   Phone, Mail, MessageCircle, Globe,
 } from "lucide-react";
 
-export const Route = createFileRoute("/_app/tracking")({
+export const Route = createFileRoute("/_app/tracking/")({
   head: () => ({ meta: [{ title: "Tracking Center — Nebula" }] }),
   component: Tracking,
 });

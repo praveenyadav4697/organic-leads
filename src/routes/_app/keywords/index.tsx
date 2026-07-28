@@ -6,7 +6,7 @@ import { Download, Sparkles, TrendingUp, HelpCircle, MapPin, FileText } from "lu
 import { motion } from "framer-motion";
 import { StatusBadge } from "@/components/status-badge";
 
-export const Route = createFileRoute("/_app/keywords")({
+export const Route = createFileRoute("/_app/keywords/")({
   head: () => ({ meta: [{ title: "Keyword Intelligence — Nebula" }] }),
   component: Keywords,
 });

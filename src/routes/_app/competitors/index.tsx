@@ -7,7 +7,7 @@ import { competitors } from "@/lib/mock-data";
 import { motion } from "framer-motion";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, RadarChart, PolarGrid, PolarAngleAxis, Radar } from "recharts";
 
-export const Route = createFileRoute("/_app/competitors")({
+export const Route = createFileRoute("/_app/competitors/")({
   head: () => ({ meta: [{ title: "Competitor Intelligence — Nebula" }] }),
   component: Competitors,
 });
