@@ -7,6 +7,7 @@ import {
   CheckCircle2, ShieldCheck, Cookie, Target, Activity, Bell,
   Phone, Mail, MessageCircle, Globe,
 } from "lucide-react";
+import { TrackingFormsNav } from "@/modules/tracking-forms/components";
 
 export const Route = createFileRoute("/_app/tracking/")({
   head: () => ({ meta: [{ title: "Tracking Center — Nebula" }] }),
@@ -47,6 +48,7 @@ function Tracking() {
           </>
         }
       />
+      <TrackingFormsNav />
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {[

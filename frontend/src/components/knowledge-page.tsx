@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Sparkles, Lightbulb, Code2, FileText } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { cn } from "@/lib/utils";
+import { SearchKnowledgeNav } from "@/modules/search-knowledge/components";
 
 export type KP = {
   title: string;
@@ -33,6 +34,7 @@ export function KnowledgePage(props: KP) {
         description={props.description}
         actions={props.actions}
       />
+      <SearchKnowledgeNav />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 space-y-6">

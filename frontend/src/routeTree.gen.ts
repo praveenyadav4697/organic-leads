@@ -38,7 +38,10 @@ import { Route as AppSearchConsoleSitemapsRouteImport } from './routes/_app/sear
 import { Route as AppSearchConsoleUrlInspectionRouteImport } from './routes/_app/search-console/url-inspection'
 import { Route as AppSearchConsoleVerificationRouteImport } from './routes/_app/search-console/verification'
 import { Route as AppSearchKnowledgeIndexRouteImport } from './routes/_app/search-knowledge/index'
+import { Route as AppSearchKnowledgeActivityLogsRouteImport } from './routes/_app/search-knowledge/activity-logs'
 import { Route as AppSearchKnowledgeAiSearchOverviewRouteImport } from './routes/_app/search-knowledge/ai-search-overview'
+import { Route as AppSearchKnowledgeApprovalsRouteImport } from './routes/_app/search-knowledge/approvals'
+import { Route as AppSearchKnowledgeDeviceBehaviourRouteImport } from './routes/_app/search-knowledge/device-behaviour'
 import { Route as AppSearchKnowledgeFeaturedSnippetsRouteImport } from './routes/_app/search-knowledge/featured-snippets'
 import { Route as AppSearchKnowledgeFutureTrendsRouteImport } from './routes/_app/search-knowledge/future-trends'
 import { Route as AppSearchKnowledgeGoogleAlgorithmUpdatesRouteImport } from './routes/_app/search-knowledge/google-algorithm-updates'
@@ -46,19 +49,39 @@ import { Route as AppSearchKnowledgeGoogleRankingFactorsRouteImport } from './ro
 import { Route as AppSearchKnowledgeGoogleSearchArchitectureRouteImport } from './routes/_app/search-knowledge/google-search-architecture'
 import { Route as AppSearchKnowledgeImageSearchRouteImport } from './routes/_app/search-knowledge/image-search'
 import { Route as AppSearchKnowledgeKnowledgeGraphRouteImport } from './routes/_app/search-knowledge/knowledge-graph'
+import { Route as AppSearchKnowledgeKnowledgeRulesRouteImport } from './routes/_app/search-knowledge/knowledge-rules'
 import { Route as AppSearchKnowledgeLocalSearchRouteImport } from './routes/_app/search-knowledge/local-search'
+import { Route as AppSearchKnowledgeMarketAnalysisRouteImport } from './routes/_app/search-knowledge/market-analysis'
 import { Route as AppSearchKnowledgeNewsSearchRouteImport } from './routes/_app/search-knowledge/news-search'
 import { Route as AppSearchKnowledgePeopleAlsoAskRouteImport } from './routes/_app/search-knowledge/people-also-ask'
 import { Route as AppSearchKnowledgeRichResultsRouteImport } from './routes/_app/search-knowledge/rich-results'
 import { Route as AppSearchKnowledgeSearchIntentRouteImport } from './routes/_app/search-knowledge/search-intent'
 import { Route as AppSearchKnowledgeSearchOperatorsRouteImport } from './routes/_app/search-knowledge/search-operators'
+import { Route as AppSearchKnowledgeSerpFeaturesRouteImport } from './routes/_app/search-knowledge/serp-features'
 import { Route as AppSearchKnowledgeSerpLayoutRouteImport } from './routes/_app/search-knowledge/serp-layout'
+import { Route as AppSearchKnowledgeSettingsRouteImport } from './routes/_app/search-knowledge/settings'
 import { Route as AppSearchKnowledgeShoppingSearchRouteImport } from './routes/_app/search-knowledge/shopping-search'
+import { Route as AppSearchKnowledgeVersionHistoryRouteImport } from './routes/_app/search-knowledge/version-history'
 import { Route as AppSearchKnowledgeVideoSearchRouteImport } from './routes/_app/search-knowledge/video-search'
 import { Route as AppSearchKnowledgeVoiceSearchRouteImport } from './routes/_app/search-knowledge/voice-search'
 import { Route as AppSeoAnalyzerIndexRouteImport } from './routes/_app/seo-analyzer/index'
 import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
 import { Route as AppTrackingIndexRouteImport } from './routes/_app/tracking/index'
+import { Route as AppTrackingActivityLogsRouteImport } from './routes/_app/tracking/activity-logs'
+import { Route as AppTrackingApprovalsRouteImport } from './routes/_app/tracking/approvals'
+import { Route as AppTrackingBusinessGoalsRouteImport } from './routes/_app/tracking/business-goals'
+import { Route as AppTrackingConfigurationRouteImport } from './routes/_app/tracking/configuration'
+import { Route as AppTrackingConsentRouteImport } from './routes/_app/tracking/consent'
+import { Route as AppTrackingContactFormsRouteImport } from './routes/_app/tracking/contact-forms'
+import { Route as AppTrackingConversionStrategyRouteImport } from './routes/_app/tracking/conversion-strategy'
+import { Route as AppTrackingEventsRouteImport } from './routes/_app/tracking/events'
+import { Route as AppTrackingKpiManagementRouteImport } from './routes/_app/tracking/kpi-management'
+import { Route as AppTrackingMeasurementPlanRouteImport } from './routes/_app/tracking/measurement-plan'
+import { Route as AppTrackingOperationsRouteImport } from './routes/_app/tracking/operations'
+import { Route as AppTrackingRoutingRouteImport } from './routes/_app/tracking/routing'
+import { Route as AppTrackingSettingsRouteImport } from './routes/_app/tracking/settings'
+import { Route as AppTrackingSpamProtectionRouteImport } from './routes/_app/tracking/spam-protection'
+import { Route as AppTrackingTestingRouteImport } from './routes/_app/tracking/testing'
 import { Route as AppWebsiteFoundationIndexRouteImport } from './routes/_app/website-foundation/index'
 import { Route as AppWebsiteFoundationApprovalsRouteImport } from './routes/_app/website-foundation/approvals'
 import { Route as AppWebsiteFoundationAuditRouteImport } from './routes/_app/website-foundation/audit'
@@ -231,10 +254,28 @@ const AppSearchKnowledgeIndexRoute = AppSearchKnowledgeIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppSearchKnowledgeRoute,
 } as any)
+const AppSearchKnowledgeActivityLogsRoute =
+  AppSearchKnowledgeActivityLogsRouteImport.update({
+    id: '/activity-logs',
+    path: '/activity-logs',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
 const AppSearchKnowledgeAiSearchOverviewRoute =
   AppSearchKnowledgeAiSearchOverviewRouteImport.update({
     id: '/ai-search-overview',
     path: '/ai-search-overview',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
+const AppSearchKnowledgeApprovalsRoute =
+  AppSearchKnowledgeApprovalsRouteImport.update({
+    id: '/approvals',
+    path: '/approvals',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
+const AppSearchKnowledgeDeviceBehaviourRoute =
+  AppSearchKnowledgeDeviceBehaviourRouteImport.update({
+    id: '/device-behaviour',
+    path: '/device-behaviour',
     getParentRoute: () => AppSearchKnowledgeRoute,
   } as any)
 const AppSearchKnowledgeFeaturedSnippetsRoute =
@@ -279,10 +320,22 @@ const AppSearchKnowledgeKnowledgeGraphRoute =
     path: '/knowledge-graph',
     getParentRoute: () => AppSearchKnowledgeRoute,
   } as any)
+const AppSearchKnowledgeKnowledgeRulesRoute =
+  AppSearchKnowledgeKnowledgeRulesRouteImport.update({
+    id: '/knowledge-rules',
+    path: '/knowledge-rules',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
 const AppSearchKnowledgeLocalSearchRoute =
   AppSearchKnowledgeLocalSearchRouteImport.update({
     id: '/local-search',
     path: '/local-search',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
+const AppSearchKnowledgeMarketAnalysisRoute =
+  AppSearchKnowledgeMarketAnalysisRouteImport.update({
+    id: '/market-analysis',
+    path: '/market-analysis',
     getParentRoute: () => AppSearchKnowledgeRoute,
   } as any)
 const AppSearchKnowledgeNewsSearchRoute =
@@ -315,16 +368,34 @@ const AppSearchKnowledgeSearchOperatorsRoute =
     path: '/search-operators',
     getParentRoute: () => AppSearchKnowledgeRoute,
   } as any)
+const AppSearchKnowledgeSerpFeaturesRoute =
+  AppSearchKnowledgeSerpFeaturesRouteImport.update({
+    id: '/serp-features',
+    path: '/serp-features',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
 const AppSearchKnowledgeSerpLayoutRoute =
   AppSearchKnowledgeSerpLayoutRouteImport.update({
     id: '/serp-layout',
     path: '/serp-layout',
     getParentRoute: () => AppSearchKnowledgeRoute,
   } as any)
+const AppSearchKnowledgeSettingsRoute =
+  AppSearchKnowledgeSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
 const AppSearchKnowledgeShoppingSearchRoute =
   AppSearchKnowledgeShoppingSearchRouteImport.update({
     id: '/shopping-search',
     path: '/shopping-search',
+    getParentRoute: () => AppSearchKnowledgeRoute,
+  } as any)
+const AppSearchKnowledgeVersionHistoryRoute =
+  AppSearchKnowledgeVersionHistoryRouteImport.update({
+    id: '/version-history',
+    path: '/version-history',
     getParentRoute: () => AppSearchKnowledgeRoute,
   } as any)
 const AppSearchKnowledgeVideoSearchRoute =
@@ -352,6 +423,87 @@ const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
 const AppTrackingIndexRoute = AppTrackingIndexRouteImport.update({
   id: '/tracking/',
   path: '/tracking/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingActivityLogsRoute = AppTrackingActivityLogsRouteImport.update({
+  id: '/tracking/activity-logs',
+  path: '/tracking/activity-logs',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingApprovalsRoute = AppTrackingApprovalsRouteImport.update({
+  id: '/tracking/approvals',
+  path: '/tracking/approvals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingBusinessGoalsRoute =
+  AppTrackingBusinessGoalsRouteImport.update({
+    id: '/tracking/business-goals',
+    path: '/tracking/business-goals',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppTrackingConfigurationRoute =
+  AppTrackingConfigurationRouteImport.update({
+    id: '/tracking/configuration',
+    path: '/tracking/configuration',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppTrackingConsentRoute = AppTrackingConsentRouteImport.update({
+  id: '/tracking/consent',
+  path: '/tracking/consent',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingContactFormsRoute = AppTrackingContactFormsRouteImport.update({
+  id: '/tracking/contact-forms',
+  path: '/tracking/contact-forms',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingConversionStrategyRoute =
+  AppTrackingConversionStrategyRouteImport.update({
+    id: '/tracking/conversion-strategy',
+    path: '/tracking/conversion-strategy',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppTrackingEventsRoute = AppTrackingEventsRouteImport.update({
+  id: '/tracking/events',
+  path: '/tracking/events',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingKpiManagementRoute =
+  AppTrackingKpiManagementRouteImport.update({
+    id: '/tracking/kpi-management',
+    path: '/tracking/kpi-management',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppTrackingMeasurementPlanRoute =
+  AppTrackingMeasurementPlanRouteImport.update({
+    id: '/tracking/measurement-plan',
+    path: '/tracking/measurement-plan',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppTrackingOperationsRoute = AppTrackingOperationsRouteImport.update({
+  id: '/tracking/operations',
+  path: '/tracking/operations',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingRoutingRoute = AppTrackingRoutingRouteImport.update({
+  id: '/tracking/routing',
+  path: '/tracking/routing',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingSettingsRoute = AppTrackingSettingsRouteImport.update({
+  id: '/tracking/settings',
+  path: '/tracking/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingSpamProtectionRoute =
+  AppTrackingSpamProtectionRouteImport.update({
+    id: '/tracking/spam-protection',
+    path: '/tracking/spam-protection',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppTrackingTestingRoute = AppTrackingTestingRouteImport.update({
+  id: '/tracking/testing',
+  path: '/tracking/testing',
   getParentRoute: () => AppRoute,
 } as any)
 const AppWebsiteFoundationIndexRoute =
@@ -483,7 +635,10 @@ export interface FileRoutesByFullPath {
   '/search-console/sitemaps': typeof AppSearchConsoleSitemapsRoute
   '/search-console/url-inspection': typeof AppSearchConsoleUrlInspectionRoute
   '/search-console/verification': typeof AppSearchConsoleVerificationRoute
+  '/search-knowledge/activity-logs': typeof AppSearchKnowledgeActivityLogsRoute
   '/search-knowledge/ai-search-overview': typeof AppSearchKnowledgeAiSearchOverviewRoute
+  '/search-knowledge/approvals': typeof AppSearchKnowledgeApprovalsRoute
+  '/search-knowledge/device-behaviour': typeof AppSearchKnowledgeDeviceBehaviourRoute
   '/search-knowledge/featured-snippets': typeof AppSearchKnowledgeFeaturedSnippetsRoute
   '/search-knowledge/future-trends': typeof AppSearchKnowledgeFutureTrendsRoute
   '/search-knowledge/google-algorithm-updates': typeof AppSearchKnowledgeGoogleAlgorithmUpdatesRoute
@@ -491,16 +646,36 @@ export interface FileRoutesByFullPath {
   '/search-knowledge/google-search-architecture': typeof AppSearchKnowledgeGoogleSearchArchitectureRoute
   '/search-knowledge/image-search': typeof AppSearchKnowledgeImageSearchRoute
   '/search-knowledge/knowledge-graph': typeof AppSearchKnowledgeKnowledgeGraphRoute
+  '/search-knowledge/knowledge-rules': typeof AppSearchKnowledgeKnowledgeRulesRoute
   '/search-knowledge/local-search': typeof AppSearchKnowledgeLocalSearchRoute
+  '/search-knowledge/market-analysis': typeof AppSearchKnowledgeMarketAnalysisRoute
   '/search-knowledge/news-search': typeof AppSearchKnowledgeNewsSearchRoute
   '/search-knowledge/people-also-ask': typeof AppSearchKnowledgePeopleAlsoAskRoute
   '/search-knowledge/rich-results': typeof AppSearchKnowledgeRichResultsRoute
   '/search-knowledge/search-intent': typeof AppSearchKnowledgeSearchIntentRoute
   '/search-knowledge/search-operators': typeof AppSearchKnowledgeSearchOperatorsRoute
+  '/search-knowledge/serp-features': typeof AppSearchKnowledgeSerpFeaturesRoute
   '/search-knowledge/serp-layout': typeof AppSearchKnowledgeSerpLayoutRoute
+  '/search-knowledge/settings': typeof AppSearchKnowledgeSettingsRoute
   '/search-knowledge/shopping-search': typeof AppSearchKnowledgeShoppingSearchRoute
+  '/search-knowledge/version-history': typeof AppSearchKnowledgeVersionHistoryRoute
   '/search-knowledge/video-search': typeof AppSearchKnowledgeVideoSearchRoute
   '/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
+  '/tracking/activity-logs': typeof AppTrackingActivityLogsRoute
+  '/tracking/approvals': typeof AppTrackingApprovalsRoute
+  '/tracking/business-goals': typeof AppTrackingBusinessGoalsRoute
+  '/tracking/configuration': typeof AppTrackingConfigurationRoute
+  '/tracking/consent': typeof AppTrackingConsentRoute
+  '/tracking/contact-forms': typeof AppTrackingContactFormsRoute
+  '/tracking/conversion-strategy': typeof AppTrackingConversionStrategyRoute
+  '/tracking/events': typeof AppTrackingEventsRoute
+  '/tracking/kpi-management': typeof AppTrackingKpiManagementRoute
+  '/tracking/measurement-plan': typeof AppTrackingMeasurementPlanRoute
+  '/tracking/operations': typeof AppTrackingOperationsRoute
+  '/tracking/routing': typeof AppTrackingRoutingRoute
+  '/tracking/settings': typeof AppTrackingSettingsRoute
+  '/tracking/spam-protection': typeof AppTrackingSpamProtectionRoute
+  '/tracking/testing': typeof AppTrackingTestingRoute
   '/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
   '/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
   '/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
@@ -549,7 +724,10 @@ export interface FileRoutesByTo {
   '/search-console/sitemaps': typeof AppSearchConsoleSitemapsRoute
   '/search-console/url-inspection': typeof AppSearchConsoleUrlInspectionRoute
   '/search-console/verification': typeof AppSearchConsoleVerificationRoute
+  '/search-knowledge/activity-logs': typeof AppSearchKnowledgeActivityLogsRoute
   '/search-knowledge/ai-search-overview': typeof AppSearchKnowledgeAiSearchOverviewRoute
+  '/search-knowledge/approvals': typeof AppSearchKnowledgeApprovalsRoute
+  '/search-knowledge/device-behaviour': typeof AppSearchKnowledgeDeviceBehaviourRoute
   '/search-knowledge/featured-snippets': typeof AppSearchKnowledgeFeaturedSnippetsRoute
   '/search-knowledge/future-trends': typeof AppSearchKnowledgeFutureTrendsRoute
   '/search-knowledge/google-algorithm-updates': typeof AppSearchKnowledgeGoogleAlgorithmUpdatesRoute
@@ -557,16 +735,36 @@ export interface FileRoutesByTo {
   '/search-knowledge/google-search-architecture': typeof AppSearchKnowledgeGoogleSearchArchitectureRoute
   '/search-knowledge/image-search': typeof AppSearchKnowledgeImageSearchRoute
   '/search-knowledge/knowledge-graph': typeof AppSearchKnowledgeKnowledgeGraphRoute
+  '/search-knowledge/knowledge-rules': typeof AppSearchKnowledgeKnowledgeRulesRoute
   '/search-knowledge/local-search': typeof AppSearchKnowledgeLocalSearchRoute
+  '/search-knowledge/market-analysis': typeof AppSearchKnowledgeMarketAnalysisRoute
   '/search-knowledge/news-search': typeof AppSearchKnowledgeNewsSearchRoute
   '/search-knowledge/people-also-ask': typeof AppSearchKnowledgePeopleAlsoAskRoute
   '/search-knowledge/rich-results': typeof AppSearchKnowledgeRichResultsRoute
   '/search-knowledge/search-intent': typeof AppSearchKnowledgeSearchIntentRoute
   '/search-knowledge/search-operators': typeof AppSearchKnowledgeSearchOperatorsRoute
+  '/search-knowledge/serp-features': typeof AppSearchKnowledgeSerpFeaturesRoute
   '/search-knowledge/serp-layout': typeof AppSearchKnowledgeSerpLayoutRoute
+  '/search-knowledge/settings': typeof AppSearchKnowledgeSettingsRoute
   '/search-knowledge/shopping-search': typeof AppSearchKnowledgeShoppingSearchRoute
+  '/search-knowledge/version-history': typeof AppSearchKnowledgeVersionHistoryRoute
   '/search-knowledge/video-search': typeof AppSearchKnowledgeVideoSearchRoute
   '/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
+  '/tracking/activity-logs': typeof AppTrackingActivityLogsRoute
+  '/tracking/approvals': typeof AppTrackingApprovalsRoute
+  '/tracking/business-goals': typeof AppTrackingBusinessGoalsRoute
+  '/tracking/configuration': typeof AppTrackingConfigurationRoute
+  '/tracking/consent': typeof AppTrackingConsentRoute
+  '/tracking/contact-forms': typeof AppTrackingContactFormsRoute
+  '/tracking/conversion-strategy': typeof AppTrackingConversionStrategyRoute
+  '/tracking/events': typeof AppTrackingEventsRoute
+  '/tracking/kpi-management': typeof AppTrackingKpiManagementRoute
+  '/tracking/measurement-plan': typeof AppTrackingMeasurementPlanRoute
+  '/tracking/operations': typeof AppTrackingOperationsRoute
+  '/tracking/routing': typeof AppTrackingRoutingRoute
+  '/tracking/settings': typeof AppTrackingSettingsRoute
+  '/tracking/spam-protection': typeof AppTrackingSpamProtectionRoute
+  '/tracking/testing': typeof AppTrackingTestingRoute
   '/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
   '/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
   '/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
@@ -620,7 +818,10 @@ export interface FileRoutesById {
   '/_app/search-console/sitemaps': typeof AppSearchConsoleSitemapsRoute
   '/_app/search-console/url-inspection': typeof AppSearchConsoleUrlInspectionRoute
   '/_app/search-console/verification': typeof AppSearchConsoleVerificationRoute
+  '/_app/search-knowledge/activity-logs': typeof AppSearchKnowledgeActivityLogsRoute
   '/_app/search-knowledge/ai-search-overview': typeof AppSearchKnowledgeAiSearchOverviewRoute
+  '/_app/search-knowledge/approvals': typeof AppSearchKnowledgeApprovalsRoute
+  '/_app/search-knowledge/device-behaviour': typeof AppSearchKnowledgeDeviceBehaviourRoute
   '/_app/search-knowledge/featured-snippets': typeof AppSearchKnowledgeFeaturedSnippetsRoute
   '/_app/search-knowledge/future-trends': typeof AppSearchKnowledgeFutureTrendsRoute
   '/_app/search-knowledge/google-algorithm-updates': typeof AppSearchKnowledgeGoogleAlgorithmUpdatesRoute
@@ -628,16 +829,36 @@ export interface FileRoutesById {
   '/_app/search-knowledge/google-search-architecture': typeof AppSearchKnowledgeGoogleSearchArchitectureRoute
   '/_app/search-knowledge/image-search': typeof AppSearchKnowledgeImageSearchRoute
   '/_app/search-knowledge/knowledge-graph': typeof AppSearchKnowledgeKnowledgeGraphRoute
+  '/_app/search-knowledge/knowledge-rules': typeof AppSearchKnowledgeKnowledgeRulesRoute
   '/_app/search-knowledge/local-search': typeof AppSearchKnowledgeLocalSearchRoute
+  '/_app/search-knowledge/market-analysis': typeof AppSearchKnowledgeMarketAnalysisRoute
   '/_app/search-knowledge/news-search': typeof AppSearchKnowledgeNewsSearchRoute
   '/_app/search-knowledge/people-also-ask': typeof AppSearchKnowledgePeopleAlsoAskRoute
   '/_app/search-knowledge/rich-results': typeof AppSearchKnowledgeRichResultsRoute
   '/_app/search-knowledge/search-intent': typeof AppSearchKnowledgeSearchIntentRoute
   '/_app/search-knowledge/search-operators': typeof AppSearchKnowledgeSearchOperatorsRoute
+  '/_app/search-knowledge/serp-features': typeof AppSearchKnowledgeSerpFeaturesRoute
   '/_app/search-knowledge/serp-layout': typeof AppSearchKnowledgeSerpLayoutRoute
+  '/_app/search-knowledge/settings': typeof AppSearchKnowledgeSettingsRoute
   '/_app/search-knowledge/shopping-search': typeof AppSearchKnowledgeShoppingSearchRoute
+  '/_app/search-knowledge/version-history': typeof AppSearchKnowledgeVersionHistoryRoute
   '/_app/search-knowledge/video-search': typeof AppSearchKnowledgeVideoSearchRoute
   '/_app/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
+  '/_app/tracking/activity-logs': typeof AppTrackingActivityLogsRoute
+  '/_app/tracking/approvals': typeof AppTrackingApprovalsRoute
+  '/_app/tracking/business-goals': typeof AppTrackingBusinessGoalsRoute
+  '/_app/tracking/configuration': typeof AppTrackingConfigurationRoute
+  '/_app/tracking/consent': typeof AppTrackingConsentRoute
+  '/_app/tracking/contact-forms': typeof AppTrackingContactFormsRoute
+  '/_app/tracking/conversion-strategy': typeof AppTrackingConversionStrategyRoute
+  '/_app/tracking/events': typeof AppTrackingEventsRoute
+  '/_app/tracking/kpi-management': typeof AppTrackingKpiManagementRoute
+  '/_app/tracking/measurement-plan': typeof AppTrackingMeasurementPlanRoute
+  '/_app/tracking/operations': typeof AppTrackingOperationsRoute
+  '/_app/tracking/routing': typeof AppTrackingRoutingRoute
+  '/_app/tracking/settings': typeof AppTrackingSettingsRoute
+  '/_app/tracking/spam-protection': typeof AppTrackingSpamProtectionRoute
+  '/_app/tracking/testing': typeof AppTrackingTestingRoute
   '/_app/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
   '/_app/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
   '/_app/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
@@ -691,7 +912,10 @@ export interface FileRouteTypes {
     | '/search-console/sitemaps'
     | '/search-console/url-inspection'
     | '/search-console/verification'
+    | '/search-knowledge/activity-logs'
     | '/search-knowledge/ai-search-overview'
+    | '/search-knowledge/approvals'
+    | '/search-knowledge/device-behaviour'
     | '/search-knowledge/featured-snippets'
     | '/search-knowledge/future-trends'
     | '/search-knowledge/google-algorithm-updates'
@@ -699,16 +923,36 @@ export interface FileRouteTypes {
     | '/search-knowledge/google-search-architecture'
     | '/search-knowledge/image-search'
     | '/search-knowledge/knowledge-graph'
+    | '/search-knowledge/knowledge-rules'
     | '/search-knowledge/local-search'
+    | '/search-knowledge/market-analysis'
     | '/search-knowledge/news-search'
     | '/search-knowledge/people-also-ask'
     | '/search-knowledge/rich-results'
     | '/search-knowledge/search-intent'
     | '/search-knowledge/search-operators'
+    | '/search-knowledge/serp-features'
     | '/search-knowledge/serp-layout'
+    | '/search-knowledge/settings'
     | '/search-knowledge/shopping-search'
+    | '/search-knowledge/version-history'
     | '/search-knowledge/video-search'
     | '/search-knowledge/voice-search'
+    | '/tracking/activity-logs'
+    | '/tracking/approvals'
+    | '/tracking/business-goals'
+    | '/tracking/configuration'
+    | '/tracking/consent'
+    | '/tracking/contact-forms'
+    | '/tracking/conversion-strategy'
+    | '/tracking/events'
+    | '/tracking/kpi-management'
+    | '/tracking/measurement-plan'
+    | '/tracking/operations'
+    | '/tracking/routing'
+    | '/tracking/settings'
+    | '/tracking/spam-protection'
+    | '/tracking/testing'
     | '/website-foundation/approvals'
     | '/website-foundation/audit'
     | '/website-foundation/automation'
@@ -757,7 +1001,10 @@ export interface FileRouteTypes {
     | '/search-console/sitemaps'
     | '/search-console/url-inspection'
     | '/search-console/verification'
+    | '/search-knowledge/activity-logs'
     | '/search-knowledge/ai-search-overview'
+    | '/search-knowledge/approvals'
+    | '/search-knowledge/device-behaviour'
     | '/search-knowledge/featured-snippets'
     | '/search-knowledge/future-trends'
     | '/search-knowledge/google-algorithm-updates'
@@ -765,16 +1012,36 @@ export interface FileRouteTypes {
     | '/search-knowledge/google-search-architecture'
     | '/search-knowledge/image-search'
     | '/search-knowledge/knowledge-graph'
+    | '/search-knowledge/knowledge-rules'
     | '/search-knowledge/local-search'
+    | '/search-knowledge/market-analysis'
     | '/search-knowledge/news-search'
     | '/search-knowledge/people-also-ask'
     | '/search-knowledge/rich-results'
     | '/search-knowledge/search-intent'
     | '/search-knowledge/search-operators'
+    | '/search-knowledge/serp-features'
     | '/search-knowledge/serp-layout'
+    | '/search-knowledge/settings'
     | '/search-knowledge/shopping-search'
+    | '/search-knowledge/version-history'
     | '/search-knowledge/video-search'
     | '/search-knowledge/voice-search'
+    | '/tracking/activity-logs'
+    | '/tracking/approvals'
+    | '/tracking/business-goals'
+    | '/tracking/configuration'
+    | '/tracking/consent'
+    | '/tracking/contact-forms'
+    | '/tracking/conversion-strategy'
+    | '/tracking/events'
+    | '/tracking/kpi-management'
+    | '/tracking/measurement-plan'
+    | '/tracking/operations'
+    | '/tracking/routing'
+    | '/tracking/settings'
+    | '/tracking/spam-protection'
+    | '/tracking/testing'
     | '/website-foundation/approvals'
     | '/website-foundation/audit'
     | '/website-foundation/automation'
@@ -827,7 +1094,10 @@ export interface FileRouteTypes {
     | '/_app/search-console/sitemaps'
     | '/_app/search-console/url-inspection'
     | '/_app/search-console/verification'
+    | '/_app/search-knowledge/activity-logs'
     | '/_app/search-knowledge/ai-search-overview'
+    | '/_app/search-knowledge/approvals'
+    | '/_app/search-knowledge/device-behaviour'
     | '/_app/search-knowledge/featured-snippets'
     | '/_app/search-knowledge/future-trends'
     | '/_app/search-knowledge/google-algorithm-updates'
@@ -835,16 +1105,36 @@ export interface FileRouteTypes {
     | '/_app/search-knowledge/google-search-architecture'
     | '/_app/search-knowledge/image-search'
     | '/_app/search-knowledge/knowledge-graph'
+    | '/_app/search-knowledge/knowledge-rules'
     | '/_app/search-knowledge/local-search'
+    | '/_app/search-knowledge/market-analysis'
     | '/_app/search-knowledge/news-search'
     | '/_app/search-knowledge/people-also-ask'
     | '/_app/search-knowledge/rich-results'
     | '/_app/search-knowledge/search-intent'
     | '/_app/search-knowledge/search-operators'
+    | '/_app/search-knowledge/serp-features'
     | '/_app/search-knowledge/serp-layout'
+    | '/_app/search-knowledge/settings'
     | '/_app/search-knowledge/shopping-search'
+    | '/_app/search-knowledge/version-history'
     | '/_app/search-knowledge/video-search'
     | '/_app/search-knowledge/voice-search'
+    | '/_app/tracking/activity-logs'
+    | '/_app/tracking/approvals'
+    | '/_app/tracking/business-goals'
+    | '/_app/tracking/configuration'
+    | '/_app/tracking/consent'
+    | '/_app/tracking/contact-forms'
+    | '/_app/tracking/conversion-strategy'
+    | '/_app/tracking/events'
+    | '/_app/tracking/kpi-management'
+    | '/_app/tracking/measurement-plan'
+    | '/_app/tracking/operations'
+    | '/_app/tracking/routing'
+    | '/_app/tracking/settings'
+    | '/_app/tracking/spam-protection'
+    | '/_app/tracking/testing'
     | '/_app/website-foundation/approvals'
     | '/_app/website-foundation/audit'
     | '/_app/website-foundation/automation'
@@ -1086,11 +1376,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSearchKnowledgeIndexRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
+    '/_app/search-knowledge/activity-logs': {
+      id: '/_app/search-knowledge/activity-logs'
+      path: '/activity-logs'
+      fullPath: '/search-knowledge/activity-logs'
+      preLoaderRoute: typeof AppSearchKnowledgeActivityLogsRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
     '/_app/search-knowledge/ai-search-overview': {
       id: '/_app/search-knowledge/ai-search-overview'
       path: '/ai-search-overview'
       fullPath: '/search-knowledge/ai-search-overview'
       preLoaderRoute: typeof AppSearchKnowledgeAiSearchOverviewRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
+    '/_app/search-knowledge/approvals': {
+      id: '/_app/search-knowledge/approvals'
+      path: '/approvals'
+      fullPath: '/search-knowledge/approvals'
+      preLoaderRoute: typeof AppSearchKnowledgeApprovalsRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
+    '/_app/search-knowledge/device-behaviour': {
+      id: '/_app/search-knowledge/device-behaviour'
+      path: '/device-behaviour'
+      fullPath: '/search-knowledge/device-behaviour'
+      preLoaderRoute: typeof AppSearchKnowledgeDeviceBehaviourRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
     '/_app/search-knowledge/featured-snippets': {
@@ -1142,11 +1453,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSearchKnowledgeKnowledgeGraphRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
+    '/_app/search-knowledge/knowledge-rules': {
+      id: '/_app/search-knowledge/knowledge-rules'
+      path: '/knowledge-rules'
+      fullPath: '/search-knowledge/knowledge-rules'
+      preLoaderRoute: typeof AppSearchKnowledgeKnowledgeRulesRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
     '/_app/search-knowledge/local-search': {
       id: '/_app/search-knowledge/local-search'
       path: '/local-search'
       fullPath: '/search-knowledge/local-search'
       preLoaderRoute: typeof AppSearchKnowledgeLocalSearchRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
+    '/_app/search-knowledge/market-analysis': {
+      id: '/_app/search-knowledge/market-analysis'
+      path: '/market-analysis'
+      fullPath: '/search-knowledge/market-analysis'
+      preLoaderRoute: typeof AppSearchKnowledgeMarketAnalysisRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
     '/_app/search-knowledge/news-search': {
@@ -1184,6 +1509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSearchKnowledgeSearchOperatorsRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
+    '/_app/search-knowledge/serp-features': {
+      id: '/_app/search-knowledge/serp-features'
+      path: '/serp-features'
+      fullPath: '/search-knowledge/serp-features'
+      preLoaderRoute: typeof AppSearchKnowledgeSerpFeaturesRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
     '/_app/search-knowledge/serp-layout': {
       id: '/_app/search-knowledge/serp-layout'
       path: '/serp-layout'
@@ -1191,11 +1523,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSearchKnowledgeSerpLayoutRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
+    '/_app/search-knowledge/settings': {
+      id: '/_app/search-knowledge/settings'
+      path: '/settings'
+      fullPath: '/search-knowledge/settings'
+      preLoaderRoute: typeof AppSearchKnowledgeSettingsRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
     '/_app/search-knowledge/shopping-search': {
       id: '/_app/search-knowledge/shopping-search'
       path: '/shopping-search'
       fullPath: '/search-knowledge/shopping-search'
       preLoaderRoute: typeof AppSearchKnowledgeShoppingSearchRouteImport
+      parentRoute: typeof AppSearchKnowledgeRoute
+    }
+    '/_app/search-knowledge/version-history': {
+      id: '/_app/search-knowledge/version-history'
+      path: '/version-history'
+      fullPath: '/search-knowledge/version-history'
+      preLoaderRoute: typeof AppSearchKnowledgeVersionHistoryRouteImport
       parentRoute: typeof AppSearchKnowledgeRoute
     }
     '/_app/search-knowledge/video-search': {
@@ -1231,6 +1577,111 @@ declare module '@tanstack/react-router' {
       path: '/tracking'
       fullPath: '/tracking/'
       preLoaderRoute: typeof AppTrackingIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/activity-logs': {
+      id: '/_app/tracking/activity-logs'
+      path: '/tracking/activity-logs'
+      fullPath: '/tracking/activity-logs'
+      preLoaderRoute: typeof AppTrackingActivityLogsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/approvals': {
+      id: '/_app/tracking/approvals'
+      path: '/tracking/approvals'
+      fullPath: '/tracking/approvals'
+      preLoaderRoute: typeof AppTrackingApprovalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/business-goals': {
+      id: '/_app/tracking/business-goals'
+      path: '/tracking/business-goals'
+      fullPath: '/tracking/business-goals'
+      preLoaderRoute: typeof AppTrackingBusinessGoalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/configuration': {
+      id: '/_app/tracking/configuration'
+      path: '/tracking/configuration'
+      fullPath: '/tracking/configuration'
+      preLoaderRoute: typeof AppTrackingConfigurationRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/consent': {
+      id: '/_app/tracking/consent'
+      path: '/tracking/consent'
+      fullPath: '/tracking/consent'
+      preLoaderRoute: typeof AppTrackingConsentRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/contact-forms': {
+      id: '/_app/tracking/contact-forms'
+      path: '/tracking/contact-forms'
+      fullPath: '/tracking/contact-forms'
+      preLoaderRoute: typeof AppTrackingContactFormsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/conversion-strategy': {
+      id: '/_app/tracking/conversion-strategy'
+      path: '/tracking/conversion-strategy'
+      fullPath: '/tracking/conversion-strategy'
+      preLoaderRoute: typeof AppTrackingConversionStrategyRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/events': {
+      id: '/_app/tracking/events'
+      path: '/tracking/events'
+      fullPath: '/tracking/events'
+      preLoaderRoute: typeof AppTrackingEventsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/kpi-management': {
+      id: '/_app/tracking/kpi-management'
+      path: '/tracking/kpi-management'
+      fullPath: '/tracking/kpi-management'
+      preLoaderRoute: typeof AppTrackingKpiManagementRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/measurement-plan': {
+      id: '/_app/tracking/measurement-plan'
+      path: '/tracking/measurement-plan'
+      fullPath: '/tracking/measurement-plan'
+      preLoaderRoute: typeof AppTrackingMeasurementPlanRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/operations': {
+      id: '/_app/tracking/operations'
+      path: '/tracking/operations'
+      fullPath: '/tracking/operations'
+      preLoaderRoute: typeof AppTrackingOperationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/routing': {
+      id: '/_app/tracking/routing'
+      path: '/tracking/routing'
+      fullPath: '/tracking/routing'
+      preLoaderRoute: typeof AppTrackingRoutingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/settings': {
+      id: '/_app/tracking/settings'
+      path: '/tracking/settings'
+      fullPath: '/tracking/settings'
+      preLoaderRoute: typeof AppTrackingSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/spam-protection': {
+      id: '/_app/tracking/spam-protection'
+      path: '/tracking/spam-protection'
+      fullPath: '/tracking/spam-protection'
+      preLoaderRoute: typeof AppTrackingSpamProtectionRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/testing': {
+      id: '/_app/tracking/testing'
+      path: '/tracking/testing'
+      fullPath: '/tracking/testing'
+      preLoaderRoute: typeof AppTrackingTestingRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/website-foundation/': {
@@ -1404,7 +1855,10 @@ const AppSearchConsoleRouteWithChildren =
   AppSearchConsoleRoute._addFileChildren(AppSearchConsoleRouteChildren)
 
 interface AppSearchKnowledgeRouteChildren {
+  AppSearchKnowledgeActivityLogsRoute: typeof AppSearchKnowledgeActivityLogsRoute
   AppSearchKnowledgeAiSearchOverviewRoute: typeof AppSearchKnowledgeAiSearchOverviewRoute
+  AppSearchKnowledgeApprovalsRoute: typeof AppSearchKnowledgeApprovalsRoute
+  AppSearchKnowledgeDeviceBehaviourRoute: typeof AppSearchKnowledgeDeviceBehaviourRoute
   AppSearchKnowledgeFeaturedSnippetsRoute: typeof AppSearchKnowledgeFeaturedSnippetsRoute
   AppSearchKnowledgeFutureTrendsRoute: typeof AppSearchKnowledgeFutureTrendsRoute
   AppSearchKnowledgeGoogleAlgorithmUpdatesRoute: typeof AppSearchKnowledgeGoogleAlgorithmUpdatesRoute
@@ -1412,22 +1866,31 @@ interface AppSearchKnowledgeRouteChildren {
   AppSearchKnowledgeGoogleSearchArchitectureRoute: typeof AppSearchKnowledgeGoogleSearchArchitectureRoute
   AppSearchKnowledgeImageSearchRoute: typeof AppSearchKnowledgeImageSearchRoute
   AppSearchKnowledgeKnowledgeGraphRoute: typeof AppSearchKnowledgeKnowledgeGraphRoute
+  AppSearchKnowledgeKnowledgeRulesRoute: typeof AppSearchKnowledgeKnowledgeRulesRoute
   AppSearchKnowledgeLocalSearchRoute: typeof AppSearchKnowledgeLocalSearchRoute
+  AppSearchKnowledgeMarketAnalysisRoute: typeof AppSearchKnowledgeMarketAnalysisRoute
   AppSearchKnowledgeNewsSearchRoute: typeof AppSearchKnowledgeNewsSearchRoute
   AppSearchKnowledgePeopleAlsoAskRoute: typeof AppSearchKnowledgePeopleAlsoAskRoute
   AppSearchKnowledgeRichResultsRoute: typeof AppSearchKnowledgeRichResultsRoute
   AppSearchKnowledgeSearchIntentRoute: typeof AppSearchKnowledgeSearchIntentRoute
   AppSearchKnowledgeSearchOperatorsRoute: typeof AppSearchKnowledgeSearchOperatorsRoute
+  AppSearchKnowledgeSerpFeaturesRoute: typeof AppSearchKnowledgeSerpFeaturesRoute
   AppSearchKnowledgeSerpLayoutRoute: typeof AppSearchKnowledgeSerpLayoutRoute
+  AppSearchKnowledgeSettingsRoute: typeof AppSearchKnowledgeSettingsRoute
   AppSearchKnowledgeShoppingSearchRoute: typeof AppSearchKnowledgeShoppingSearchRoute
+  AppSearchKnowledgeVersionHistoryRoute: typeof AppSearchKnowledgeVersionHistoryRoute
   AppSearchKnowledgeVideoSearchRoute: typeof AppSearchKnowledgeVideoSearchRoute
   AppSearchKnowledgeVoiceSearchRoute: typeof AppSearchKnowledgeVoiceSearchRoute
   AppSearchKnowledgeIndexRoute: typeof AppSearchKnowledgeIndexRoute
 }
 
 const AppSearchKnowledgeRouteChildren: AppSearchKnowledgeRouteChildren = {
+  AppSearchKnowledgeActivityLogsRoute: AppSearchKnowledgeActivityLogsRoute,
   AppSearchKnowledgeAiSearchOverviewRoute:
     AppSearchKnowledgeAiSearchOverviewRoute,
+  AppSearchKnowledgeApprovalsRoute: AppSearchKnowledgeApprovalsRoute,
+  AppSearchKnowledgeDeviceBehaviourRoute:
+    AppSearchKnowledgeDeviceBehaviourRoute,
   AppSearchKnowledgeFeaturedSnippetsRoute:
     AppSearchKnowledgeFeaturedSnippetsRoute,
   AppSearchKnowledgeFutureTrendsRoute: AppSearchKnowledgeFutureTrendsRoute,
@@ -1439,15 +1902,20 @@ const AppSearchKnowledgeRouteChildren: AppSearchKnowledgeRouteChildren = {
     AppSearchKnowledgeGoogleSearchArchitectureRoute,
   AppSearchKnowledgeImageSearchRoute: AppSearchKnowledgeImageSearchRoute,
   AppSearchKnowledgeKnowledgeGraphRoute: AppSearchKnowledgeKnowledgeGraphRoute,
+  AppSearchKnowledgeKnowledgeRulesRoute: AppSearchKnowledgeKnowledgeRulesRoute,
   AppSearchKnowledgeLocalSearchRoute: AppSearchKnowledgeLocalSearchRoute,
+  AppSearchKnowledgeMarketAnalysisRoute: AppSearchKnowledgeMarketAnalysisRoute,
   AppSearchKnowledgeNewsSearchRoute: AppSearchKnowledgeNewsSearchRoute,
   AppSearchKnowledgePeopleAlsoAskRoute: AppSearchKnowledgePeopleAlsoAskRoute,
   AppSearchKnowledgeRichResultsRoute: AppSearchKnowledgeRichResultsRoute,
   AppSearchKnowledgeSearchIntentRoute: AppSearchKnowledgeSearchIntentRoute,
   AppSearchKnowledgeSearchOperatorsRoute:
     AppSearchKnowledgeSearchOperatorsRoute,
+  AppSearchKnowledgeSerpFeaturesRoute: AppSearchKnowledgeSerpFeaturesRoute,
   AppSearchKnowledgeSerpLayoutRoute: AppSearchKnowledgeSerpLayoutRoute,
+  AppSearchKnowledgeSettingsRoute: AppSearchKnowledgeSettingsRoute,
   AppSearchKnowledgeShoppingSearchRoute: AppSearchKnowledgeShoppingSearchRoute,
+  AppSearchKnowledgeVersionHistoryRoute: AppSearchKnowledgeVersionHistoryRoute,
   AppSearchKnowledgeVideoSearchRoute: AppSearchKnowledgeVideoSearchRoute,
   AppSearchKnowledgeVoiceSearchRoute: AppSearchKnowledgeVoiceSearchRoute,
   AppSearchKnowledgeIndexRoute: AppSearchKnowledgeIndexRoute,
@@ -1506,6 +1974,21 @@ interface AppRouteChildren {
   AppSearchKnowledgeRoute: typeof AppSearchKnowledgeRouteWithChildren
   AppWebsiteFoundationRoute: typeof AppWebsiteFoundationRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
+  AppTrackingActivityLogsRoute: typeof AppTrackingActivityLogsRoute
+  AppTrackingApprovalsRoute: typeof AppTrackingApprovalsRoute
+  AppTrackingBusinessGoalsRoute: typeof AppTrackingBusinessGoalsRoute
+  AppTrackingConfigurationRoute: typeof AppTrackingConfigurationRoute
+  AppTrackingConsentRoute: typeof AppTrackingConsentRoute
+  AppTrackingContactFormsRoute: typeof AppTrackingContactFormsRoute
+  AppTrackingConversionStrategyRoute: typeof AppTrackingConversionStrategyRoute
+  AppTrackingEventsRoute: typeof AppTrackingEventsRoute
+  AppTrackingKpiManagementRoute: typeof AppTrackingKpiManagementRoute
+  AppTrackingMeasurementPlanRoute: typeof AppTrackingMeasurementPlanRoute
+  AppTrackingOperationsRoute: typeof AppTrackingOperationsRoute
+  AppTrackingRoutingRoute: typeof AppTrackingRoutingRoute
+  AppTrackingSettingsRoute: typeof AppTrackingSettingsRoute
+  AppTrackingSpamProtectionRoute: typeof AppTrackingSpamProtectionRoute
+  AppTrackingTestingRoute: typeof AppTrackingTestingRoute
   AppBusinessProfileIndexRoute: typeof AppBusinessProfileIndexRoute
   AppCompetitorsIndexRoute: typeof AppCompetitorsIndexRoute
   AppGoogleProductsIndexRoute: typeof AppGoogleProductsIndexRoute
@@ -1523,6 +2006,21 @@ const AppRouteChildren: AppRouteChildren = {
   AppSearchKnowledgeRoute: AppSearchKnowledgeRouteWithChildren,
   AppWebsiteFoundationRoute: AppWebsiteFoundationRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
+  AppTrackingActivityLogsRoute: AppTrackingActivityLogsRoute,
+  AppTrackingApprovalsRoute: AppTrackingApprovalsRoute,
+  AppTrackingBusinessGoalsRoute: AppTrackingBusinessGoalsRoute,
+  AppTrackingConfigurationRoute: AppTrackingConfigurationRoute,
+  AppTrackingConsentRoute: AppTrackingConsentRoute,
+  AppTrackingContactFormsRoute: AppTrackingContactFormsRoute,
+  AppTrackingConversionStrategyRoute: AppTrackingConversionStrategyRoute,
+  AppTrackingEventsRoute: AppTrackingEventsRoute,
+  AppTrackingKpiManagementRoute: AppTrackingKpiManagementRoute,
+  AppTrackingMeasurementPlanRoute: AppTrackingMeasurementPlanRoute,
+  AppTrackingOperationsRoute: AppTrackingOperationsRoute,
+  AppTrackingRoutingRoute: AppTrackingRoutingRoute,
+  AppTrackingSettingsRoute: AppTrackingSettingsRoute,
+  AppTrackingSpamProtectionRoute: AppTrackingSpamProtectionRoute,
+  AppTrackingTestingRoute: AppTrackingTestingRoute,
   AppBusinessProfileIndexRoute: AppBusinessProfileIndexRoute,
   AppCompetitorsIndexRoute: AppCompetitorsIndexRoute,
   AppGoogleProductsIndexRoute: AppGoogleProductsIndexRoute,

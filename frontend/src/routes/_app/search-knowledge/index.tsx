@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { BookOpen, ArrowRight, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { SearchKnowledgeNav } from "@/modules/search-knowledge/components";
 import {
   Search,
   LayoutGrid,
@@ -72,6 +73,11 @@ function SearchKnowledgeOverview() {
           </Button>
         }
       />
+      <SearchKnowledgeNav />
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        {[['Knowledge Articles','48'],['Algorithm Updates','16'],['SERP Features','14'],['Pending Reviews','4']].map(([label,value]) => <div key={label} className="rounded-2xl border border-border bg-card p-4"><div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div><div className="mt-2 text-2xl font-semibold">{value}</div></div>)}
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-8">
         {topics.map((t, i) => (
