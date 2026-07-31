@@ -3,7 +3,7 @@ import { HelpCircle } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/people-also-ask")({
-  head: () => ({ meta: [{ title: "People Also Ask — Nebula" }] }),
+  head: () => ({ meta: [{ title: "People Also Ask | Organic Leads" }] }),
   component: Page,
 });
 
@@ -48,7 +48,7 @@ function Page() {
         },
       ]}
       bestPractices={[
-        "Use PAA mining tools (Nebula, AlsoAsked, AnswerThePublic) to expand topic clusters.",
+        "Use PAA mining tools (Organic Leads, AlsoAsked, AnswerThePublic) to expand topic clusters.",
         "One FAQ per H2 — never bury multiple questions under one header.",
         "Refresh PAA-targeted content every 90 days; freshness matters more here than elsewhere.",
         "Track which PAA boxes your pages own via Search Console > Performance > queries.",

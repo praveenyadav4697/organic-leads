@@ -24,7 +24,9 @@ export function TopNav({
   onOpenPalette: () => void;
 }) {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
-  const current = navItems.find((n) => (n.to === "/" ? pathname === "/" : pathname.startsWith(n.to)));
+  const current =
+    navItems.find((n) => (n.to === "/" ? pathname === "/" : n.to === pathname)) ||
+    navItems.find((n) => (n.to === "/" ? pathname === "/" : pathname.startsWith(n.to)));
 
   return (
     <header className="sticky top-0 z-30 h-16 flex items-center gap-3 px-4 lg:px-6 border-b border-border bg-background/70 backdrop-blur-xl">
@@ -33,7 +35,7 @@ export function TopNav({
       </Button>
 
       <nav className="hidden md:flex items-center gap-1.5 text-sm text-muted-foreground min-w-0">
-        <Link to="/" className="hover:text-foreground truncate">Nebula</Link>
+        <Link to="/" className="hover:text-foreground truncate">Organic Leads</Link>
         <span className="opacity-40">/</span>
         <span className="text-foreground font-medium truncate">{current?.title ?? "Dashboard"}</span>
       </nav>
@@ -77,9 +79,9 @@ export function TopNav({
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           {[
-            "Audit finished for acme.io — score 96",
-            "Merchant Center needs reconnection",
-            "New competitor detected: helix.ai",
+            "Audit finished for your website — score 96",
+            "Google Search Console needs reconnection",
+            "New competitor detected",
           ].map((n) => (
             <DropdownMenuItem key={n} className="py-2.5 gap-2">
               <span className="mt-1 size-1.5 rounded-full bg-primary shrink-0" />
@@ -92,13 +94,13 @@ export function TopNav({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2 pl-1 pr-2 h-10 rounded-xl hover:bg-muted transition">
-            <Avatar className="size-8">
-              <AvatarFallback className="gradient-primary text-white text-xs font-semibold">AK</AvatarFallback>
-            </Avatar>
-            <div className="hidden sm:block text-left leading-tight">
-              <div className="text-xs font-semibold">Ava Kepler</div>
-              <div className="text-[10px] text-muted-foreground">Admin · Acme Corp</div>
-            </div>
+              <Avatar className="size-8">
+                <AvatarFallback className="gradient-primary text-white text-xs font-semibold">OL</AvatarFallback>
+              </Avatar>
+              <div className="hidden sm:block text-left leading-tight">
+                <div className="text-xs font-semibold">User</div>
+                <div className="text-[10px] text-muted-foreground">Organization</div>
+              </div>
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">

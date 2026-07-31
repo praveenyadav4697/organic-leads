@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TrackingNav } from "@/modules/tracking/components";
 
 export const Route = createFileRoute("/_app/tracking/form-builder")({
-  head: () => ({ meta: [{ title: "Form Builder — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Form Builder | Organic Leads" }] }),
   component: () => (
     <div>
       <TrackingNav />

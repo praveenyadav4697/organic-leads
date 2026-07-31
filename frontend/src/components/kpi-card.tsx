@@ -55,13 +55,15 @@ export function KpiCard({
   index = 0,
 }: {
   label: string;
-  value: number;
+  value: number | null | undefined;
   unit?: string;
   delta?: number;
   hint?: string;
   ring?: boolean;
   index?: number;
 }) {
+  const showPlaceholder = value === null || value === undefined || isNaN(value);
+  const displayValue = showPlaceholder ? 0 : value;
   const trend = (delta ?? 0) > 0 ? "up" : (delta ?? 0) < 0 ? "down" : "flat";
   return (
     <motion.div
@@ -75,13 +77,17 @@ export function KpiCard({
           <div className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">{label}</div>
           <div className="mt-2 flex items-baseline gap-1">
             <div className="text-3xl font-semibold tracking-tight">
-              <CountUp value={value} />
+              {showPlaceholder ? (
+                <span className="text-muted-foreground">—</span>
+              ) : (
+                <CountUp value={displayValue} />
+              )}
             </div>
             {unit && <div className="text-sm text-muted-foreground">{unit}</div>}
           </div>
           {hint && <div className="mt-1 text-xs text-muted-foreground truncate">{hint}</div>}
         </div>
-        {ring && <ProgressRing value={typeof value === "number" && unit === "%" ? value : Math.min(100, value * 10)} />}
+        {ring && <ProgressRing value={typeof value === "number" && !showPlaceholder ? value : Math.min(100, (displayValue ?? 0) * 10)} />}
       </div>
       {delta !== undefined && (
         <div

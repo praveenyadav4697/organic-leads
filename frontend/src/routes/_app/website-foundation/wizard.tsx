@@ -8,7 +8,7 @@ import { useCreateWebsite } from "@/hooks/useWebsite";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/wizard")({
-  head: () => ({ meta: [{ title: "Website Wizard — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Website Wizard | Organic Leads" }] }),
   component: WebsiteWizard,
 });
 
@@ -57,13 +57,13 @@ function WebsiteWizard() {
       content: (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="Website name" required>
-            <TextInput value={data.name} onChange={(e) => update("name", e.target.value)} placeholder="Acme Marketing Site" />
+            <TextInput value={data.name} onChange={(e) => update("name", e.target.value)} placeholder="My Website Project" />
           </Field>
           <Field label="Website URL" required>
-            <TextInput value={data.url} onChange={(e) => update("url", e.target.value)} placeholder="https://example.com" />
+            <TextInput value={data.url} onChange={(e) => update("url", e.target.value)} placeholder="https://yourdomain.com" />
           </Field>
           <Field label="Domain" required>
-            <TextInput value={data.domain} onChange={(e) => update("domain", e.target.value)} placeholder="example.com" />
+            <TextInput value={data.domain} onChange={(e) => update("domain", e.target.value)} placeholder="yourdomain.com" />
           </Field>
           <Field label="Protocol">
             <div className="flex gap-2">

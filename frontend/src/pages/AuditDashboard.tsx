@@ -6,14 +6,6 @@ import { AuditRunCard } from "@/components/audit/run-card";
 import { AuditRunDialog } from "@/components/audit/run-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Plus, Search, RefreshCw } from "lucide-react";
@@ -21,7 +13,6 @@ import { Plus, Search, RefreshCw } from "lucide-react";
 function AuditDashboard() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data, isLoading, isError, refetch } = useAuditRuns({
     page,
@@ -31,7 +22,6 @@ function AuditDashboard() {
   const createRun = useCreateAuditRun({
     onSuccess: () => {
       toast.success("Audit run created");
-      setDialogOpen(false);
       refetch();
     },
     onError: () => toast.error("Failed to create audit run"),
@@ -46,33 +36,15 @@ function AuditDashboard() {
     (r) => r.audit_name.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-destructive mb-4">Failed to load audit runs</p>
-        <Button onClick={() => refetch()}>Retry</Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
+      {isError && (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-center justify-between">
+          <span>Failed to load audit runs — the backend may be unreachable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">SEO Audit</h1>
@@ -84,7 +56,7 @@ function AuditDashboard() {
           <Button variant="outline" size="sm" onClick={() => refetch()} className="flex items-center gap-1">
             <RefreshCw className="size-3" /> Refresh
           </Button>
-          <AuditRunDialog onSubmit={(data) => createRun.mutate(data)}>
+          <AuditRunDialog onSubmit={(data) => createRun.mutate({ audit_type: data.audit_type, audit_name: data.audit_name, foundation_project_id: data.foundation_project_id })}>
             <Button size="sm" className="flex items-center gap-1">
               <Plus className="size-3" /> New Audit
             </Button>
@@ -104,10 +76,16 @@ function AuditDashboard() {
         </div>
       </div>
 
-      {filteredRuns.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">No audit runs found.</p>
-          <p className="text-xs mt-1">Start a new audit to analyze your site.</p>
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      ) : filteredRuns.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border p-12 text-center">
+          <p className="text-sm font-medium text-foreground">No audit runs found.</p>
+          <p className="text-xs mt-1 text-muted-foreground">Start a new audit to analyze your site.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

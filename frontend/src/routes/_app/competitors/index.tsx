@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, RadarChart, PolarGrid, PolarAngleAxis, Radar } from "recharts";
 
 export const Route = createFileRoute("/_app/competitors/")({
-  head: () => ({ meta: [{ title: "Competitor Intelligence — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Competitor Intelligence | Organic Leads" }] }),
   component: Competitors,
 });
 

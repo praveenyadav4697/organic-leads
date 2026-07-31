@@ -42,7 +42,7 @@ export function SeoPageDialog({ onSubmit }: SeoPageDialogProps) {
           <DialogTitle>Add Page</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-          <Input {...register("url")} placeholder="https://example.com/page" />
+           <Input {...register("url")} placeholder="https://yourdomain.com/page" />
           <Button type="submit">Add</Button>
         </form>
       </DialogContent>

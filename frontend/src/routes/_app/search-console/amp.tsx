@@ -4,7 +4,7 @@ import { ConsolePage, ConsoleTable } from "@/components/search-console-page";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/amp")({
-  head: () => ({ meta: [{ title: "AMP — Nebula" }] }),
+  head: () => ({ meta: [{ title: "AMP | Organic Leads" }] }),
   component: Page,
 });
 

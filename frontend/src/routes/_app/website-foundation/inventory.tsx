@@ -8,7 +8,7 @@ import type { ComponentInventory } from "@/modules/website-foundation/types";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/inventory")({
-  head: () => ({ meta: [{ title: "Component Inventory — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Component Inventory | Organic Leads" }] }),
   component: ComponentInventoryPage,
 });
 

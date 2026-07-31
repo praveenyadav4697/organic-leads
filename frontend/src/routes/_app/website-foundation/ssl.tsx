@@ -8,7 +8,7 @@ import { SSLDashboard } from "@/components/diagnostics/ssl-dashboard";
 import { HostingDashboard } from "@/components/diagnostics/hosting-dashboard";
 
 export const Route = createFileRoute("/_app/website-foundation/ssl")({
-  head: () => ({ meta: [{ title: "SSL & Hosting Diagnostics — Nebula" }] }),
+  head: () => ({ meta: [{ title: "SSL & Hosting Diagnostics | Organic Leads" }] }),
   component: SslHostingPage,
 });
 

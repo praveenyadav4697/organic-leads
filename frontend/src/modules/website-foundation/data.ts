@@ -16,7 +16,7 @@ export function websiteQuickStats(site: Website) {
       { date: "3 days ago", size: "2.2 GB" },
     ],
     deployments: [
-      { v: "v3.12.0", t: "2h ago", a: "Ava Kepler", m: "Add CWV optimization" },
+      { v: "v3.12.0", t: "2h ago", a: "User", m: "Add CWV optimization" },
       { v: "v3.11.4", t: "1d ago", a: "Marcus Lane", m: "Hotfix: cookie banner" },
       { v: "v3.11.3", t: "3d ago", a: "CI", m: "Security patches" },
       { v: "v3.11.2", t: "5d ago", a: "Ivy Sun", m: "Refactor blog index" },

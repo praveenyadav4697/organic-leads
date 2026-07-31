@@ -77,8 +77,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Nebula — AI Marketing Automation OS" },
-      { name: "description", content: "The enterprise AI marketing OS — SEO, performance, competitor intelligence, and Google ecosystem in one premium workspace." },
+      { title: "Organic Leads | Digital Marketing Automation Platform" },
+      { name: "description", content: "The enterprise digital marketing automation platform — SEO, performance, competitor intelligence, and Google ecosystem in one workspace." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

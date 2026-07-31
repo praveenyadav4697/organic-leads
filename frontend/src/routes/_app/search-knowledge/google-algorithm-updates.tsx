@@ -3,7 +3,7 @@ import { History } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/google-algorithm-updates")({
-  head: () => ({ meta: [{ title: "Google Algorithm Updates — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Google Algorithm Updates | Organic Leads" }] }),
   component: Page,
 });
 
@@ -54,7 +54,7 @@ function Page() {
         },
       ]}
       bestPractices={[
-        "Subscribe to Nebula's update alerts to react within 48h of a confirmed rollout.",
+        "Subscribe to Organic Leads's update alerts to react within 48h of a confirmed rollout.",
         "Build content for humans first — Helpful Content penalties are sitewide.",
         "Track ranking volatility daily during core update windows.",
         "Document changes you make pre/post update so you can attribute wins and losses.",

@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 export const Route = createFileRoute("/_app/business-profile/")({
   head: () => ({
     meta: [
-      { title: "Business Profile — Nebula" },
+      { title: "Business Profile | Organic Leads" },
       {
         name: "description",
         content: "Define your brand DNA: industry, audience, geography, competitors, voice, and goals — the fuel for every AI recommendation.",
@@ -43,8 +43,8 @@ function BusinessProfile() {
         <div className="xl:col-span-2 space-y-6">
           <Card title="Company">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Company name"><Input defaultValue="Acme Corporation" className="rounded-xl h-11" /></Field>
-              <Field label="Legal name"><Input defaultValue="Acme Corp. Holdings, Inc." className="rounded-xl h-11" /></Field>
+               <Field label="Company name"><Input defaultValue="Organic Leads Inc." className="rounded-xl h-11" /></Field>
+               <Field label="Legal name"><Input defaultValue="Organic Leads Holdings, Inc." className="rounded-xl h-11" /></Field>
               <Field label="GST number"><Input defaultValue="22AAAAA0000A1Z5" className="rounded-xl h-11" /></Field>
               <Field label="Registration number"><Input defaultValue="CIN: U72200KA2018PTC123456" className="rounded-xl h-11" /></Field>
               <Field label="Industry"><Input defaultValue="SaaS · Marketing Automation" className="rounded-xl h-11" /></Field>
@@ -64,14 +64,14 @@ function BusinessProfile() {
             </div>
             <div className="mt-4">
               <Field label="Brand story">
-                <Textarea rows={3} className="rounded-xl" defaultValue="Founded in 2018 by three engineers tired of stitching together 14 tools to run enterprise SEO, Acme rebuilt marketing intelligence from the ground up. Today we power growth for 800+ brands across 40 countries." />
+                <Textarea rows={3} className="rounded-xl" defaultValue="Founded to unify website performance, SEO, and marketing automation into one trusted platform. Organic Leads helps teams move faster with connected data and clear action paths." />
               </Field>
             </div>
           </Card>
 
           <Card title="Products & Services">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Products"><Textarea rows={3} className="rounded-xl" defaultValue="Nebula SEO Suite · Nebula Content Studio · Nebula AI Writer · Nebula Ads Optimizer" /></Field>
+              <Field label="Products"><Textarea rows={3} className="rounded-xl" defaultValue="Organic Leads SEO Suite · Organic Leads Studio · Organic Leads Ads Optimizer · Organic Leads Analytics" /></Field>
               <Field label="Services"><Textarea rows={3} className="rounded-xl" defaultValue="Enterprise SEO, Content Strategy, Paid Media, Analytics, CRO, Digital PR" /></Field>
               <Field label="Target audience"><Input defaultValue="B2B enterprise marketing teams (500+)" className="rounded-xl h-11" /></Field>
               <Field label="Ideal customer profile"><Input defaultValue="CMO/VP Marketing at $50M+ ARR SaaS companies" className="rounded-xl h-11" /></Field>
@@ -99,8 +99,8 @@ function BusinessProfile() {
 
           <Card title="Contact">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Website"><Input defaultValue="https://acme.io" className="rounded-xl h-11" /></Field>
-              <Field label="Email"><Input defaultValue="hello@acme.io" className="rounded-xl h-11" /></Field>
+               <Field label="Website"><Input defaultValue="https://organicleads.io" className="rounded-xl h-11" /></Field>
+               <Field label="Email"><Input defaultValue="hello@organicleads.io" className="rounded-xl h-11" /></Field>
               <Field label="Phone"><Input defaultValue="+1 415 555 0123" className="rounded-xl h-11" /></Field>
               <Field label="WhatsApp"><Input defaultValue="+1 415 555 0199" className="rounded-xl h-11" /></Field>
               <Field label="Business hours"><Input defaultValue="Mon–Fri 9:00–18:00 PT" className="rounded-xl h-11" /></Field>

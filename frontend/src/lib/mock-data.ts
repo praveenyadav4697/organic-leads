@@ -37,7 +37,7 @@ export const radarSeo = [
 ];
 
 export const websites = [
-  { id: "1", domain: "acme.io", cms: "Next.js", hosting: "Vercel", health: 96, issues: 2, updated: "2h ago" },
+  { id: "1", domain: "organicleads.io", cms: "Next.js", hosting: "Vercel", health: 96, issues: 2, updated: "2h ago" },
   { id: "2", domain: "northwind.shop", cms: "Shopify", hosting: "Shopify Cloud", health: 88, issues: 6, updated: "5h ago" },
   { id: "3", domain: "helix.ai", cms: "Astro", hosting: "Cloudflare", health: 91, issues: 4, updated: "1d ago" },
   { id: "4", domain: "orbital-labs.com", cms: "WordPress", hosting: "Kinsta", health: 74, issues: 12, updated: "3d ago" },

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/feedback";
 import { DashboardCards } from "@/modules/search-knowledge/components/dashboard-cards";
 import { KnowledgeGraph } from "@/modules/search-knowledge/components/knowledge-graph";
 import { EntityTable } from "@/modules/search-knowledge/components/entity-table";
@@ -86,7 +87,10 @@ export function SearchKnowledgePage() {
                 {overview.data.coverageHeatmap.length > 0 ? (
                   <CoverageHeatmap data={overview.data.coverageHeatmap} />
                 ) : (
-                  <p className="text-xs text-muted-foreground">No coverage data yet.</p>
+                  <EmptyState
+                    title="No coverage data yet"
+                    description="Run a discovery scan to populate this section."
+                  />
                 )}
               </Card>
               <Card className="p-5">
@@ -94,7 +98,10 @@ export function SearchKnowledgePage() {
                 {overview.data.topicDistribution.length > 0 ? (
                   <TopicDistributionMini data={overview.data.topicDistribution} />
                 ) : (
-                  <p className="text-xs text-muted-foreground">No growth data yet.</p>
+                  <EmptyState
+                    title="No growth data yet"
+                    description="Run a discovery scan to populate this section."
+                  />
                 )}
               </Card>
             </div>

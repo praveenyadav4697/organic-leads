@@ -10,10 +10,10 @@ import { Copy, KeyRound, ShieldCheck, Bell, Building2, User } from "lucide-react
 export const Route = createFileRoute("/_app/settings/")({
   head: () => ({
     meta: [
-      { title: "Settings — Nebula" },
+      { title: "Settings | Organic Leads" },
       { name: "description", content: "Manage profile, organization, notifications, API keys, integrations, security, and audit logs." },
-      { property: "og:title", content: "Settings — Nebula" },
-      { property: "og:description", content: "Organization-wide settings for Nebula AI Marketing OS." },
+      { property: "og:title", content: "Settings | Organic Leads" },
+      { property: "og:description", content: "Organization-wide settings for Digital Marketing Automation Platform." },
     ],
   }),
   component: Settings,
@@ -41,8 +41,8 @@ function Settings() {
         <TabsContent value="profile" className="mt-6">
           <Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Full name"><Input defaultValue="Ava Kepler" className="rounded-xl h-11" /></Field>
-              <Field label="Email"><Input defaultValue="ava@acme.io" className="rounded-xl h-11" /></Field>
+              <Field label="Full name"><Input defaultValue="User" className="rounded-xl h-11" /></Field>
+              <Field label="Email"><Input defaultValue="user@organicleads.io" className="rounded-xl h-11" /></Field>
               <Field label="Role"><Input defaultValue="Admin" className="rounded-xl h-11" /></Field>
               <Field label="Timezone"><Input defaultValue="America/Los_Angeles" className="rounded-xl h-11" /></Field>
             </div>
@@ -52,7 +52,7 @@ function Settings() {
         <TabsContent value="org" className="mt-6">
           <Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Field label="Organization"><Input defaultValue="Acme Corporation" className="rounded-xl h-11" /></Field>
+              <Field label="Organization"><Input defaultValue="Organic Leads Inc." className="rounded-xl h-11" /></Field>
               <Field label="Plan"><Input defaultValue="Enterprise · Unlimited" className="rounded-xl h-11" /></Field>
               <Field label="Members"><Input defaultValue="42" className="rounded-xl h-11" /></Field>
               <Field label="Region"><Input defaultValue="US · EU · APAC" className="rounded-xl h-11" /></Field>
@@ -107,10 +107,10 @@ function Settings() {
             <div className="text-sm font-semibold mb-3">Audit log</div>
             <div className="space-y-2">
               {[
-                "Ava K. exported keyword universe · 12m ago",
-                "Marcus L. connected Google Ads · 1h ago",
+                "Operator exported keyword universe · 12m ago",
+                "Operator connected Google Ads · 1h ago",
                 "System · nightly audit completed · 3h ago",
-                "Ivy S. updated brand voice · yesterday",
+                "Operator updated brand voice · yesterday",
               ].map((l) => (
                 <div key={l} className="text-xs text-muted-foreground border-l-2 border-primary/40 pl-3 py-1">{l}</div>
               ))}

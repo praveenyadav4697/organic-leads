@@ -7,7 +7,7 @@ import { FoundationSubNav } from "@/modules/website-foundation/components/founda
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation")({
-  head: () => ({ meta: [{ title: "Website Foundation — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Website Foundation | Organic Leads" }] }),
   component: WebsiteFoundationLayout,
 });
 

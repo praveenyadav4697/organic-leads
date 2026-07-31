@@ -9,7 +9,7 @@ import { Pill } from "@/modules/website-foundation/components/status-pill";
 import { AISection } from "@/modules/website-foundation/components/ai-section";
 
 export const Route = createFileRoute("/_app/website-foundation/backlog")({
-  head: () => ({ meta: [{ title: "Issue Backlog — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Issue Backlog | Organic Leads" }] }),
   component: IssueBacklog,
 });
 

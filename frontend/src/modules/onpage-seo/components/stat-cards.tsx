@@ -1,14 +1,37 @@
 import type { SEOOverview } from "@/modules/onpage-seo/types";
 import { KpiCard } from "@/components/kpi-card";
 import { Card } from "@/components/ui/card";
-import { Target, Award, AlertTriangle, CheckCircle2, XCircle, Eye, TrendingUp, Zap, BookOpen, Image as ImageIcon, Link as LinkIcon, Code, FileText, Brain, Lightbulb, Rocket } from "lucide-react";
 
 interface StatCardsProps {
   overview: SEOOverview | undefined;
   isLoading: boolean;
 }
 
+const emptySEOOverview: SEOOverview = {
+  overall_score: null,
+  optimized_pages: 0,
+  pages_with_issues: 0,
+  critical_errors: 0,
+  warnings: 0,
+  passed_checks: 0,
+  avg_readability: null,
+  missing_meta_tags: 0,
+  duplicate_titles: 0,
+  broken_links: 0,
+  schema_coverage: 0,
+  answer_readiness_score: 0,
+  ai_recommendations_count: 0,
+  last_scan: null,
+  score_distribution: [],
+  issue_severity: [],
+  optimization_progress: [],
+  readability_trend: [],
+  page_performance: [],
+};
+
 export function StatCards({ overview, isLoading }: StatCardsProps) {
+  const data = overview ?? emptySEOOverview;
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -22,22 +45,20 @@ export function StatCards({ overview, isLoading }: StatCardsProps) {
     );
   }
 
-  if (!overview) return null;
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <KpiCard label="Overall SEO Score" value={overview.overall_score} />
-      <KpiCard label="Optimized Pages" value={overview.optimized_pages} />
-      <KpiCard label="Pages with Issues" value={overview.pages_with_issues} />
-      <KpiCard label="Critical Errors" value={overview.critical_errors} />
-      <KpiCard label="Warnings" value={overview.warnings} />
-      <KpiCard label="Passed Checks" value={overview.passed_checks} />
-      <KpiCard label="Avg Readability" value={overview.avg_readability} />
-      <KpiCard label="Missing Meta Tags" value={overview.missing_meta_tags} />
-      <KpiCard label="Duplicate Titles" value={overview.duplicate_titles} />
-      <KpiCard label="Broken Links" value={overview.broken_links} />
-      <KpiCard label="Schema Coverage" value={overview.schema_coverage} />
-      <KpiCard label="Answer Readiness" value={overview.answer_readiness_score} />
+      <KpiCard label="Overall SEO Score" value={data.overall_score} />
+      <KpiCard label="Optimized Pages" value={data.optimized_pages} />
+      <KpiCard label="Pages with Issues" value={data.pages_with_issues} />
+      <KpiCard label="Critical Errors" value={data.critical_errors} />
+      <KpiCard label="Warnings" value={data.warnings} />
+      <KpiCard label="Passed Checks" value={data.passed_checks} />
+      <KpiCard label="Avg Readability" value={data.avg_readability} />
+      <KpiCard label="Missing Meta Tags" value={data.missing_meta_tags} />
+      <KpiCard label="Duplicate Titles" value={data.duplicate_titles} />
+      <KpiCard label="Broken Links" value={data.broken_links} />
+      <KpiCard label="Schema Coverage" value={data.schema_coverage} />
+      <KpiCard label="Answer Readiness" value={data.answer_readiness_score} />
     </div>
   );
 }

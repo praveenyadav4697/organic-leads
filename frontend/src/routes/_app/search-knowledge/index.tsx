@@ -4,7 +4,7 @@ import { SearchKnowledgePage } from "@/pages/SearchKnowledge";
 export const Route = createFileRoute("/_app/search-knowledge/")({
   head: () => ({
     meta: [
-      { title: "Search Knowledge â€” Nebula" },
+      { title: "Search Knowledge — Organic Leads" },
       {
         name: "description",
         content:

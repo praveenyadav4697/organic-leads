@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TrackingNav } from "@/modules/tracking/components";
 
 export const Route = createFileRoute("/_app/tracking/spam-protection")({
-  head: () => ({ meta: [{ title: "Spam Protection — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Spam Protection | Organic Leads" }] }),
   component: () => (
     <div>
       <TrackingNav />

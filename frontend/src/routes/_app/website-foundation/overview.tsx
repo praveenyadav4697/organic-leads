@@ -13,7 +13,7 @@ import type { WebsiteRegistrationResponse } from "@/types/website";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/overview")({
-  head: () => ({ meta: [{ title: "Website Overview — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Website Overview | Organic Leads" }] }),
   component: WebsiteOverview,
 });
 
@@ -106,17 +106,26 @@ function WebsiteOverview() {
     }
   };
 
-  if (!site) {
+  const hasSite = site !== null;
+
+  if (!hasSite) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <div className="size-16 rounded-2xl bg-muted/40 grid place-items-center mb-4">
-          <Globe className="size-8 text-muted-foreground" />
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Website Overview</h1>
+            <p className="text-sm text-muted-foreground">
+              Monitor website health, performance, SEO, and responsive metrics.
+            </p>
+          </div>
         </div>
-        <div className="text-lg font-semibold mb-2">No websites registered</div>
-        <div className="text-sm text-muted-foreground mb-6">Add your first website to get started with monitoring and auditing.</div>
-        <Button className="rounded-xl gradient-primary text-white border-0" onClick={() => {}}>
-          <Plus className="size-4" /> Add website
-        </Button>
+        <div className="rounded-xl border border-dashed border-border p-12 text-center">
+          <div className="size-16 rounded-2xl bg-muted/40 grid place-items-center mb-4">
+            <Globe className="size-8 text-muted-foreground" />
+          </div>
+          <p className="text-sm font-medium text-foreground mb-1">No websites registered</p>
+          <p className="text-xs text-muted-foreground mb-4">Add your first website to get started with monitoring and auditing.</p>
+        </div>
       </div>
     );
   }

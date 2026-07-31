@@ -4,7 +4,7 @@ import { ConsolePage } from "@/components/search-console-page";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/property-details")({
-  head: () => ({ meta: [{ title: "Property Details — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Property Details | Organic Leads" }] }),
   component: Page,
 });
 
@@ -14,10 +14,10 @@ function Page() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 rounded-3xl border border-border bg-card p-6 space-y-4">
           {[
-            { l: "Property URL", v: "https://acme.io/" },
+            { l: "Property URL", v: "https://Organic Leads.io/" },
             { l: "Verification method", v: "DNS TXT record" },
             { l: "Verified on", v: "Jan 14, 2024" },
-            { l: "Owner", v: "Ava Kepler (ava@acme.io)" },
+            { l: "Owner", v: "User (ava@Organic Leads.io)" },
             { l: "Owners", v: "4 · Full permission" },
             { l: "Users", v: "12 · Read-only / full" },
             { l: "API scopes", v: "searchconsole, analytics, index, adwords" },
@@ -36,7 +36,7 @@ function Page() {
               <Globe className="size-4 text-primary" />
               <div className="text-sm font-semibold">Property</div>
             </div>
-            <div className="text-2xl font-semibold mt-2">acme.io</div>
+            <div className="text-2xl font-semibold mt-2">Organic Leads.io</div>
             <div className="mt-2"><StatusBadge status="connected" /></div>
           </div>
 

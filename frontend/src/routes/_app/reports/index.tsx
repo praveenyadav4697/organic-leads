@@ -7,9 +7,9 @@ import { motion } from "framer-motion";
 export const Route = createFileRoute("/_app/reports/")({
   head: () => ({
     meta: [
-      { title: "Reports — Nebula" },
+      { title: "Reports | Organic Leads" },
       { name: "description", content: "Generate, schedule, and share investor-grade marketing reports — PDF, CSV, or automated email." },
-      { property: "og:title", content: "Reports — Nebula" },
+      { property: "og:title", content: "Reports | Organic Leads" },
       { property: "og:description", content: "Investor-grade marketing reports on demand." },
     ],
   }),

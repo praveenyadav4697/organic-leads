@@ -3,7 +3,7 @@ import { Mic } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/voice-search")({
-  head: () => ({ meta: [{ title: "Voice Search — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Voice Search | Organic Leads" }] }),
   component: Page,
 });
 

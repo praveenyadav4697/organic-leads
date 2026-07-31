@@ -9,7 +9,7 @@ import { Pill } from "@/modules/website-foundation/components/status-pill";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/rollback")({
-  head: () => ({ meta: [{ title: "Rollback — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Rollback | Organic Leads" }] }),
   component: RollbackCenter,
 });
 

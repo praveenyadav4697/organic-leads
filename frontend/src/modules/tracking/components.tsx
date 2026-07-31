@@ -5,8 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { trackingApi } from "./services";
 import type { TrackingConfig, TrackingIntegration, TrackingEvent, MeasurementPlan, ContactForm, FormSubmission, TrackingVerification, ConsentLog, DeliveryLog, RetryLog, ApprovalRequest, TrackingDashboardStats } from "./types";
+
+const EMPTY_STATS: TrackingDashboardStats = {
+  trackingHealth: 0,
+  verificationStatus: "pending",
+  submissionCount: 0,
+  conversionRate: 0,
+  spamDetection: 0,
+  consentRate: 0,
+  failedDeliveries: 0,
+  retryCount: 0,
+  pendingApprovals: 0,
+  eventSummary: {},
+};
 
 const nav = [
   ["Dashboard", "/tracking"], ["Measurement Plan", "/tracking/measurement-plan"], ["Tracking Providers", "/tracking/providers"], ["Tracking Verification", "/tracking/verification"], ["Consent Management", "/tracking/consent"], ["Contact Forms", "/tracking/contact-forms"], ["Form Builder", "/tracking/form-builder"], ["Submissions", "/tracking/submissions"], ["Spam Protection", "/tracking/spam-protection"], ["Delivery Logs", "/tracking/delivery-logs"], ["Retry Logs", "/tracking/retry-logs"], ["Audit Logs", "/tracking/audit-logs"], ["Approval Center", "/tracking/approvals"], ["Settings", "/tracking/settings"],
@@ -53,29 +67,30 @@ export function TrackingStats({ stats }: { stats: TrackingDashboardStats }) {
 }
 
 export function TrackingDashboard() {
-  const [stats, setStats] = useState<TrackingDashboardStats | null>(null);
+  const [stats, setStats] = useState<TrackingDashboardStats>(EMPTY_STATS);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    trackingApi.dashboard.getStats().then(setStats).catch(() => {}).finally(() => setLoading(false));
+    trackingApi.dashboard.getStats()
+      .then(setStats)
+      .catch(() => setStats(EMPTY_STATS))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-8 w-64 bg-muted rounded animate-pulse" />
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-24 bg-muted rounded-xl animate-pulse" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  // Always render the layout. Replace only the stats area with a skeleton while loading.
+  const effectiveStats: TrackingDashboardStats = loading || !stats ? EMPTY_STATS : stats;
 
   return (
     <div>
-      <TrackingStats stats={stats || { trackingHealth: 94, verificationStatus: "verified", submissionCount: 186, conversionRate: 0, spamDetection: 0, consentRate: 96.8, failedDeliveries: 3, retryCount: 0, pendingApprovals: 0, eventSummary: {} }} />
+      {loading ? (
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 rounded-xl" />
+          ))}
+        </div>
+      ) : (
+        <TrackingStats stats={effectiveStats} />
+      )}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
         <Card className="p-6">
           <div className="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -83,7 +98,7 @@ export function TrackingDashboard() {
           </div>
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/20">
-              <div className="text-sm font-medium">Demo request form</div>
+              <div className="text-sm font-medium">Lead capture form</div>
               <Badge variant="secondary">Delivered</Badge>
             </div>
             <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-muted/20">
@@ -146,13 +161,21 @@ export function TrackingTable({ title, description, records, columns }: { title:
             </tr>
           </thead>
           <tbody>
-            {filtered.map((record, i) => (
-              <tr key={i} className="border-b border-border/50 hover:bg-muted/20 transition">
-                {columns.map((c) => (
-                  <td key={c.key} className="py-3 px-3">{c.render ? c.render(record[c.key]) : String(record[c.key] ?? "")}</td>
-                ))}
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length} className="py-10 text-center text-xs text-muted-foreground">
+                  No data available. Run your first scan to populate this table.
+                </td>
               </tr>
-            ))}
+            ) : (
+              filtered.map((record, i) => (
+                <tr key={i} className="border-b border-border/50 hover:bg-muted/20 transition">
+                  {columns.map((c) => (
+                    <td key={c.key} className="py-3 px-3">{c.render ? c.render(record[c.key]) : String(record[c.key] ?? "—")}</td>
+                  ))}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

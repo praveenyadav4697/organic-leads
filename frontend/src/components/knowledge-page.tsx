@@ -233,7 +233,7 @@ function Section({ section }: { section: KnowledgeSection }) {
             <div className="size-2 rounded-full bg-warning/70" />
             <div className="size-2 rounded-full bg-success/70" />
             <div className="text-[11px] text-muted-foreground ml-3">
-              {section.title ?? "Example"} · {section.language ?? "json"}
+               {section.title ?? "Untitled"} · {section.language ?? "json"}
             </div>
           </div>
           <pre className="p-5 text-xs font-mono leading-relaxed overflow-auto">

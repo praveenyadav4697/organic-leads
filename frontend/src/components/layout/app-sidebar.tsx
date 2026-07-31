@@ -20,8 +20,8 @@ export function AppSidebar({ collapsed }: { collapsed: boolean }) {
         </div>
         {!collapsed && (
           <div className="min-w-0">
-            <div className="text-sm font-semibold tracking-tight text-sidebar-foreground truncate">Nebula AI</div>
-            <div className="text-[11px] text-muted-foreground truncate">Marketing OS · Phase 1</div>
+            <div className="text-sm font-semibold tracking-tight text-sidebar-foreground truncate">Organic Leads</div>
+            <div className="text-[11px] text-muted-foreground truncate">Digital Marketing Automation Platform</div>
           </div>
         )}
       </div>

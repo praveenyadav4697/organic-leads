@@ -3,7 +3,7 @@ import { LayoutGrid } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/serp-layout")({
-  head: () => ({ meta: [{ title: "SERP Layout — Nebula" }] }),
+  head: () => ({ meta: [{ title: "SERP Layout | Organic Leads" }] }),
   component: Page,
 });
 

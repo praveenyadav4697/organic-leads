@@ -43,7 +43,7 @@ export function MobileTestDialog({ onSubmit }: MobileTestDialogProps) {
           <DialogTitle>Mobile Readiness Test</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-          <Input {...register("url")} placeholder="https://example.com" />
+           <Input {...register("url")} placeholder="https://yourdomain.com" />
           <Button type="submit">Run Test</Button>
         </form>
       </DialogContent>

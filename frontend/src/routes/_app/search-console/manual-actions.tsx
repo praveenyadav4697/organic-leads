@@ -4,7 +4,7 @@ import { ConsolePage } from "@/components/search-console-page";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/manual-actions")({
-  head: () => ({ meta: [{ title: "Manual Actions — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Manual Actions | Organic Leads" }] }),
   component: Page,
 });
 

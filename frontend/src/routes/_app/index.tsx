@@ -25,9 +25,9 @@ import { StatusBadge } from "@/components/status-badge";
 export const Route = createFileRoute("/_app/")({
   head: () => ({
     meta: [
-      { title: "Command Center — Nebula AI Marketing OS" },
+      { title: "Command Center | Digital Marketing Automation Platform" },
       { name: "description", content: "Enterprise dashboard for AI-powered digital marketing automation: SEO, performance, tracking, and Google product health at a glance." },
-      { property: "og:title", content: "Command Center — Nebula AI Marketing OS" },
+      { property: "og:title", content: "Command Center | Digital Marketing Automation Platform" },
       { property: "og:description", content: "Enterprise dashboard for AI-powered digital marketing automation." },
     ],
   }),

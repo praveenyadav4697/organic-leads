@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TrackingNav } from "@/modules/tracking/components";
 
 export const Route = createFileRoute("/_app/tracking/contact-forms")({
-  head: () => ({ meta: [{ title: "Contact Forms — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Contact Forms | Organic Leads" }] }),
   component: () => (
     <div>
       <TrackingNav />

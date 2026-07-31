@@ -4,7 +4,7 @@ import { ConsolePage } from "@/components/search-console-page";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/verification")({
-  head: () => ({ meta: [{ title: "Verification Status — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Verification Status | Organic Leads" }] }),
   component: Page,
 });
 

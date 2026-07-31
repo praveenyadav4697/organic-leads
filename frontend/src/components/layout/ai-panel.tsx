@@ -27,7 +27,7 @@ export function AIPanel({ open, onClose }: { open: boolean; onClose: () => void 
                 <Sparkles className="size-4 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold">Nebula Copilot</div>
+                <div className="text-sm font-semibold">Organic Leads Copilot</div>
                 <div className="text-[11px] text-muted-foreground flex items-center gap-1.5">
                   <span className="size-1.5 rounded-full bg-success animate-pulse" />
                   Online · GPT-4o class

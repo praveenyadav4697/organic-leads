@@ -3,7 +3,7 @@ import { ShoppingBag } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/shopping-search")({
-  head: () => ({ meta: [{ title: "Shopping Search — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Shopping Search | Organic Leads" }] }),
   component: Page,
 });
 

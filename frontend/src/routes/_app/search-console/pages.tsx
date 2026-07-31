@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ConsolePage, ConsoleFilters, ConsoleTable } from "@/components/search-console-page";
 
 export const Route = createFileRoute("/_app/search-console/pages")({
-  head: () => ({ meta: [{ title: "Pages — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Pages | Organic Leads" }] }),
   component: Page,
 });
 

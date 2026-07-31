@@ -9,7 +9,7 @@ import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/seo-analyzer/")({
   head: () => ({
-    meta: [{ title: "SEO Audit — Nebula" }],
+    meta: [{ title: "SEO Audit | Organic Leads" }],
   }),
   component: SeoAnalyzer,
 });
@@ -72,7 +72,7 @@ function SeoAnalyzer() {
         <div className="flex flex-col md:flex-row items-stretch md:items-end gap-3">
           <div className="flex-1">
             <div className="text-[11px] uppercase tracking-widest text-muted-foreground mb-2">Website URL</div>
-            <Input defaultValue="https://acme.io" className="rounded-xl h-12 text-base" />
+            <Input defaultValue="https://Organic Leads.io" className="rounded-xl h-12 text-base" />
           </div>
           <Button className="rounded-xl h-12 px-6 gradient-primary text-white border-0 shadow-[var(--shadow-glow)]">
             <Play className="size-4" /> Run audit

@@ -4,7 +4,7 @@ import { KnowledgePage } from "@/components/knowledge-page";
 import { BarChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Tooltip, Bar } from "recharts";
 
 export const Route = createFileRoute("/_app/search-knowledge/google-ranking-factors")({
-  head: () => ({ meta: [{ title: "Google Ranking Factors — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Google Ranking Factors | Organic Leads" }] }),
   component: Page,
 });
 
@@ -24,7 +24,7 @@ function Page() {
     <KnowledgePage
       title="Google Ranking Factors"
       description="The signals Google weighs — by impact, by category, and by how to influence them."
-      summary="Modern ranking blends content understanding, link authority, brand-level entity trust, and live UX signals. The relative weights below are derived from Nebula's correlation analyses across 4M keywords. Treat them as directional, not absolute."
+      summary="Modern ranking blends content understanding, link authority, brand-level entity trust, and live UX signals. The relative weights below are derived from correlation analyses across millions of keywords. Treat them as directional, not absolute."
       sections={[
         {
           kind: "chart",
@@ -67,7 +67,7 @@ function Page() {
         },
       ]}
       bestPractices={[
-        "Audit each page's topical depth with Nebula Copilot before chasing backlinks.",
+        "Audit each page's topical depth with Organic Leads Copilot before chasing backlinks.",
         "Treat UX as a ranking factor, not a nice-to-have — CWV is now a hard threshold.",
         "Earn brand mentions in editorial sources to feed entity authority signals.",
         "Keep your structured data valid — Google ignores invalid markup silently.",

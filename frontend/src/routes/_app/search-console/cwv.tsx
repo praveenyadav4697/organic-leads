@@ -5,7 +5,7 @@ import { ProgressRing } from "@/components/kpi-card";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/cwv")({
-  head: () => ({ meta: [{ title: "Core Web Vitals — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Core Web Vitals | Organic Leads" }] }),
   component: Page,
 });
 

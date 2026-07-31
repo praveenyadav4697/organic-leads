@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/future-trends")({
-  head: () => ({ meta: [{ title: "Future Trends — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Future Trends | Organic Leads" }] }),
   component: Page,
 });
 

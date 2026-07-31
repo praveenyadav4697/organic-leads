@@ -6,14 +6,6 @@ import { SearchConsolePropertyCard } from "@/components/search-console/property-
 import { SearchConsolePropertyDialog } from "@/components/search-console/property-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Plus, Search, RefreshCw } from "lucide-react";
@@ -22,7 +14,6 @@ function SearchConsoleDashboard() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data, isLoading, isError, refetch } = useSearchConsoleProperties({
     page,
@@ -33,7 +24,6 @@ function SearchConsoleDashboard() {
   const connectProperty = useCreateSearchConsoleProperty({
     onSuccess: () => {
       toast.success("Property connected");
-      setDialogOpen(false);
       refetch();
     },
     onError: () => toast.error("Failed to connect property"),
@@ -44,35 +34,19 @@ function SearchConsoleDashboard() {
     onError: () => toast.error("Failed to delete property"),
   });
 
-  const filteredProperties = data?.items ?? [];
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-destructive mb-4">Failed to load properties</p>
-        <Button onClick={() => refetch()}>Retry</Button>
-      </div>
-    );
-  }
+  const filteredProperties = (data?.items ?? []).filter((p) =>
+    p.property_name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
+      {isError && (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-center justify-between">
+          <span>Failed to load properties — the backend may be unreachable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Google Search Console</h1>
@@ -114,10 +88,16 @@ function SearchConsoleDashboard() {
         </select>
       </div>
 
-      {filteredProperties.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">No properties found.</p>
-          <p className="text-xs mt-1">Connect a Search Console property to get started.</p>
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      ) : filteredProperties.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border p-12 text-center">
+          <p className="text-sm font-medium text-foreground">No properties found.</p>
+          <p className="text-xs mt-1 text-muted-foreground">Connect a Search Console property to get started.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

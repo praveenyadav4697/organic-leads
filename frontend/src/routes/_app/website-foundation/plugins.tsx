@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { StatCard } from "@/modules/website-foundation/components/stat-cards";
 
 export const Route = createFileRoute("/_app/website-foundation/plugins")({
-  head: () => ({ meta: [{ title: "Plugins — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Plugins | Organic Leads" }] }),
   component: PluginManager,
 });
 

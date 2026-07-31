@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/keywords/")({
-  head: () => ({ meta: [{ title: "Keyword Intelligence — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Keyword Intelligence | Organic Leads" }] }),
   component: Keywords,
 });
 
@@ -58,7 +58,7 @@ function Keywords() {
           <Input placeholder="Language" defaultValue="English" className="rounded-xl h-11" />
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div className="text-xs text-muted-foreground">Powered by Nebula Copilot · GPT-4o class</div>
+          <div className="text-xs text-muted-foreground">Powered by Organic Leads Copilot · GPT-4o class</div>
           <Button className="rounded-xl h-11 gradient-primary text-white border-0 shadow-[var(--shadow-glow)]">
             <Sparkles className="size-4" /> Generate keywords
           </Button>

@@ -4,7 +4,7 @@ import { KnowledgePage } from "@/components/knowledge-page";
 import { LineChart, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Line, Tooltip } from "recharts";
 
 export const Route = createFileRoute("/_app/search-knowledge/google-search-architecture")({
-  head: () => ({ meta: [{ title: "Google Search Architecture — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Google Search Architecture | Organic Leads" }] }),
   component: Page,
 });
 
@@ -74,9 +74,9 @@ function Page() {
         "Watch Core Web Vitals — they feed directly into the serving-layer UX signals.",
       ]}
       examples={[
-        { query: "site:acme.io/blog", result: "Lists indexed blog URLs, helping you confirm indexing of new articles." },
-        { query: "cache:acme.io", result: "Shows Google's last rendered snapshot — useful to verify content parity." },
-        { query: "info:acme.io", result: "Returns indexed information, sitelinks and any known entity panel data." },
+        { query: "site:Organic Leads.io/blog", result: "Lists indexed blog URLs, helping you confirm indexing of new articles." },
+        { query: "cache:Organic Leads.io", result: "Shows Google's last rendered snapshot — useful to verify content parity." },
+        { query: "info:Organic Leads.io", result: "Returns indexed information, sitelinks and any known entity panel data." },
       ]}
     />
   );

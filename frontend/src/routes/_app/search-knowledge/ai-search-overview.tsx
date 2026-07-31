@@ -3,7 +3,7 @@ import { Bot } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/ai-search-overview")({
-  head: () => ({ meta: [{ title: "AI Search Overview — Nebula" }] }),
+  head: () => ({ meta: [{ title: "AI Search Overview | Organic Leads" }] }),
   component: Page,
 });
 
@@ -54,7 +54,7 @@ to the most authoritative URLs.
         "Lead every pillar with a 50-word definition block — Gemini extracts this first.",
         "Publish original research — statistics are cited far more than opinion.",
         "Implement Speakable schema for voice and AI-friendly markup.",
-        "Monitor AI Overview citation share — Nebula Copilot tracks this automatically.",
+        "Monitor AI Overview citation share | Organic Leads Copilot tracks this automatically.",
       ]}
       examples={[
         { query: "\"what is cwv\"", result: "AI Overview cites 3 sources with definitions — your 50-word block can win citation 1." },

@@ -12,75 +12,17 @@ import { KeywordGrowthChart, RankingDistributionChart, CompetitionDistributionCh
 import { useBusinessOverview, useKeywords, useCompetitors, useKeywordOpportunities, useRecommendations, useResearchHistory, useRunResearch, useExportData, useApproveResults } from "@/modules/business-keyword-competitor/hooks";
 import { F05_NAV } from "@/modules/business-keyword-competitor/constants";
 import { Download, RefreshCw, Plus, Trash2, Sparkles, FileText, Table2, PieChart, BarChart3, LineChart, TrendingUp } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import type { BusinessKeywordCompetitorFilters } from "@/modules/business-keyword-competitor/types";
 
-function OverviewTab() {
-  return <div className="text-sm text-muted-foreground">Overview content loading...</div>;
-}
-
-function BusinessProfileTab() {
-  return <div className="text-sm text-muted-foreground">Business Profile content loading...</div>;
-}
-
-function KeywordUniverseTab() {
-  return <div className="text-sm text-muted-foreground">Keyword Universe content loading...</div>;
-}
-
-function KeywordClustersTab() {
-  return <div className="text-sm text-muted-foreground">Keyword Clusters content loading...</div>;
-}
-
-function KeywordOpportunitiesTab() {
-  return <div className="text-sm text-muted-foreground">Keyword Opportunities content loading...</div>;
-}
-
-function SearchIntentTab() {
-  return <div className="text-sm text-muted-foreground">Search Intent content loading...</div>;
-}
-
-function CompetitorsTab() {
-  return <div className="text-sm text-muted-foreground">Competitors content loading...</div>;
-}
-
-function RankingAnalysisTab() {
-  return <div className="text-sm text-muted-foreground">Ranking Analysis content loading...</div>;
-}
-
-function SERPAnalysisTab() {
-  return <div className="text-sm text-muted-foreground">SERP Analysis content loading...</div>;
-}
-
-function TopicClustersTab() {
-  return <div className="text-sm text-muted-foreground">Topic Clusters content loading...</div>;
-}
-
-function ContentGapsTab() {
-  return <div className="text-sm text-muted-foreground">Content Gaps content loading...</div>;
-}
-
-function SearchTrendsTab() {
-  return <div className="text-sm text-muted-foreground">Search Trends content loading...</div>;
-}
-
-function AIRecommendationsTab() {
-  return <div className="text-sm text-muted-foreground">AI Recommendations content loading...</div>;
-}
-
-function ReportsTab() {
-  return <div className="text-sm text-muted-foreground">Reports content loading...</div>;
-}
-
-function HistoryTab() {
-  return <div className="text-sm text-muted-foreground">History content loading...</div>;
-}
-
-function LogsTab() {
-  return <div className="text-sm text-muted-foreground">Logs content loading...</div>;
-}
-
-function SettingsTab() {
-  return <div className="text-sm text-muted-foreground">Settings content loading...</div>;
+function TabPlaceholder({ title, description }: { title: string; description: string }) {
+  return (
+    <Card className="p-8 text-center">
+      <div className="text-sm font-medium text-foreground">{title}</div>
+      <div className="text-xs text-muted-foreground mt-1">{description}</div>
+    </Card>
+  );
 }
 
 export function BusinessKeywordCompetitorDashboard() {
@@ -167,8 +109,17 @@ export function BusinessKeywordCompetitorDashboard() {
           ))}
         </TabsList>
 
-        <TabsContent value="overview"><OverviewTab /></TabsContent>
-        <TabsContent value="business-profile"><BusinessProfileTab /></TabsContent>
+        <TabsContent value="overview">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <KeywordGrowthChart data={[]} />
+            <RankingDistributionChart data={[]} />
+            <CompetitionDistributionChart data={[]} />
+            <IntentDistributionChart data={[]} />
+          </div>
+        </TabsContent>
+        <TabsContent value="business-profile">
+          <TabPlaceholder title="No business profile yet" description="Create a business profile to get started." />
+        </TabsContent>
         <TabsContent value="keyword-universe">
           <KeywordsTable
             keywords={keywords.data?.items ?? []}
@@ -189,36 +140,60 @@ export function BusinessKeywordCompetitorDashboard() {
             sortOrder={keywordSortOrder}
           />
         </TabsContent>
-        <TabsContent value="keyword-clusters"><KeywordClustersTab /></TabsContent>
-        <TabsContent value="keyword-opportunities"><KeywordOpportunitiesTab /></TabsContent>
-        <TabsContent value="search-intent"><SearchIntentTab /></TabsContent>
+        <TabsContent value="keyword-clusters">
+          <TabPlaceholder title="No keyword clusters yet" description="Run a research scan to discover keyword clusters." />
+        </TabsContent>
+        <TabsContent value="keyword-opportunities">
+          <TabPlaceholder title="No opportunities yet" description="Run a research scan to find keyword opportunities." />
+        </TabsContent>
+        <TabsContent value="search-intent">
+          <TabPlaceholder title="No intent data yet" description="Run a research scan to analyze search intent." />
+        </TabsContent>
         <TabsContent value="competitors">
           <CompetitorsSection
             competitors={competitors.data?.items ?? []}
             isLoading={competitors.isLoading}
           />
         </TabsContent>
-        <TabsContent value="ranking-analysis"><RankingAnalysisTab /></TabsContent>
-        <TabsContent value="serp-analysis"><SERPAnalysisTab /></TabsContent>
-        <TabsContent value="topic-clusters"><TopicClustersTab /></TabsContent>
-        <TabsContent value="content-gaps"><ContentGapsTab /></TabsContent>
-        <TabsContent value="search-trends"><SearchTrendsTab /></TabsContent>
+        <TabsContent value="ranking-analysis">
+          <TabPlaceholder title="No ranking data yet" description="Start rank tracking to see ranking analysis." />
+        </TabsContent>
+        <TabsContent value="serp-analysis">
+          <TabPlaceholder title="No SERP data yet" description="Run a SERP analysis to capture search results." />
+        </TabsContent>
+        <TabsContent value="topic-clusters">
+          <TabPlaceholder title="No topic clusters yet" description="Run a research scan to discover topic clusters." />
+        </TabsContent>
+        <TabsContent value="content-gaps">
+          <TabPlaceholder title="No content gaps yet" description="Run a research scan to identify content gaps." />
+        </TabsContent>
+        <TabsContent value="search-trends">
+          <TabPlaceholder title="No trend data yet" description="Run a research scan to capture search trends." />
+        </TabsContent>
         <TabsContent value="ai-recommendations">
           <AIRecommendations
             recommendations={recommendations.data ?? []}
             isLoading={recommendations.isLoading}
           />
         </TabsContent>
-        <TabsContent value="reports"><ReportsTab /></TabsContent>
-        <TabsContent value="history"><HistoryTab /></TabsContent>
-        <TabsContent value="logs"><LogsTab /></TabsContent>
-        <TabsContent value="settings"><SettingsTab /></TabsContent>
+        <TabsContent value="reports">
+          <TabPlaceholder title="No reports yet" description="Generate reports from your research data." />
+        </TabsContent>
+        <TabsContent value="history">
+          <TabPlaceholder title="No history yet" description="Run a research scan to build history." />
+        </TabsContent>
+        <TabsContent value="logs">
+          <TabPlaceholder title="No logs yet" description="Activity logs will appear here." />
+        </TabsContent>
+        <TabsContent value="settings">
+          <TabPlaceholder title="No settings data yet" description="Configure research settings here." />
+        </TabsContent>
       </Tabs>
     </div>
   );
 }
 
 export const Route = createFileRoute("/_app/business-keyword-competitor/")({
-  head: () => ({ meta: [{ title: "Business, Keyword & Competitor Intelligence — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Business, Keyword & Competitor Intelligence | Organic Leads" }] }),
   component: BusinessKeywordCompetitorDashboard,
 });

@@ -10,7 +10,7 @@ import { Pill } from "@/modules/website-foundation/components/status-pill";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/themes")({
-  head: () => ({ meta: [{ title: "Themes — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Themes | Organic Leads" }] }),
   component: ThemeManager,
 });
 

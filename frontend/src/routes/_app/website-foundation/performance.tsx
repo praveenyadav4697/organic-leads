@@ -8,7 +8,7 @@ import { Pill } from "@/modules/website-foundation/components/status-pill";
 import { TrendChart } from "@/modules/website-foundation/components/charts";
 
 export const Route = createFileRoute("/_app/website-foundation/performance")({
-  head: () => ({ meta: [{ title: "Performance — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Performance | Organic Leads" }] }),
   component: PerformanceCenter,
 });
 

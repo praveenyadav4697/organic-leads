@@ -3,7 +3,7 @@ import { Brain } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/knowledge-graph")({
-  head: () => ({ meta: [{ title: "Knowledge Graph — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Knowledge Graph | Organic Leads" }] }),
   component: Page,
 });
 
@@ -44,16 +44,16 @@ function Page() {
           code: `{
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Acme Corporation",
-  "url": "https://acme.io",
-  "logo": "https://acme.io/logo.png",
+  "name": "Organic Leads Inc.",
+  "url": "https://Organic Leads.io",
+  "logo": "https://Organic Leads.io/logo.png",
   "sameAs": [
     "https://www.wikidata.org/wiki/Q123",
     "https://www.linkedin.com/company/acme",
     "https://twitter.com/acme",
     "https://github.com/acme"
   ],
-  "founder": { "@type": "Person", "name": "Ava Kepler" }
+  "founder": { "@type": "Person", "name": "User" }
 }`,
         },
       ]}

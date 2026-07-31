@@ -10,87 +10,17 @@ import { SEOAuditTab, KeywordsTab, MetaTagsTab, HeadingsTab, ContentTab, ImagesT
 import { useSEOOverview, useSEOPages, useRunSEOScan, useVerifyFixes, useBulkOptimize, useApproveChanges, useExportSEOData } from "@/modules/onpage-seo/hooks";
 import { F06_NAV } from "@/modules/onpage-seo/constants";
 import { Download, RefreshCw, Scan, CheckCircle2, FileText, Settings, Zap } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import type { SEOFilters } from "@/modules/onpage-seo/types";
 
-function OverviewTab() {
-  return <div className="text-sm text-muted-foreground">Overview content loading...</div>;
-}
-
-function PagesTab() {
-  return <div className="text-sm text-muted-foreground">Pages content loading...</div>;
-}
-
-function SEOTab() {
-  return <div className="text-sm text-muted-foreground">SEO Audit content loading...</div>;
-}
-
-function KeywordsTab() {
-  return <div className="text-sm text-muted-foreground">Keywords content loading...</div>;
-}
-
-function MetaTagsTab() {
-  return <div className="text-sm text-muted-foreground">Meta Tags content loading...</div>;
-}
-
-function HeadingsTab() {
-  return <div className="text-sm text-muted-foreground">Headings content loading...</div>;
-}
-
-function ContentTab() {
-  return <div className="text-sm text-muted-foreground">Content content loading...</div>;
-}
-
-function ImagesTab() {
-  return <div className="text-sm text-muted-foreground">Images content loading...</div>;
-}
-
-function InternalLinksTab() {
-  return <div className="text-sm text-muted-foreground">Internal Links content loading...</div>;
-}
-
-function ExternalLinksTab() {
-  return <div className="text-sm text-muted-foreground">External Links content loading...</div>;
-}
-
-function CanonicalTab() {
-  return <div className="text-sm text-muted-foreground">Canonical content loading...</div>;
-}
-
-function RobotsTab() {
-  return <div className="text-sm text-muted-foreground">Robots content loading...</div>;
-}
-
-function SitemapTab() {
-  return <div className="text-sm text-muted-foreground">Sitemap content loading...</div>;
-}
-
-function SchemaTab() {
-  return <div className="text-sm text-muted-foreground">Schema content loading...</div>;
-}
-
-function AnswerReadinessTab() {
-  return <div className="text-sm text-muted-foreground">Answer Readiness content loading...</div>;
-}
-
-function AIRecommendationsTab() {
-  return <div className="text-sm text-muted-foreground">AI Recommendations content loading...</div>;
-}
-
-function BulkActionsTab() {
-  return <div className="text-sm text-muted-foreground">Bulk Actions content loading...</div>;
-}
-
-function HistoryTab() {
-  return <div className="text-sm text-muted-foreground">History content loading...</div>;
-}
-
-function LogsTab() {
-  return <div className="text-sm text-muted-foreground">Logs content loading...</div>;
-}
-
-function SettingsTab() {
-  return <div className="text-sm text-muted-foreground">Settings content loading...</div>;
+function TabPlaceholder({ title, description }: { title: string; description: string }) {
+  return (
+    <Card className="p-8 text-center">
+      <div className="text-sm font-medium text-foreground">{title}</div>
+      <div className="text-xs text-muted-foreground mt-1">{description}</div>
+    </Card>
+  );
 }
 
 export function OnPageSEODashboard() {
@@ -173,7 +103,9 @@ export function OnPageSEODashboard() {
           ))}
         </TabsList>
 
-        <TabsContent value="overview"><OverviewTab /></TabsContent>
+        <TabsContent value="overview">
+          <TabPlaceholder title="No overview data yet" description="Run an SEO scan to populate the overview." />
+        </TabsContent>
         <TabsContent value="pages">
           <PagesTable
             pages={pages.data?.items ?? []}
@@ -194,30 +126,66 @@ export function OnPageSEODashboard() {
             sortOrder={sortOrder}
           />
         </TabsContent>
-        <TabsContent value="seo-audit"><SEOTab /></TabsContent>
-        <TabsContent value="keywords"><KeywordsTab /></TabsContent>
-        <TabsContent value="meta-tags"><MetaTagsTab /></TabsContent>
-        <TabsContent value="headings"><HeadingsTab /></TabsContent>
-        <TabsContent value="content"><ContentTab /></TabsContent>
-        <TabsContent value="images"><ImagesTab /></TabsContent>
-        <TabsContent value="internal-links"><InternalLinksTab /></TabsContent>
-        <TabsContent value="external-links"><ExternalLinksTab /></TabsContent>
-        <TabsContent value="canonical"><CanonicalTab /></TabsContent>
-        <TabsContent value="robots"><RobotsTab /></TabsContent>
-        <TabsContent value="sitemap"><SitemapTab /></TabsContent>
-        <TabsContent value="schema"><SchemaTab /></TabsContent>
-        <TabsContent value="answer-readiness"><AnswerReadinessTab /></TabsContent>
-        <TabsContent value="ai-recommendations"><AIRecommendationsTab /></TabsContent>
-        <TabsContent value="bulk-actions"><BulkActionsTab /></TabsContent>
-        <TabsContent value="history"><HistoryTab /></TabsContent>
-        <TabsContent value="logs"><LogsTab /></TabsContent>
-        <TabsContent value="settings"><SettingsTab /></TabsContent>
+        <TabsContent value="seo-audit">
+          <SEOAuditTab findings={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="keywords">
+          <KeywordsTab keywords={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="meta-tags">
+          <MetaTagsTab metaTags={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="headings">
+          <HeadingsTab headings={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="content">
+          <ContentTab content={null} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="images">
+          <ImagesTab images={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="internal-links">
+          <InternalLinksTab links={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="external-links">
+          <ExternalLinksTab links={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="canonical">
+          <CanonicalTab canonical={null} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="robots">
+          <RobotsTab robots={null} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="sitemap">
+          <SitemapTab sitemap={null} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="schema">
+          <SchemaTab schemas={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="answer-readiness">
+          <AnswerReadinessTab data={null} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="ai-recommendations">
+          <AIRecommendationsTab recommendations={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="bulk-actions">
+          <BulkActionsTab isLoading={false} />
+        </TabsContent>
+        <TabsContent value="history">
+          <HistoryTab history={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="logs">
+          <LogsTab logs={[]} isLoading={false} />
+        </TabsContent>
+        <TabsContent value="settings">
+          <TabPlaceholder title="No settings data yet" description="Configure SEO settings here." />
+        </TabsContent>
       </Tabs>
     </div>
   );
 }
 
 export const Route = createFileRoute("/_app/onpage-seo/")({
-  head: () => ({ meta: [{ title: "On-Page SEO Engine — Nebula" }] }),
+  head: () => ({ meta: [{ title: "On-Page SEO Engine | Organic Leads" }] }),
   component: OnPageSEODashboard,
 });

@@ -3,7 +3,7 @@ import { MapPin } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/local-search")({
-  head: () => ({ meta: [{ title: "Local Search — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Local Search | Organic Leads" }] }),
   component: Page,
 });
 

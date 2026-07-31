@@ -3,7 +3,7 @@ import { Image as ImageIcon } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/image-search")({
-  head: () => ({ meta: [{ title: "Image Search — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Image Search | Organic Leads" }] }),
   component: Page,
 });
 

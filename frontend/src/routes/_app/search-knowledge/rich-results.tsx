@@ -3,7 +3,7 @@ import { Star } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/rich-results")({
-  head: () => ({ meta: [{ title: "Rich Results — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Rich Results | Organic Leads" }] }),
   component: Page,
 });
 
@@ -51,11 +51,11 @@ function Page() {
           code: `{
   "@context": "https://schema.org",
   "@type": "Product",
-  "name": "Nebula Pro Plan",
-  "image": "https://acme.io/og.png",
+  "name": "Organic Leads Plan",
+  "image": "https://Organic Leads.io/og.png",
   "description": "AI marketing OS for enterprise teams",
   "sku": "NEB-PRO-001",
-  "brand": { "@type": "Brand", "name": "Nebula" },
+  "brand": { "@type": "Brand", "name": "Organic Leads" },
   "offers": {
     "@type": "Offer",
     "priceCurrency": "USD",

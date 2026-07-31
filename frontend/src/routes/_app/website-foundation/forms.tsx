@@ -9,7 +9,7 @@ import { Pill } from "@/modules/website-foundation/components/status-pill";
 import { Switch } from "@/modules/website-foundation/components/form-field";
 
 export const Route = createFileRoute("/_app/website-foundation/forms")({
-  head: () => ({ meta: [{ title: "Forms — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Forms | Organic Leads" }] }),
   component: FormsCenter,
 });
 
@@ -72,7 +72,7 @@ function FormsCenter() {
           <div className="text-sm font-semibold flex items-center gap-2"><Mail className="size-4 text-primary" /> SMTP routing</div>
           <div className="mt-4 space-y-2 text-sm">
             <div className="rounded-xl border border-border p-3 bg-muted/20"><div className="text-xs text-muted-foreground">Provider</div><div className="font-medium">SendGrid</div></div>
-            <div className="rounded-xl border border-border p-3 bg-muted/20"><div className="text-xs text-muted-foreground">From</div><div className="font-medium">forms@acme.io</div></div>
+            <div className="rounded-xl border border-border p-3 bg-muted/20"><div className="text-xs text-muted-foreground">From</div><div className="font-medium">forms@Organic Leads.io</div></div>
             <div className="rounded-xl border border-border p-3 bg-muted/20"><div className="text-xs text-muted-foreground">Daily quota</div><div className="font-medium">10,000 / 25,000</div></div>
           </div>
         </div>

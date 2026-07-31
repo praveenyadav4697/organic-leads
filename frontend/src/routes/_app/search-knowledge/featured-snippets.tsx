@@ -3,7 +3,7 @@ import { PanelTop } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/featured-snippets")({
-  head: () => ({ meta: [{ title: "Featured Snippets — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Featured Snippets | Organic Leads" }] }),
   component: Page,
 });
 

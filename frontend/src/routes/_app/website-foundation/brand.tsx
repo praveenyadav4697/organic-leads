@@ -8,7 +8,7 @@ import type { BrandAsset } from "@/modules/website-foundation/types";
 import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_app/website-foundation/brand")({
-  head: () => ({ meta: [{ title: "Brand Assets — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Brand Assets | Organic Leads" }] }),
   component: BrandAssets,
 });
 

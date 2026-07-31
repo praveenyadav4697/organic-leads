@@ -3,7 +3,7 @@ import { ResponsiveContainer, BarChart, Bar, CartesianGrid, XAxis, YAxis, Toolti
 import { ConsolePage, ConsoleFilters } from "@/components/search-console-page";
 
 export const Route = createFileRoute("/_app/search-console/countries")({
-  head: () => ({ meta: [{ title: "Countries — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Countries | Organic Leads" }] }),
   component: Page,
 });
 

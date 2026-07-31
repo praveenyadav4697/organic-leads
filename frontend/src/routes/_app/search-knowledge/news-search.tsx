@@ -3,7 +3,7 @@ import { Newspaper } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/news-search")({
-  head: () => ({ meta: [{ title: "News Search — Nebula" }] }),
+  head: () => ({ meta: [{ title: "News Search | Organic Leads" }] }),
   component: Page,
 });
 

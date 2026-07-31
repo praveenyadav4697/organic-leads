@@ -4,7 +4,7 @@ import { KnowledgePage } from "@/components/knowledge-page";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 export const Route = createFileRoute("/_app/search-knowledge/search-intent")({
-  head: () => ({ meta: [{ title: "Search Intent — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Search Intent | Organic Leads" }] }),
   component: Page,
 });
 
@@ -25,7 +25,7 @@ function Page() {
         {
           kind: "chart",
           title: "Query distribution by intent",
-          description: "Nebula classification across 4M monthly searches.",
+          description: "Organic Leads classification across millions of monthly searches.",
           chart: (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>

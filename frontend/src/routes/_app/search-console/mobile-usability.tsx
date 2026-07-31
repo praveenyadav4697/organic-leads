@@ -4,7 +4,7 @@ import { KpiCard } from "@/components/kpi-card";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/mobile-usability")({
-  head: () => ({ meta: [{ title: "Mobile Usability — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Mobile Usability | Organic Leads" }] }),
   component: Page,
 });
 

@@ -46,31 +46,6 @@ function PerformanceDashboard() {
     (c) => c.url.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-destructive mb-4">Failed to load performance checks</p>
-        <Button onClick={() => refetch()}>Retry</Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -92,6 +67,13 @@ function PerformanceDashboard() {
         </div>
       </div>
 
+      {isError && (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-center justify-between">
+          <span>Failed to load performance checks — the backend may be unreachable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -104,10 +86,16 @@ function PerformanceDashboard() {
         </div>
       </div>
 
-      {filteredChecks.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">No performance checks found.</p>
-          <p className="text-xs mt-1">Create a new check to start monitoring.</p>
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      ) : filteredChecks.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border p-12 text-center">
+          <p className="text-sm font-medium text-foreground">No performance checks found.</p>
+          <p className="text-xs mt-1 text-muted-foreground">Create a new check to start monitoring.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

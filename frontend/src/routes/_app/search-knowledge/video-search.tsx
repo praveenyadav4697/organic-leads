@@ -3,7 +3,7 @@ import { Video } from "lucide-react";
 import { KnowledgePage } from "@/components/knowledge-page";
 
 export const Route = createFileRoute("/_app/search-knowledge/video-search")({
-  head: () => ({ meta: [{ title: "Video Search — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Video Search | Organic Leads" }] }),
   component: Page,
 });
 

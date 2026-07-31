@@ -3,7 +3,7 @@ import { ConsolePage, ConsoleFilters, ConsoleTable } from "@/components/search-c
 import { KpiCard } from "@/components/kpi-card";
 
 export const Route = createFileRoute("/_app/search-console/performance")({
-  head: () => ({ meta: [{ title: "Performance — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Performance | Organic Leads" }] }),
   component: Page,
 });
 

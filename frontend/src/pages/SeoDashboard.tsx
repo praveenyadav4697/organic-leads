@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSeoPages } from "@/hooks/useSeo";
 import { useCreateSeoPage } from "@/hooks/useSeo";
 import { useDeleteSeoPage } from "@/hooks/useSeo";
@@ -6,14 +6,6 @@ import { SeoPageCard } from "@/components/seo/page-card";
 import { SeoPageDialog } from "@/components/seo/page-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Plus, Search, RefreshCw } from "lucide-react";
@@ -21,7 +13,6 @@ import { Plus, Search, RefreshCw } from "lucide-react";
 function SeoDashboard() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data, isLoading, isError, refetch } = useSeoPages({
     page,
@@ -31,7 +22,6 @@ function SeoDashboard() {
   const createPage = useCreateSeoPage({
     onSuccess: () => {
       toast.success("Page added");
-      setDialogOpen(false);
       refetch();
     },
     onError: () => toast.error("Failed to add page"),
@@ -42,37 +32,21 @@ function SeoDashboard() {
     onError: () => toast.error("Failed to delete page"),
   });
 
-  const filteredPages = (data?.items ?? []).filter(
-    (p) => p.url.toLowerCase().includes(search.toLowerCase())
+  const items = data?.items ?? [];
+  const filteredPages = useMemo(
+    () => items.filter((p) => p.url.toLowerCase().includes(search.toLowerCase())),
+    [items, search]
   );
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-destructive mb-4">Failed to load pages</p>
-        <Button onClick={() => refetch()}>Retry</Button>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
+      {isError && (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-center justify-between">
+          <span>Failed to load pages — the backend may be unreachable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">On-Page SEO</h1>
@@ -104,10 +78,16 @@ function SeoDashboard() {
         </div>
       </div>
 
-      {filteredPages.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">No pages found.</p>
-          <p className="text-xs mt-1">Add a page URL to start your SEO inventory.</p>
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      ) : filteredPages.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border p-12 text-center">
+          <p className="text-sm font-medium text-foreground">No pages found.</p>
+          <p className="text-xs mt-1 text-muted-foreground">Add a page URL to start your SEO inventory.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -8,7 +8,7 @@ import type { Deployment } from "@/modules/website-foundation/types";
 import { Pill } from "@/modules/website-foundation/components/status-pill";
 
 export const Route = createFileRoute("/_app/website-foundation/deployments")({
-  head: () => ({ meta: [{ title: "Deployments — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Deployments | Organic Leads" }] }),
   component: Deployments,
 });
 

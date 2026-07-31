@@ -13,7 +13,7 @@ import { Switch } from "@/modules/website-foundation/components/form-field";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/wordpress")({
-  head: () => ({ meta: [{ title: "WordPress — Nebula" }] }),
+  head: () => ({ meta: [{ title: "WordPress | Organic Leads" }] }),
   component: WordPressManagement,
 });
 

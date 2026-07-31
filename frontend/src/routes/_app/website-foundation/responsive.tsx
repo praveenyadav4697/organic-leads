@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/responsive")({
-  head: () => ({ meta: [{ title: "Responsive — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Responsive | Organic Leads" }] }),
   component: ResponsiveCenter,
 });
 
@@ -126,9 +126,17 @@ function ResponsiveCenter() {
 
   if (responsiveError) {
     return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-destructive mb-4">Failed to load responsive data</p>
-        <Button onClick={() => refetchResponsive()}>Retry</Button>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Responsive</h1>
+            <p className="text-sm text-muted-foreground">Mobile readiness, viewports, touch targets</p>
+          </div>
+        </div>
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-center justify-between">
+          <span>Failed to load responsive data — the backend may be unreachable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetchResponsive()}>Refresh</Button>
+        </div>
       </div>
     );
   }

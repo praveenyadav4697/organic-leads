@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { ConsolePage } from "@/components/search-console-page";
 
 export const Route = createFileRoute("/_app/search-console/url-inspection")({
-  head: () => ({ meta: [{ title: "URL Inspection — Nebula" }] }),
+  head: () => ({ meta: [{ title: "URL Inspection | Organic Leads" }] }),
   component: Page,
 });
 
@@ -23,7 +23,7 @@ function Page() {
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input defaultValue="https://acme.io/ai-marketing-automation" className="pl-9 rounded-xl h-12" />
+                <Input defaultValue="https://Organic Leads.io/ai-marketing-automation" className="pl-9 rounded-xl h-12" />
               </div>
               <Button className="h-12 rounded-xl gradient-primary text-white border-0 shadow-[var(--shadow-glow)]">Inspect</Button>
             </div>

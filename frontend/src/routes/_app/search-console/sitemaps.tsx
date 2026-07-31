@@ -5,7 +5,7 @@ import { ConsolePage, ConsoleTable } from "@/components/search-console-page";
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/sitemaps")({
-  head: () => ({ meta: [{ title: "Sitemaps — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Sitemaps | Organic Leads" }] }),
   component: Page,
 });
 
@@ -52,7 +52,7 @@ Disallow: /admin/
 Disallow: /tmp/
 Disallow: /*.json$
 
-Sitemap: https://acme.io/sitemap.xml`}
+Sitemap: https://Organic Leads.io/sitemap.xml`}
         </pre>
       </div>
     </ConsolePage>

@@ -95,7 +95,7 @@ export function ProjectDialog({
                 <FormItem>
                   <FormLabel>Project Name</FormLabel>
                   <FormControl>
-                    <Input placeholder=" e.g., Acme Marketing Site" {...field} />
+                    <Input placeholder=" e.g., My Website Project" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -108,7 +108,7 @@ export function ProjectDialog({
                 <FormItem>
                   <FormLabel>Domain</FormLabel>
                   <FormControl>
-                    <Input placeholder="example.com" {...field} />
+                     <Input placeholder="yourdomain.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -121,7 +121,7 @@ export function ProjectDialog({
                 <FormItem>
                   <FormLabel>Website URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com" {...field} />
+                     <Input placeholder="https://yourdomain.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

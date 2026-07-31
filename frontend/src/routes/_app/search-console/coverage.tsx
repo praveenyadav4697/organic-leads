@@ -3,7 +3,7 @@ import { ConsolePage, ConsoleFilters, ConsoleTable } from "@/components/search-c
 import { StatusBadge } from "@/components/status-badge";
 
 export const Route = createFileRoute("/_app/search-console/coverage")({
-  head: () => ({ meta: [{ title: "Coverage Report — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Coverage Report | Organic Leads" }] }),
   component: Page,
 });
 

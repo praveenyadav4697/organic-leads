@@ -33,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Plus, Search, RefreshCw, Play, Shield, Globe, Server, Cpu, Image as ImageIcon, FileText, Lock } from "lucide-react";
 import type { FoundationProject } from "@/types/foundation";
+import { EmptyState } from "@/components/feedback/feedback-states";
 
 function DiscoveryPanel({ projectId }: { projectId: string }) {
   const overview = useOverview(projectId);
@@ -50,6 +51,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "SSL",
       icon: Lock,
+      isLoading: ssl.isLoading,
       data: ssl.data?.result,
       fields: [
         { label: "HTTPS", key: "https_enabled", render: (v: boolean) => (v ? "Enabled" : "Not Publicly Available") },
@@ -63,6 +65,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "DNS",
       icon: Globe,
+      isLoading: dns.isLoading,
       data: dns.data?.result,
       fields: [
         { label: "A Records", key: "a_records", render: (v: string[]) => v?.length ? v.join(", ") : "Not Publicly Available" },
@@ -76,6 +79,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "SEO",
       icon: FileText,
+      isLoading: seo.isLoading,
       data: seo.data?.result,
       fields: [
         { label: "Title", key: "title", render: (v: string) => v || "Not Publicly Available" },
@@ -91,6 +95,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "Security",
       icon: Shield,
+      isLoading: security.isLoading,
       data: security.data?.result,
       fields: [
         { label: "Security Score", key: "security_score", render: (v: number) => v != null ? `${v}/100` : "Not Publicly Available" },
@@ -104,6 +109,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "Performance",
       icon: Cpu,
+      isLoading: performance.isLoading,
       data: performance.data?.result,
       fields: [
         { label: "Performance Score", key: "performance_score", render: (v: number) => v != null ? `${v}/100` : "Not Publicly Available" },
@@ -116,6 +122,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "WordPress",
       icon: Server,
+      isLoading: wordpress.isLoading,
       data: wordpress.data?.result,
       fields: [
         { label: "CMS", key: "cms", render: (v: string) => v || "Not Publicly Available" },
@@ -129,6 +136,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "Robots.txt",
       icon: FileText,
+      isLoading: robots.isLoading,
       data: robots.data?.result,
       fields: [
         { label: "Exists", key: "exists", render: (v: boolean) => v ? "Yes" : "Not Publicly Available" },
@@ -138,6 +146,7 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
     {
       title: "Sitemap",
       icon: FileText,
+      isLoading: sitemap.isLoading,
       data: sitemap.data?.result,
       fields: [
         { label: "Exists", key: "exists", render: (v: boolean) => v ? "Yes" : "Not Publicly Available" },
@@ -157,41 +166,57 @@ function DiscoveryPanel({ projectId }: { projectId: string }) {
               <section.icon className="size-4" />
               {section.title}
             </h3>
-            {section.data && !section.data.error ? (
-              <div className="space-y-2 text-xs">
-                {section.fields.map((field) => {
-                  const value = section.data?.[field.key];
-                  return (
-                    <div key={field.key} className="flex justify-between">
-                      <span className="text-muted-foreground">{field.label}</span>
-                      <span className="font-medium text-right max-w-[60%] truncate" title={value != null ? String(value) : "Not Publicly Available"}>
-                        {value != null ? field.render(value) : "Not Publicly Available"}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-xs text-muted-foreground">Not Publicly Available</p>
-            )}
+             {section.isLoading ? (
+               <div className="space-y-2">
+                 {Array.from({ length: 4 }).map((_, i) => (
+                   <Skeleton key={i} className="h-4 w-full" />
+                 ))}
+               </div>
+             ) : section.data && !section.data.error ? (
+               <div className="space-y-2 text-xs">
+                 {section.fields.map((field) => {
+                   const value = section.data?.[field.key];
+                   return (
+                     <div key={field.key} className="flex justify-between">
+                       <span className="text-muted-foreground">{field.label}</span>
+                       <span className="font-medium text-right max-w-[60%] truncate" title={value != null ? String(value) : "Not Publicly Available"}>
+                         {value != null ? field.render(value) : "Not Publicly Available"}
+                       </span>
+                     </div>
+                   );
+                 })}
+               </div>
+             ) : (
+               <div className="text-xs">
+                 <EmptyState
+                   className="py-4 px-0"
+                   title="Not Publicly Available"
+                   description="Run a discovery scan to populate this section."
+                   icon={null}
+                 />
+               </div>
+             )}
           </div>
         ))}
       </div>
-      {screenshot.data?.result && (
-        <div className="rounded-lg border p-4">
-          <h3 className="flex items-center gap-2 text-sm font-semibold mb-3">
-            <ImageIcon className="size-4" />
-            Screenshot
-          </h3>
-          {screenshot.data.result.url ? (
-            <img src={screenshot.data.result.url} alt="Screenshot" className="max-w-full rounded border" />
-          ) : screenshot.data.result.status === "not_available" ? (
-            <p className="text-xs text-muted-foreground">Not Publicly Available</p>
-          ) : (
-            <p className="text-xs text-muted-foreground">Not Publicly Available</p>
-          )}
-        </div>
-      )}
+      <div className="rounded-lg border p-4">
+        <h3 className="flex items-center gap-2 text-sm font-semibold mb-3">
+          <ImageIcon className="size-4" />
+          Screenshot
+        </h3>
+        {screenshot.isLoading ? (
+          <Skeleton className="h-40 w-full rounded-md" />
+        ) : screenshot.data?.result?.url ? (
+          <img src={screenshot.data.result.url} alt="Screenshot" className="max-w-full rounded border" />
+        ) : (
+          <EmptyState
+            className="py-4 px-0"
+            title="Not Publicly Available"
+            description="Run a discovery scan to capture the screenshot."
+            icon={null}
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -274,31 +299,6 @@ function FoundationPage() {
 
   const filteredProjects = data?.items ?? [];
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-destructive mb-4">Failed to load projects</p>
-        <Button onClick={() => refetch()}>Retry</Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -320,6 +320,13 @@ function FoundationPage() {
         </div>
       </div>
 
+      {isError && (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-center justify-between">
+          <span>Failed to load projects — the backend may be unreachable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+        </div>
+      )}
+
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
@@ -338,10 +345,16 @@ function FoundationPage() {
         </select>
       </div>
 
-      {filteredProjects.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">No projects found.</p>
-          <p className="text-xs mt-1">Create a new project to get started.</p>
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      ) : filteredProjects.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border p-12 text-center">
+          <p className="text-sm font-medium text-foreground">No projects found.</p>
+          <p className="text-xs mt-1 text-muted-foreground">Create a new project to get started.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useBusinessProfiles } from "@/hooks/useBusiness";
 import { useBusinessProfile } from "@/hooks/useBusiness";
 import { useCreateBusinessProfile } from "@/hooks/useBusiness";
@@ -8,14 +8,6 @@ import { BusinessProfileCard } from "@/components/business/profile-card";
 import { BusinessProfileDialog } from "@/components/business/profile-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Plus, Search, RefreshCw } from "lucide-react";
@@ -23,7 +15,6 @@ import { Plus, Search, RefreshCw } from "lucide-react";
 function BusinessDashboard() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { data, isLoading, isError, refetch } = useBusinessProfiles({
     page,
@@ -33,7 +24,6 @@ function BusinessDashboard() {
   const createProfile = useCreateBusinessProfile({
     onSuccess: () => {
       toast.success("Business profile created");
-      setDialogOpen(false);
       refetch();
     },
     onError: () => toast.error("Failed to create profile"),
@@ -44,37 +34,21 @@ function BusinessDashboard() {
     onError: () => toast.error("Failed to delete profile"),
   });
 
-  const filteredProfiles = (data?.items ?? []).filter((p) =>
-    p.business_name.toLowerCase().includes(search.toLowerCase())
+  const items = data?.items ?? [];
+  const filteredProfiles = useMemo(
+    () => items.filter((p) => p.business_name.toLowerCase().includes(search.toLowerCase())),
+    [items, search]
   );
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-xl" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64">
-        <p className="text-destructive mb-4">Failed to load business profiles</p>
-        <Button onClick={() => refetch()}>Retry</Button>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
+      {isError && (
+        <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive flex items-center justify-between">
+          <span>Failed to load business profiles — the backend may be unreachable.</span>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>Retry</Button>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Business Intelligence</h1>
@@ -106,10 +80,16 @@ function BusinessDashboard() {
         </div>
       </div>
 
-      {filteredProfiles.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">No profiles found.</p>
-          <p className="text-xs mt-1">Create a new business profile to get started.</p>
+      {isLoading ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      ) : filteredProfiles.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border p-12 text-center">
+          <p className="text-sm font-medium text-foreground">No profiles found.</p>
+          <p className="text-xs mt-1 text-muted-foreground">Create a new business profile to get started.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

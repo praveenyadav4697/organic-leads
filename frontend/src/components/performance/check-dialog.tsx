@@ -42,7 +42,7 @@ export function PerformanceCheckDialog({ onSubmit }: PerformanceCheckDialogProps
           <DialogTitle>New Performance Check</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-          <Input {...register("url")} placeholder="https://example.com" />
+           <Input {...register("url")} placeholder="https://yourdomain.com" />
           <Button type="submit">Check</Button>
         </form>
       </DialogContent>

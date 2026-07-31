@@ -10,7 +10,7 @@ import { Pill } from "@/modules/website-foundation/components/status-pill";
 import { AISection } from "@/modules/website-foundation/components/ai-section";
 
 export const Route = createFileRoute("/_app/website-foundation/audit")({
-  head: () => ({ meta: [{ title: "Website Audit — Nebula" }] }),
+  head: () => ({ meta: [{ title: "Website Audit | Organic Leads" }] }),
   component: WebsiteAudit,
 });
 
