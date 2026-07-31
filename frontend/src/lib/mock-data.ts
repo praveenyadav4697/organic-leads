@@ -71,7 +71,6 @@ export const googleProducts = [
 ];
 
 export const trackers = [
-  { name: "Google Analytics 4", id: "G-XXXX2024", status: "connected" },
   { name: "Google Tag Manager", id: "GTM-A1B2C3", status: "connected" },
   { name: "Meta Pixel", id: "1029384756", status: "connected" },
   { name: "LinkedIn Insight", id: "insight-8842", status: "disconnected" },

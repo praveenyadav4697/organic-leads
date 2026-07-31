@@ -1,9 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Box, Check, FileText, ImageIcon, Server, Shield, Sparkles, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, TextInput, Switch } from "@/modules/website-foundation/components/form-field";
 import { Wizard, type WizardStep } from "@/modules/website-foundation/components/wizard";
+import { useCreateWebsite } from "@/hooks/useWebsite";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/wizard")({
@@ -12,34 +13,36 @@ export const Route = createFileRoute("/_app/website-foundation/wizard")({
 });
 
 function WebsiteWizard() {
+  const navigate = useNavigate();
+  const createWebsite = useCreateWebsite();
   const [data, setData] = useState({
-    name: "Acme Marketing Site",
-    url: "https://acme.io",
-    domain: "acme.io",
+    name: "",
+    url: "",
+    domain: "",
     protocol: "https" as "https" | "http",
-    hostingProvider: "Kinsta",
+    hostingProvider: "",
     hostingType: "cloud" as "shared" | "cloud" | "dedicated" | "vps",
-    hostingUsername: "acme-admin",
+    hostingUsername: "",
     hostingPassword: "",
     accessProtocol: "sftp" as "ftp" | "sftp" | "ssh",
-    wpAdminUrl: "https://acme.io/wp-admin",
-    wpUsername: "admin",
+    wpAdminUrl: "",
+    wpUsername: "",
     wpAppPassword: "",
     restApiStatus: "active" as "active" | "inactive",
     xmlrpcStatus: "disabled" as "enabled" | "disabled",
-    logo: "logo-primary.svg",
-    darkLogo: "logo-dark.svg",
-    lightLogo: "logo-light.svg",
-    favicon: "favicon.ico",
+    logo: "",
+    darkLogo: "",
+    lightLogo: "",
+    favicon: "",
     primaryColor: "#6366f1",
     secondaryColor: "#22d3ee",
     fonts: "Inter",
-    brandGuidelinesPdf: "brand-guidelines.pdf",
-    currentTheme: "Nebula",
-    childTheme: "Nebula Child",
-    themeVersion: "3.4.0",
-    themeLicense: "GPL v2",
-    selectedPlugins: ["Rank Math SEO", "WP Rocket", "Wordfence"],
+    brandGuidelinesPdf: "",
+    currentTheme: "",
+    childTheme: "",
+    themeVersion: "",
+    themeLicense: "",
+    selectedPlugins: [] as string[],
   });
 
   const update = (k: keyof typeof data, v: any) => setData((d) => ({ ...d, [k]: v }));
@@ -276,7 +279,30 @@ function WebsiteWizard() {
           <div className="text-xs text-muted-foreground">Six guided steps to onboard a new website.</div>
         </div>
       </div>
-      <Wizard steps={steps} onFinish={() => toast.success("Website configured successfully")} finishLabel="Finish setup" />
+      <Wizard steps={steps} onFinish={async () => {
+        try {
+          await createWebsite.mutateAsync({
+            name: data.name,
+            url: data.url,
+            domain: data.domain,
+            protocol: data.protocol,
+            hostingProvider: data.hostingProvider,
+            hostingType: data.hostingType,
+            hostingUsername: data.hostingUsername,
+            hostingPassword: data.hostingPassword,
+            accessProtocol: data.accessProtocol,
+            wpAdminUrl: data.wpAdminUrl,
+            wpUsername: data.wpUsername,
+            wpAppPassword: data.wpAppPassword,
+            wpRestApiStatus: data.restApiStatus,
+            wpXmlrpcStatus: data.xmlrpcStatus,
+          });
+          toast.success("Website registered successfully");
+          navigate({ to: "/website-foundation/overview" });
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Registration failed");
+        }
+      }} finishLabel="Finish setup" />
     </div>
   );
 }

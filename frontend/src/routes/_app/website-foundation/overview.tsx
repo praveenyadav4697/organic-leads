@@ -1,46 +1,147 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Play, RefreshCw, Database, Shield, Server, Cpu, HardDrive, Camera, Globe, Clock, Download, Rocket, History, Pencil, Trash2,
+  RefreshCw, Shield, Server, Cpu, HardDrive, Camera, Globe, Rocket, Plus, Pencil, Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ProgressRing } from "@/components/kpi-card";
 import { StatusBadge } from "@/components/status-badge";
 import { StatCard } from "@/modules/website-foundation/components/stat-cards";
-import { websiteService } from "@/modules/website-foundation/services";
-import type { Website } from "@/modules/website-foundation/types";
-import { websiteQuickStats } from "@/modules/website-foundation/data";
-import { cn } from "@/lib/utils";
+import { websiteApi } from "@/api/websiteApi";
+import type { WebsiteRegistrationResponse } from "@/types/website";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/overview")({
   head: () => ({ meta: [{ title: "Website Overview — Nebula" }] }),
   component: WebsiteOverview,
 });
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+function resolveApiUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  return `${API_BASE}${url}`;
+}
+
 function WebsiteOverview() {
-  const [site, setSite] = useState<Website | null>(null);
-  const [query, setQuery] = useState("");
+  const [sites, setSites] = useState<WebsiteRegistrationResponse[]>([]);
+  const [site, setSite] = useState<WebsiteRegistrationResponse | null>(null);
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
+  const [screenshotLoading, setScreenshotLoading] = useState(false);
+  const [screenshotCapturing, setScreenshotCapturing] = useState(false);
+  const [screenshotError, setScreenshotError] = useState<string | null>(null);
+  const [scanRefreshing, setScanRefreshing] = useState(false);
 
   useEffect(() => {
-    websiteService.get().then(setSite);
+    websiteApi.list()
+      .then((res) => {
+        const items = res.items ?? [];
+        setSites(items);
+        if (items.length > 0) {
+          setSite(items[0]);
+        } else {
+          setSite(null);
+        }
+      })
+      .catch(() => {
+        setSites([]);
+        setSite(null);
+      });
   }, []);
+
+  useEffect(() => {
+    if (!site) return;
+    setScreenshotUrl(null);
+    setScreenshotError(null);
+    websiteApi.getScreenshot(site.id)
+      .then((data) => {
+        const url = resolveApiUrl(data?.url);
+        if (url) {
+          setScreenshotUrl(url);
+        } else if (data && data.status === "failed") {
+          setScreenshotError(data.error_message || "Previous capture failed");
+        }
+      })
+      .catch((error) => {
+        setScreenshotUrl(null);
+        setScreenshotError(error instanceof Error ? error.message : "Failed to load screenshot");
+      });
+  }, [site]);
+
+  const handleRecapture = async () => {
+    if (!site) return;
+    setScreenshotCapturing(true);
+    setScreenshotError(null);
+    try {
+      const data = await websiteApi.captureScreenshot(site.id);
+      const url = resolveApiUrl(data?.url);
+      if (url) {
+        setScreenshotUrl(`${url}?t=${Date.now()}`);
+        toast.success("Screenshot re-captured");
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to capture screenshot";
+      setScreenshotError(message);
+      toast.error(message);
+    } finally {
+      setScreenshotCapturing(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    if (!site) return;
+    setScanRefreshing(true);
+    try {
+      await websiteApi.runDiagnostics(site.id, true);
+      setSite(await websiteApi.get(site.id));
+      toast.success("Live website diagnostics updated");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Live scan failed");
+    } finally {
+      setScanRefreshing(false);
+    }
+  };
 
   if (!site) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-28 rounded-2xl border border-border bg-card animate-pulse" />
-        ))}
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <div className="size-16 rounded-2xl bg-muted/40 grid place-items-center mb-4">
+          <Globe className="size-8 text-muted-foreground" />
+        </div>
+        <div className="text-lg font-semibold mb-2">No websites registered</div>
+        <div className="text-sm text-muted-foreground mb-6">Add your first website to get started with monitoring and auditing.</div>
+        <Button className="rounded-xl gradient-primary text-white border-0" onClick={() => {}}>
+          <Plus className="size-4" /> Add website
+        </Button>
       </div>
     );
   }
 
-  const stats = websiteQuickStats(site);
-
   return (
     <div>
+      {sites.length > 1 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          <div className="text-sm text-muted-foreground self-center mr-2">
+            {sites.length} websites registered
+          </div>
+          {sites.map((item) => (
+            <Button
+              key={item.id}
+              size="sm"
+              variant={site?.id === item.id ? "default" : "outline"}
+              className="rounded-full"
+              onClick={() => setSite(item)}
+            >
+              {item.name}
+            </Button>
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         <StatCard label="Health" value={site.health} unit="%" delta={2.4} hint="All systems nominal" icon={Shield} intent="success" index={0} />
         <StatCard label="Performance" value={site.performance} unit="%" delta={1.8} hint="LCP 1.4s" icon={Rocket} intent="primary" index={1} />
@@ -66,8 +167,8 @@ function WebsiteOverview() {
             {[
               { l: "Environment", v: site.environment, intent: "primary" as const },
               { l: "Status", v: site.status, intent: site.status === "online" ? "success" as const : "warning" as const },
-              { l: "Last scan", v: new Date(site.lastScan).toLocaleString() },
-              { l: "Next scheduled", v: new Date(site.nextScan).toLocaleString() },
+              { l: "Last scan", v: site.last_scan ? new Date(site.last_scan).toLocaleString() : "Never" },
+              { l: "Next scheduled", v: site.next_scan ? new Date(site.next_scan).toLocaleString() : "Not scheduled" },
             ].map((c) => (
               <div key={c.l} className="rounded-xl border border-border p-3 bg-muted/30">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.l}</div>
@@ -76,21 +177,51 @@ function WebsiteOverview() {
             ))}
           </div>
           <div className="mt-4 flex items-center gap-2">
-            <div className="relative flex-1 max-w-md">
-              <Input value={query} onChange={(e) => setQuery(e.target.value)} className="pl-3 rounded-xl h-10" placeholder="Search workloads, pages, audits…" />
-            </div>
-            <Button variant="outline" className="rounded-xl h-10"><RefreshCw className="size-4" /> Refresh</Button>
+            <Button variant="outline" className="rounded-xl h-10" onClick={handleRefresh} disabled={scanRefreshing}>
+              <RefreshCw className={`size-4 ${scanRefreshing ? "animate-spin" : ""}`} /> {scanRefreshing ? "Scanning…" : "Refresh live data"}
+            </Button>
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-3xl border border-border bg-gradient-to-br from-primary/8 via-card to-accent/8 p-6">
           <div className="text-sm font-semibold mb-3 flex items-center gap-2"><Camera className="size-4 text-primary" /> Website screenshot</div>
           <div className="aspect-video rounded-2xl bg-muted/30 border border-border grid place-items-center relative overflow-hidden">
-            <div className="absolute inset-0 gradient-primary opacity-10" />
+            {screenshotUrl && !screenshotError ? (
+              <img
+                src={screenshotUrl}
+                alt={`Screenshot of ${site?.url}`}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 gradient-primary opacity-10" />
+            )}
             <div className="relative text-center">
-              <div className="text-xs font-semibold">{site.url} · 1440×900</div>
-              <div className="text-[11px] text-muted-foreground">Captured 2 minutes ago</div>
-              <Button size="sm" variant="outline" className="rounded-lg mt-3">Re-capture</Button>
+              <div className="text-xs font-semibold">
+                {site?.url} · 1440×900
+              </div>
+              <div className="text-[11px] text-muted-foreground">
+                {screenshotCapturing
+                  ? "Capturing..."
+                  : screenshotUrl
+                    ? "Captured just now"
+                    : screenshotError
+                      ? "Capture failed"
+                      : "No screenshot available"}
+              </div>
+              {screenshotError && (
+                <div className="text-[11px] text-destructive mt-1 max-w-[90%] mx-auto line-clamp-2">
+                  {screenshotError}
+                </div>
+              )}
+              <Button
+                size="sm"
+                variant="outline"
+                className="rounded-lg mt-3"
+                onClick={handleRecapture}
+                disabled={screenshotCapturing}
+              >
+                {screenshotCapturing ? "Capturing..." : screenshotError ? "Retry" : "Re-capture"}
+              </Button>
             </div>
           </div>
         </motion.div>
@@ -102,14 +233,14 @@ function WebsiteOverview() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {[
               { l: "Domain", v: site.domain },
-              { l: "Registrar", v: site.registrar },
-              { l: "Hosting", v: site.hosting },
-              { l: "DNS", v: site.dns },
-              { l: "SSL", v: site.ssl },
-              { l: "WHOIS", v: site.whois },
-              { l: "Server location", v: site.location },
-              { l: "IP", v: site.ip },
-              { l: "Uptime", v: site.uptime },
+              { l: "Registrar", v: "—" },
+              { l: "Hosting", v: site.hosting || "—" },
+              { l: "DNS", v: "—" },
+              { l: "SSL", v: site.ssl || "—" },
+              { l: "WHOIS", v: "—" },
+              { l: "Server location", v: "—" },
+              { l: "IP", v: "—" },
+              { l: "Uptime", v: site.uptime || "—" },
             ].map((c) => (
               <div key={c.l} className="rounded-xl border border-border p-3 bg-muted/30">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.l}</div>
@@ -126,7 +257,7 @@ function WebsiteOverview() {
               { l: "Storage usage", v: site.storage },
               { l: "CPU usage", v: site.cpu },
               { l: "Memory usage", v: site.memory },
-              { l: "Disk usage", v: site.diskUsage },
+              { l: "Disk usage", v: site.disk_usage },
             ].map((m) => (
               <div key={m.l}>
                 <div className="flex justify-between text-xs mb-1"><span>{m.l}</span><span className="font-semibold">{m.v}%</span></div>
@@ -136,115 +267,12 @@ function WebsiteOverview() {
               </div>
             ))}
           </div>
-          <div className="mt-5 grid grid-cols-3 gap-3">
-            <div className="rounded-xl border border-border p-3 bg-muted/30 text-center">
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Plugins</div>
-              <div className="text-lg font-semibold mt-1">10</div>
-            </div>
-            <div className="rounded-xl border border-border p-3 bg-muted/30 text-center">
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Themes</div>
-              <div className="text-lg font-semibold mt-1">5</div>
-            </div>
-            <div className="rounded-xl border border-border p-3 bg-muted/30 text-center">
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Forms</div>
-              <div className="text-lg font-semibold mt-1">6</div>
-            </div>
-          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-        <div className="rounded-3xl border border-border bg-card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-sm font-semibold flex items-center gap-2"><HardDrive className="size-4 text-primary" /> Plugin list</div>
-            <Button size="sm" variant="outline" className="rounded-lg">Manage</Button>
-          </div>
-          <div className="space-y-2">
-            {stats.plugins.map((p) => (
-              <div key={p.n} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/20">
-                <Database className="size-4 text-primary" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{p.n}</div>
-                  <div className="text-[11px] text-muted-foreground">{p.v}</div>
-                </div>
-                <StatusBadge status={p.s} />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-border bg-card p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-sm font-semibold flex items-center gap-2"><Download className="size-4 text-primary" /> Website backups</div>
-            <Button size="sm" className="rounded-lg gradient-primary text-white border-0">Backup now</Button>
-          </div>
-          <div className="space-y-2">
-            {stats.backups.map((b) => (
-              <div key={b.date} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/20">
-                <HardDrive className="size-4 text-primary" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{b.date}</div>
-                  <div className="text-[11px] text-muted-foreground">{b.size}</div>
-                </div>
-                <Button variant="ghost" size="sm" className="rounded-lg">Restore</Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-        <div className="rounded-3xl border border-border bg-card p-6">
-          <div className="text-sm font-semibold mb-4 flex items-center gap-2"><Clock className="size-4 text-primary" /> Deployment history</div>
-          <div className="space-y-3">
-            {stats.deployments.map((d) => (
-              <div key={d.v} className="flex items-start gap-3">
-                <div className="size-8 rounded-lg bg-muted grid place-items-center shrink-0"><Server className="size-4 text-primary" /></div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium">{d.v} <span className="text-muted-foreground font-normal">· {d.t}</span></div>
-                  <div className="text-xs text-muted-foreground">{d.m} — {d.a}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-border bg-card p-6">
-          <div className="text-sm font-semibold mb-4 flex items-center gap-2"><Shield className="size-4 text-primary" /> Audit history</div>
-          <div className="space-y-3">
-            {stats.audit.map((r) => (
-              <div key={r.t} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-muted/20">
-                <RefreshCw className="size-4 text-primary" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{r.t}</div>
-                  <div className="text-[11px] text-muted-foreground">{r.when}</div>
-                </div>
-                <StatusBadge status={r.s} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-3xl border border-border bg-card p-6">
-        <div className="text-lg font-semibold mb-4">Audit summary</div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { l: "Domain", v: "Verified · SSL A+" },
-            { l: "Hosting", v: site.hosting },
-            { l: "CMS", v: site.cms },
-            { l: "Theme", v: "Custom · design v3" },
-            { l: "Plugins", v: "10 active" },
-            { l: "Contact forms", v: "6 · all healthy" },
-            { l: "Website speed", v: "1.4s LCP" },
-            { l: "Responsive", v: "100% pass" },
-          ].map((x) => (
-            <div key={x.l} className="rounded-xl border border-border p-4 bg-muted/30">
-              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{x.l}</div>
-              <div className="text-sm font-medium mt-1">{x.v}</div>
-            </div>
-          ))}
-        </div>
+      <div className="flex items-center justify-end gap-2 mb-4">
+        <Button variant="outline" className="rounded-xl" onClick={() => toast.info("Editing website")}><Pencil className="size-4" /> Edit</Button>
+        <Button variant="outline" className="rounded-xl text-destructive" onClick={() => toast.info("Deleting website")}><Trash2 className="size-4" /> Delete</Button>
       </div>
     </div>
   );

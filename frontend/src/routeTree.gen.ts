@@ -14,11 +14,16 @@ import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppSearchConsoleRouteImport } from './routes/_app/search-console'
 import { Route as AppSearchKnowledgeRouteImport } from './routes/_app/search-knowledge'
 import { Route as AppWebsiteFoundationRouteImport } from './routes/_app/website-foundation'
+import { Route as AppAuditIndexRouteImport } from './routes/_app/audit/index'
+import { Route as AppBusinessKeywordCompetitorIndexRouteImport } from './routes/_app/business-keyword-competitor/index'
 import { Route as AppBusinessProfileIndexRouteImport } from './routes/_app/business-profile/index'
+import { Route as AppBusinessIndexRouteImport } from './routes/_app/business/index'
 import { Route as AppCompetitorsIndexRouteImport } from './routes/_app/competitors/index'
+import { Route as AppFoundationIndexRouteImport } from './routes/_app/foundation/index'
 import { Route as AppGoogleProductsIndexRouteImport } from './routes/_app/google-products/index'
 import { Route as AppKeywordsIndexRouteImport } from './routes/_app/keywords/index'
 import { Route as AppMobileIndexRouteImport } from './routes/_app/mobile/index'
+import { Route as AppOnpageSeoIndexRouteImport } from './routes/_app/onpage-seo/index'
 import { Route as AppPerformanceIndexRouteImport } from './routes/_app/performance/index'
 import { Route as AppReportsIndexRouteImport } from './routes/_app/reports/index'
 import { Route as AppSearchConsoleIndexRouteImport } from './routes/_app/search-console/index'
@@ -65,23 +70,31 @@ import { Route as AppSearchKnowledgeVersionHistoryRouteImport } from './routes/_
 import { Route as AppSearchKnowledgeVideoSearchRouteImport } from './routes/_app/search-knowledge/video-search'
 import { Route as AppSearchKnowledgeVoiceSearchRouteImport } from './routes/_app/search-knowledge/voice-search'
 import { Route as AppSeoAnalyzerIndexRouteImport } from './routes/_app/seo-analyzer/index'
+import { Route as AppSeoIndexRouteImport } from './routes/_app/seo/index'
 import { Route as AppSettingsIndexRouteImport } from './routes/_app/settings/index'
 import { Route as AppTrackingIndexRouteImport } from './routes/_app/tracking/index'
 import { Route as AppTrackingActivityLogsRouteImport } from './routes/_app/tracking/activity-logs'
 import { Route as AppTrackingApprovalsRouteImport } from './routes/_app/tracking/approvals'
+import { Route as AppTrackingAuditLogsRouteImport } from './routes/_app/tracking/audit-logs'
 import { Route as AppTrackingBusinessGoalsRouteImport } from './routes/_app/tracking/business-goals'
 import { Route as AppTrackingConfigurationRouteImport } from './routes/_app/tracking/configuration'
 import { Route as AppTrackingConsentRouteImport } from './routes/_app/tracking/consent'
 import { Route as AppTrackingContactFormsRouteImport } from './routes/_app/tracking/contact-forms'
 import { Route as AppTrackingConversionStrategyRouteImport } from './routes/_app/tracking/conversion-strategy'
+import { Route as AppTrackingDeliveryLogsRouteImport } from './routes/_app/tracking/delivery-logs'
 import { Route as AppTrackingEventsRouteImport } from './routes/_app/tracking/events'
+import { Route as AppTrackingFormBuilderRouteImport } from './routes/_app/tracking/form-builder'
 import { Route as AppTrackingKpiManagementRouteImport } from './routes/_app/tracking/kpi-management'
 import { Route as AppTrackingMeasurementPlanRouteImport } from './routes/_app/tracking/measurement-plan'
 import { Route as AppTrackingOperationsRouteImport } from './routes/_app/tracking/operations'
+import { Route as AppTrackingProvidersRouteImport } from './routes/_app/tracking/providers'
+import { Route as AppTrackingRetryLogsRouteImport } from './routes/_app/tracking/retry-logs'
 import { Route as AppTrackingRoutingRouteImport } from './routes/_app/tracking/routing'
 import { Route as AppTrackingSettingsRouteImport } from './routes/_app/tracking/settings'
 import { Route as AppTrackingSpamProtectionRouteImport } from './routes/_app/tracking/spam-protection'
+import { Route as AppTrackingSubmissionsRouteImport } from './routes/_app/tracking/submissions'
 import { Route as AppTrackingTestingRouteImport } from './routes/_app/tracking/testing'
+import { Route as AppTrackingVerificationRouteImport } from './routes/_app/tracking/verification'
 import { Route as AppWebsiteFoundationIndexRouteImport } from './routes/_app/website-foundation/index'
 import { Route as AppWebsiteFoundationApprovalsRouteImport } from './routes/_app/website-foundation/approvals'
 import { Route as AppWebsiteFoundationAuditRouteImport } from './routes/_app/website-foundation/audit'
@@ -97,6 +110,7 @@ import { Route as AppWebsiteFoundationPerformanceRouteImport } from './routes/_a
 import { Route as AppWebsiteFoundationPluginsRouteImport } from './routes/_app/website-foundation/plugins'
 import { Route as AppWebsiteFoundationResponsiveRouteImport } from './routes/_app/website-foundation/responsive'
 import { Route as AppWebsiteFoundationRollbackRouteImport } from './routes/_app/website-foundation/rollback'
+import { Route as AppWebsiteFoundationSslRouteImport } from './routes/_app/website-foundation/ssl'
 import { Route as AppWebsiteFoundationThemesRouteImport } from './routes/_app/website-foundation/themes'
 import { Route as AppWebsiteFoundationWizardRouteImport } from './routes/_app/website-foundation/wizard'
 import { Route as AppWebsiteFoundationWordpressRouteImport } from './routes/_app/website-foundation/wordpress'
@@ -125,14 +139,35 @@ const AppWebsiteFoundationRoute = AppWebsiteFoundationRouteImport.update({
   path: '/website-foundation',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAuditIndexRoute = AppAuditIndexRouteImport.update({
+  id: '/audit/',
+  path: '/audit/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBusinessKeywordCompetitorIndexRoute =
+  AppBusinessKeywordCompetitorIndexRouteImport.update({
+    id: '/business-keyword-competitor/',
+    path: '/business-keyword-competitor/',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppBusinessProfileIndexRoute = AppBusinessProfileIndexRouteImport.update({
   id: '/business-profile/',
   path: '/business-profile/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBusinessIndexRoute = AppBusinessIndexRouteImport.update({
+  id: '/business/',
+  path: '/business/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCompetitorsIndexRoute = AppCompetitorsIndexRouteImport.update({
   id: '/competitors/',
   path: '/competitors/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFoundationIndexRoute = AppFoundationIndexRouteImport.update({
+  id: '/foundation/',
+  path: '/foundation/',
   getParentRoute: () => AppRoute,
 } as any)
 const AppGoogleProductsIndexRoute = AppGoogleProductsIndexRouteImport.update({
@@ -148,6 +183,11 @@ const AppKeywordsIndexRoute = AppKeywordsIndexRouteImport.update({
 const AppMobileIndexRoute = AppMobileIndexRouteImport.update({
   id: '/mobile/',
   path: '/mobile/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOnpageSeoIndexRoute = AppOnpageSeoIndexRouteImport.update({
+  id: '/onpage-seo/',
+  path: '/onpage-seo/',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPerformanceIndexRoute = AppPerformanceIndexRouteImport.update({
@@ -415,6 +455,11 @@ const AppSeoAnalyzerIndexRoute = AppSeoAnalyzerIndexRouteImport.update({
   path: '/seo-analyzer/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSeoIndexRoute = AppSeoIndexRouteImport.update({
+  id: '/seo/',
+  path: '/seo/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSettingsIndexRoute = AppSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
@@ -433,6 +478,11 @@ const AppTrackingActivityLogsRoute = AppTrackingActivityLogsRouteImport.update({
 const AppTrackingApprovalsRoute = AppTrackingApprovalsRouteImport.update({
   id: '/tracking/approvals',
   path: '/tracking/approvals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingAuditLogsRoute = AppTrackingAuditLogsRouteImport.update({
+  id: '/tracking/audit-logs',
+  path: '/tracking/audit-logs',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTrackingBusinessGoalsRoute =
@@ -463,9 +513,19 @@ const AppTrackingConversionStrategyRoute =
     path: '/tracking/conversion-strategy',
     getParentRoute: () => AppRoute,
   } as any)
+const AppTrackingDeliveryLogsRoute = AppTrackingDeliveryLogsRouteImport.update({
+  id: '/tracking/delivery-logs',
+  path: '/tracking/delivery-logs',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTrackingEventsRoute = AppTrackingEventsRouteImport.update({
   id: '/tracking/events',
   path: '/tracking/events',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingFormBuilderRoute = AppTrackingFormBuilderRouteImport.update({
+  id: '/tracking/form-builder',
+  path: '/tracking/form-builder',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTrackingKpiManagementRoute =
@@ -485,6 +545,16 @@ const AppTrackingOperationsRoute = AppTrackingOperationsRouteImport.update({
   path: '/tracking/operations',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTrackingProvidersRoute = AppTrackingProvidersRouteImport.update({
+  id: '/tracking/providers',
+  path: '/tracking/providers',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingRetryLogsRoute = AppTrackingRetryLogsRouteImport.update({
+  id: '/tracking/retry-logs',
+  path: '/tracking/retry-logs',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTrackingRoutingRoute = AppTrackingRoutingRouteImport.update({
   id: '/tracking/routing',
   path: '/tracking/routing',
@@ -501,9 +571,19 @@ const AppTrackingSpamProtectionRoute =
     path: '/tracking/spam-protection',
     getParentRoute: () => AppRoute,
   } as any)
+const AppTrackingSubmissionsRoute = AppTrackingSubmissionsRouteImport.update({
+  id: '/tracking/submissions',
+  path: '/tracking/submissions',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppTrackingTestingRoute = AppTrackingTestingRouteImport.update({
   id: '/tracking/testing',
   path: '/tracking/testing',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTrackingVerificationRoute = AppTrackingVerificationRouteImport.update({
+  id: '/tracking/verification',
+  path: '/tracking/verification',
   getParentRoute: () => AppRoute,
 } as any)
 const AppWebsiteFoundationIndexRoute =
@@ -596,6 +676,11 @@ const AppWebsiteFoundationRollbackRoute =
     path: '/rollback',
     getParentRoute: () => AppWebsiteFoundationRoute,
   } as any)
+const AppWebsiteFoundationSslRoute = AppWebsiteFoundationSslRouteImport.update({
+  id: '/ssl',
+  path: '/ssl',
+  getParentRoute: () => AppWebsiteFoundationRoute,
+} as any)
 const AppWebsiteFoundationThemesRoute =
   AppWebsiteFoundationThemesRouteImport.update({
     id: '/themes',
@@ -663,19 +748,26 @@ export interface FileRoutesByFullPath {
   '/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
   '/tracking/activity-logs': typeof AppTrackingActivityLogsRoute
   '/tracking/approvals': typeof AppTrackingApprovalsRoute
+  '/tracking/audit-logs': typeof AppTrackingAuditLogsRoute
   '/tracking/business-goals': typeof AppTrackingBusinessGoalsRoute
   '/tracking/configuration': typeof AppTrackingConfigurationRoute
   '/tracking/consent': typeof AppTrackingConsentRoute
   '/tracking/contact-forms': typeof AppTrackingContactFormsRoute
   '/tracking/conversion-strategy': typeof AppTrackingConversionStrategyRoute
+  '/tracking/delivery-logs': typeof AppTrackingDeliveryLogsRoute
   '/tracking/events': typeof AppTrackingEventsRoute
+  '/tracking/form-builder': typeof AppTrackingFormBuilderRoute
   '/tracking/kpi-management': typeof AppTrackingKpiManagementRoute
   '/tracking/measurement-plan': typeof AppTrackingMeasurementPlanRoute
   '/tracking/operations': typeof AppTrackingOperationsRoute
+  '/tracking/providers': typeof AppTrackingProvidersRoute
+  '/tracking/retry-logs': typeof AppTrackingRetryLogsRoute
   '/tracking/routing': typeof AppTrackingRoutingRoute
   '/tracking/settings': typeof AppTrackingSettingsRoute
   '/tracking/spam-protection': typeof AppTrackingSpamProtectionRoute
+  '/tracking/submissions': typeof AppTrackingSubmissionsRoute
   '/tracking/testing': typeof AppTrackingTestingRoute
+  '/tracking/verification': typeof AppTrackingVerificationRoute
   '/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
   '/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
   '/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
@@ -690,19 +782,26 @@ export interface FileRoutesByFullPath {
   '/website-foundation/plugins': typeof AppWebsiteFoundationPluginsRoute
   '/website-foundation/responsive': typeof AppWebsiteFoundationResponsiveRoute
   '/website-foundation/rollback': typeof AppWebsiteFoundationRollbackRoute
+  '/website-foundation/ssl': typeof AppWebsiteFoundationSslRoute
   '/website-foundation/themes': typeof AppWebsiteFoundationThemesRoute
   '/website-foundation/wizard': typeof AppWebsiteFoundationWizardRoute
   '/website-foundation/wordpress': typeof AppWebsiteFoundationWordpressRoute
+  '/audit/': typeof AppAuditIndexRoute
+  '/business-keyword-competitor/': typeof AppBusinessKeywordCompetitorIndexRoute
   '/business-profile/': typeof AppBusinessProfileIndexRoute
+  '/business/': typeof AppBusinessIndexRoute
   '/competitors/': typeof AppCompetitorsIndexRoute
+  '/foundation/': typeof AppFoundationIndexRoute
   '/google-products/': typeof AppGoogleProductsIndexRoute
   '/keywords/': typeof AppKeywordsIndexRoute
   '/mobile/': typeof AppMobileIndexRoute
+  '/onpage-seo/': typeof AppOnpageSeoIndexRoute
   '/performance/': typeof AppPerformanceIndexRoute
   '/reports/': typeof AppReportsIndexRoute
   '/search-console/': typeof AppSearchConsoleIndexRoute
   '/search-knowledge/': typeof AppSearchKnowledgeIndexRoute
   '/seo-analyzer/': typeof AppSeoAnalyzerIndexRoute
+  '/seo/': typeof AppSeoIndexRoute
   '/settings/': typeof AppSettingsIndexRoute
   '/tracking/': typeof AppTrackingIndexRoute
   '/website-foundation/': typeof AppWebsiteFoundationIndexRoute
@@ -752,19 +851,26 @@ export interface FileRoutesByTo {
   '/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
   '/tracking/activity-logs': typeof AppTrackingActivityLogsRoute
   '/tracking/approvals': typeof AppTrackingApprovalsRoute
+  '/tracking/audit-logs': typeof AppTrackingAuditLogsRoute
   '/tracking/business-goals': typeof AppTrackingBusinessGoalsRoute
   '/tracking/configuration': typeof AppTrackingConfigurationRoute
   '/tracking/consent': typeof AppTrackingConsentRoute
   '/tracking/contact-forms': typeof AppTrackingContactFormsRoute
   '/tracking/conversion-strategy': typeof AppTrackingConversionStrategyRoute
+  '/tracking/delivery-logs': typeof AppTrackingDeliveryLogsRoute
   '/tracking/events': typeof AppTrackingEventsRoute
+  '/tracking/form-builder': typeof AppTrackingFormBuilderRoute
   '/tracking/kpi-management': typeof AppTrackingKpiManagementRoute
   '/tracking/measurement-plan': typeof AppTrackingMeasurementPlanRoute
   '/tracking/operations': typeof AppTrackingOperationsRoute
+  '/tracking/providers': typeof AppTrackingProvidersRoute
+  '/tracking/retry-logs': typeof AppTrackingRetryLogsRoute
   '/tracking/routing': typeof AppTrackingRoutingRoute
   '/tracking/settings': typeof AppTrackingSettingsRoute
   '/tracking/spam-protection': typeof AppTrackingSpamProtectionRoute
+  '/tracking/submissions': typeof AppTrackingSubmissionsRoute
   '/tracking/testing': typeof AppTrackingTestingRoute
+  '/tracking/verification': typeof AppTrackingVerificationRoute
   '/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
   '/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
   '/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
@@ -779,19 +885,26 @@ export interface FileRoutesByTo {
   '/website-foundation/plugins': typeof AppWebsiteFoundationPluginsRoute
   '/website-foundation/responsive': typeof AppWebsiteFoundationResponsiveRoute
   '/website-foundation/rollback': typeof AppWebsiteFoundationRollbackRoute
+  '/website-foundation/ssl': typeof AppWebsiteFoundationSslRoute
   '/website-foundation/themes': typeof AppWebsiteFoundationThemesRoute
   '/website-foundation/wizard': typeof AppWebsiteFoundationWizardRoute
   '/website-foundation/wordpress': typeof AppWebsiteFoundationWordpressRoute
+  '/audit': typeof AppAuditIndexRoute
+  '/business-keyword-competitor': typeof AppBusinessKeywordCompetitorIndexRoute
   '/business-profile': typeof AppBusinessProfileIndexRoute
+  '/business': typeof AppBusinessIndexRoute
   '/competitors': typeof AppCompetitorsIndexRoute
+  '/foundation': typeof AppFoundationIndexRoute
   '/google-products': typeof AppGoogleProductsIndexRoute
   '/keywords': typeof AppKeywordsIndexRoute
   '/mobile': typeof AppMobileIndexRoute
+  '/onpage-seo': typeof AppOnpageSeoIndexRoute
   '/performance': typeof AppPerformanceIndexRoute
   '/reports': typeof AppReportsIndexRoute
   '/search-console': typeof AppSearchConsoleIndexRoute
   '/search-knowledge': typeof AppSearchKnowledgeIndexRoute
   '/seo-analyzer': typeof AppSeoAnalyzerIndexRoute
+  '/seo': typeof AppSeoIndexRoute
   '/settings': typeof AppSettingsIndexRoute
   '/tracking': typeof AppTrackingIndexRoute
   '/website-foundation': typeof AppWebsiteFoundationIndexRoute
@@ -846,19 +959,26 @@ export interface FileRoutesById {
   '/_app/search-knowledge/voice-search': typeof AppSearchKnowledgeVoiceSearchRoute
   '/_app/tracking/activity-logs': typeof AppTrackingActivityLogsRoute
   '/_app/tracking/approvals': typeof AppTrackingApprovalsRoute
+  '/_app/tracking/audit-logs': typeof AppTrackingAuditLogsRoute
   '/_app/tracking/business-goals': typeof AppTrackingBusinessGoalsRoute
   '/_app/tracking/configuration': typeof AppTrackingConfigurationRoute
   '/_app/tracking/consent': typeof AppTrackingConsentRoute
   '/_app/tracking/contact-forms': typeof AppTrackingContactFormsRoute
   '/_app/tracking/conversion-strategy': typeof AppTrackingConversionStrategyRoute
+  '/_app/tracking/delivery-logs': typeof AppTrackingDeliveryLogsRoute
   '/_app/tracking/events': typeof AppTrackingEventsRoute
+  '/_app/tracking/form-builder': typeof AppTrackingFormBuilderRoute
   '/_app/tracking/kpi-management': typeof AppTrackingKpiManagementRoute
   '/_app/tracking/measurement-plan': typeof AppTrackingMeasurementPlanRoute
   '/_app/tracking/operations': typeof AppTrackingOperationsRoute
+  '/_app/tracking/providers': typeof AppTrackingProvidersRoute
+  '/_app/tracking/retry-logs': typeof AppTrackingRetryLogsRoute
   '/_app/tracking/routing': typeof AppTrackingRoutingRoute
   '/_app/tracking/settings': typeof AppTrackingSettingsRoute
   '/_app/tracking/spam-protection': typeof AppTrackingSpamProtectionRoute
+  '/_app/tracking/submissions': typeof AppTrackingSubmissionsRoute
   '/_app/tracking/testing': typeof AppTrackingTestingRoute
+  '/_app/tracking/verification': typeof AppTrackingVerificationRoute
   '/_app/website-foundation/approvals': typeof AppWebsiteFoundationApprovalsRoute
   '/_app/website-foundation/audit': typeof AppWebsiteFoundationAuditRoute
   '/_app/website-foundation/automation': typeof AppWebsiteFoundationAutomationRoute
@@ -873,19 +993,26 @@ export interface FileRoutesById {
   '/_app/website-foundation/plugins': typeof AppWebsiteFoundationPluginsRoute
   '/_app/website-foundation/responsive': typeof AppWebsiteFoundationResponsiveRoute
   '/_app/website-foundation/rollback': typeof AppWebsiteFoundationRollbackRoute
+  '/_app/website-foundation/ssl': typeof AppWebsiteFoundationSslRoute
   '/_app/website-foundation/themes': typeof AppWebsiteFoundationThemesRoute
   '/_app/website-foundation/wizard': typeof AppWebsiteFoundationWizardRoute
   '/_app/website-foundation/wordpress': typeof AppWebsiteFoundationWordpressRoute
+  '/_app/audit/': typeof AppAuditIndexRoute
+  '/_app/business-keyword-competitor/': typeof AppBusinessKeywordCompetitorIndexRoute
   '/_app/business-profile/': typeof AppBusinessProfileIndexRoute
+  '/_app/business/': typeof AppBusinessIndexRoute
   '/_app/competitors/': typeof AppCompetitorsIndexRoute
+  '/_app/foundation/': typeof AppFoundationIndexRoute
   '/_app/google-products/': typeof AppGoogleProductsIndexRoute
   '/_app/keywords/': typeof AppKeywordsIndexRoute
   '/_app/mobile/': typeof AppMobileIndexRoute
+  '/_app/onpage-seo/': typeof AppOnpageSeoIndexRoute
   '/_app/performance/': typeof AppPerformanceIndexRoute
   '/_app/reports/': typeof AppReportsIndexRoute
   '/_app/search-console/': typeof AppSearchConsoleIndexRoute
   '/_app/search-knowledge/': typeof AppSearchKnowledgeIndexRoute
   '/_app/seo-analyzer/': typeof AppSeoAnalyzerIndexRoute
+  '/_app/seo/': typeof AppSeoIndexRoute
   '/_app/settings/': typeof AppSettingsIndexRoute
   '/_app/tracking/': typeof AppTrackingIndexRoute
   '/_app/website-foundation/': typeof AppWebsiteFoundationIndexRoute
@@ -940,19 +1067,26 @@ export interface FileRouteTypes {
     | '/search-knowledge/voice-search'
     | '/tracking/activity-logs'
     | '/tracking/approvals'
+    | '/tracking/audit-logs'
     | '/tracking/business-goals'
     | '/tracking/configuration'
     | '/tracking/consent'
     | '/tracking/contact-forms'
     | '/tracking/conversion-strategy'
+    | '/tracking/delivery-logs'
     | '/tracking/events'
+    | '/tracking/form-builder'
     | '/tracking/kpi-management'
     | '/tracking/measurement-plan'
     | '/tracking/operations'
+    | '/tracking/providers'
+    | '/tracking/retry-logs'
     | '/tracking/routing'
     | '/tracking/settings'
     | '/tracking/spam-protection'
+    | '/tracking/submissions'
     | '/tracking/testing'
+    | '/tracking/verification'
     | '/website-foundation/approvals'
     | '/website-foundation/audit'
     | '/website-foundation/automation'
@@ -967,19 +1101,26 @@ export interface FileRouteTypes {
     | '/website-foundation/plugins'
     | '/website-foundation/responsive'
     | '/website-foundation/rollback'
+    | '/website-foundation/ssl'
     | '/website-foundation/themes'
     | '/website-foundation/wizard'
     | '/website-foundation/wordpress'
+    | '/audit/'
+    | '/business-keyword-competitor/'
     | '/business-profile/'
+    | '/business/'
     | '/competitors/'
+    | '/foundation/'
     | '/google-products/'
     | '/keywords/'
     | '/mobile/'
+    | '/onpage-seo/'
     | '/performance/'
     | '/reports/'
     | '/search-console/'
     | '/search-knowledge/'
     | '/seo-analyzer/'
+    | '/seo/'
     | '/settings/'
     | '/tracking/'
     | '/website-foundation/'
@@ -1029,19 +1170,26 @@ export interface FileRouteTypes {
     | '/search-knowledge/voice-search'
     | '/tracking/activity-logs'
     | '/tracking/approvals'
+    | '/tracking/audit-logs'
     | '/tracking/business-goals'
     | '/tracking/configuration'
     | '/tracking/consent'
     | '/tracking/contact-forms'
     | '/tracking/conversion-strategy'
+    | '/tracking/delivery-logs'
     | '/tracking/events'
+    | '/tracking/form-builder'
     | '/tracking/kpi-management'
     | '/tracking/measurement-plan'
     | '/tracking/operations'
+    | '/tracking/providers'
+    | '/tracking/retry-logs'
     | '/tracking/routing'
     | '/tracking/settings'
     | '/tracking/spam-protection'
+    | '/tracking/submissions'
     | '/tracking/testing'
+    | '/tracking/verification'
     | '/website-foundation/approvals'
     | '/website-foundation/audit'
     | '/website-foundation/automation'
@@ -1056,19 +1204,26 @@ export interface FileRouteTypes {
     | '/website-foundation/plugins'
     | '/website-foundation/responsive'
     | '/website-foundation/rollback'
+    | '/website-foundation/ssl'
     | '/website-foundation/themes'
     | '/website-foundation/wizard'
     | '/website-foundation/wordpress'
+    | '/audit'
+    | '/business-keyword-competitor'
     | '/business-profile'
+    | '/business'
     | '/competitors'
+    | '/foundation'
     | '/google-products'
     | '/keywords'
     | '/mobile'
+    | '/onpage-seo'
     | '/performance'
     | '/reports'
     | '/search-console'
     | '/search-knowledge'
     | '/seo-analyzer'
+    | '/seo'
     | '/settings'
     | '/tracking'
     | '/website-foundation'
@@ -1122,19 +1277,26 @@ export interface FileRouteTypes {
     | '/_app/search-knowledge/voice-search'
     | '/_app/tracking/activity-logs'
     | '/_app/tracking/approvals'
+    | '/_app/tracking/audit-logs'
     | '/_app/tracking/business-goals'
     | '/_app/tracking/configuration'
     | '/_app/tracking/consent'
     | '/_app/tracking/contact-forms'
     | '/_app/tracking/conversion-strategy'
+    | '/_app/tracking/delivery-logs'
     | '/_app/tracking/events'
+    | '/_app/tracking/form-builder'
     | '/_app/tracking/kpi-management'
     | '/_app/tracking/measurement-plan'
     | '/_app/tracking/operations'
+    | '/_app/tracking/providers'
+    | '/_app/tracking/retry-logs'
     | '/_app/tracking/routing'
     | '/_app/tracking/settings'
     | '/_app/tracking/spam-protection'
+    | '/_app/tracking/submissions'
     | '/_app/tracking/testing'
+    | '/_app/tracking/verification'
     | '/_app/website-foundation/approvals'
     | '/_app/website-foundation/audit'
     | '/_app/website-foundation/automation'
@@ -1149,19 +1311,26 @@ export interface FileRouteTypes {
     | '/_app/website-foundation/plugins'
     | '/_app/website-foundation/responsive'
     | '/_app/website-foundation/rollback'
+    | '/_app/website-foundation/ssl'
     | '/_app/website-foundation/themes'
     | '/_app/website-foundation/wizard'
     | '/_app/website-foundation/wordpress'
+    | '/_app/audit/'
+    | '/_app/business-keyword-competitor/'
     | '/_app/business-profile/'
+    | '/_app/business/'
     | '/_app/competitors/'
+    | '/_app/foundation/'
     | '/_app/google-products/'
     | '/_app/keywords/'
     | '/_app/mobile/'
+    | '/_app/onpage-seo/'
     | '/_app/performance/'
     | '/_app/reports/'
     | '/_app/search-console/'
     | '/_app/search-knowledge/'
     | '/_app/seo-analyzer/'
+    | '/_app/seo/'
     | '/_app/settings/'
     | '/_app/tracking/'
     | '/_app/website-foundation/'
@@ -1208,6 +1377,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWebsiteFoundationRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/audit/': {
+      id: '/_app/audit/'
+      path: '/audit'
+      fullPath: '/audit/'
+      preLoaderRoute: typeof AppAuditIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/business-keyword-competitor/': {
+      id: '/_app/business-keyword-competitor/'
+      path: '/business-keyword-competitor'
+      fullPath: '/business-keyword-competitor/'
+      preLoaderRoute: typeof AppBusinessKeywordCompetitorIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/business-profile/': {
       id: '/_app/business-profile/'
       path: '/business-profile'
@@ -1215,11 +1398,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppBusinessProfileIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/business/': {
+      id: '/_app/business/'
+      path: '/business'
+      fullPath: '/business/'
+      preLoaderRoute: typeof AppBusinessIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/competitors/': {
       id: '/_app/competitors/'
       path: '/competitors'
       fullPath: '/competitors/'
       preLoaderRoute: typeof AppCompetitorsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/foundation/': {
+      id: '/_app/foundation/'
+      path: '/foundation'
+      fullPath: '/foundation/'
+      preLoaderRoute: typeof AppFoundationIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/google-products/': {
@@ -1241,6 +1438,13 @@ declare module '@tanstack/react-router' {
       path: '/mobile'
       fullPath: '/mobile/'
       preLoaderRoute: typeof AppMobileIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/onpage-seo/': {
+      id: '/_app/onpage-seo/'
+      path: '/onpage-seo'
+      fullPath: '/onpage-seo/'
+      preLoaderRoute: typeof AppOnpageSeoIndexRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/performance/': {
@@ -1565,6 +1769,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSeoAnalyzerIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/seo/': {
+      id: '/_app/seo/'
+      path: '/seo'
+      fullPath: '/seo/'
+      preLoaderRoute: typeof AppSeoIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/settings/': {
       id: '/_app/settings/'
       path: '/settings'
@@ -1591,6 +1802,13 @@ declare module '@tanstack/react-router' {
       path: '/tracking/approvals'
       fullPath: '/tracking/approvals'
       preLoaderRoute: typeof AppTrackingApprovalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/audit-logs': {
+      id: '/_app/tracking/audit-logs'
+      path: '/tracking/audit-logs'
+      fullPath: '/tracking/audit-logs'
+      preLoaderRoute: typeof AppTrackingAuditLogsRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/tracking/business-goals': {
@@ -1628,11 +1846,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTrackingConversionStrategyRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/tracking/delivery-logs': {
+      id: '/_app/tracking/delivery-logs'
+      path: '/tracking/delivery-logs'
+      fullPath: '/tracking/delivery-logs'
+      preLoaderRoute: typeof AppTrackingDeliveryLogsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/tracking/events': {
       id: '/_app/tracking/events'
       path: '/tracking/events'
       fullPath: '/tracking/events'
       preLoaderRoute: typeof AppTrackingEventsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/form-builder': {
+      id: '/_app/tracking/form-builder'
+      path: '/tracking/form-builder'
+      fullPath: '/tracking/form-builder'
+      preLoaderRoute: typeof AppTrackingFormBuilderRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/tracking/kpi-management': {
@@ -1656,6 +1888,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTrackingOperationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/tracking/providers': {
+      id: '/_app/tracking/providers'
+      path: '/tracking/providers'
+      fullPath: '/tracking/providers'
+      preLoaderRoute: typeof AppTrackingProvidersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/retry-logs': {
+      id: '/_app/tracking/retry-logs'
+      path: '/tracking/retry-logs'
+      fullPath: '/tracking/retry-logs'
+      preLoaderRoute: typeof AppTrackingRetryLogsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/tracking/routing': {
       id: '/_app/tracking/routing'
       path: '/tracking/routing'
@@ -1677,11 +1923,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTrackingSpamProtectionRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/tracking/submissions': {
+      id: '/_app/tracking/submissions'
+      path: '/tracking/submissions'
+      fullPath: '/tracking/submissions'
+      preLoaderRoute: typeof AppTrackingSubmissionsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/tracking/testing': {
       id: '/_app/tracking/testing'
       path: '/tracking/testing'
       fullPath: '/tracking/testing'
       preLoaderRoute: typeof AppTrackingTestingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/tracking/verification': {
+      id: '/_app/tracking/verification'
+      path: '/tracking/verification'
+      fullPath: '/tracking/verification'
+      preLoaderRoute: typeof AppTrackingVerificationRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/website-foundation/': {
@@ -1787,6 +2047,13 @@ declare module '@tanstack/react-router' {
       path: '/rollback'
       fullPath: '/website-foundation/rollback'
       preLoaderRoute: typeof AppWebsiteFoundationRollbackRouteImport
+      parentRoute: typeof AppWebsiteFoundationRoute
+    }
+    '/_app/website-foundation/ssl': {
+      id: '/_app/website-foundation/ssl'
+      path: '/ssl'
+      fullPath: '/website-foundation/ssl'
+      preLoaderRoute: typeof AppWebsiteFoundationSslRouteImport
       parentRoute: typeof AppWebsiteFoundationRoute
     }
     '/_app/website-foundation/themes': {
@@ -1939,6 +2206,7 @@ interface AppWebsiteFoundationRouteChildren {
   AppWebsiteFoundationPluginsRoute: typeof AppWebsiteFoundationPluginsRoute
   AppWebsiteFoundationResponsiveRoute: typeof AppWebsiteFoundationResponsiveRoute
   AppWebsiteFoundationRollbackRoute: typeof AppWebsiteFoundationRollbackRoute
+  AppWebsiteFoundationSslRoute: typeof AppWebsiteFoundationSslRoute
   AppWebsiteFoundationThemesRoute: typeof AppWebsiteFoundationThemesRoute
   AppWebsiteFoundationWizardRoute: typeof AppWebsiteFoundationWizardRoute
   AppWebsiteFoundationWordpressRoute: typeof AppWebsiteFoundationWordpressRoute
@@ -1960,6 +2228,7 @@ const AppWebsiteFoundationRouteChildren: AppWebsiteFoundationRouteChildren = {
   AppWebsiteFoundationPluginsRoute: AppWebsiteFoundationPluginsRoute,
   AppWebsiteFoundationResponsiveRoute: AppWebsiteFoundationResponsiveRoute,
   AppWebsiteFoundationRollbackRoute: AppWebsiteFoundationRollbackRoute,
+  AppWebsiteFoundationSslRoute: AppWebsiteFoundationSslRoute,
   AppWebsiteFoundationThemesRoute: AppWebsiteFoundationThemesRoute,
   AppWebsiteFoundationWizardRoute: AppWebsiteFoundationWizardRoute,
   AppWebsiteFoundationWordpressRoute: AppWebsiteFoundationWordpressRoute,
@@ -1976,27 +2245,40 @@ interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppTrackingActivityLogsRoute: typeof AppTrackingActivityLogsRoute
   AppTrackingApprovalsRoute: typeof AppTrackingApprovalsRoute
+  AppTrackingAuditLogsRoute: typeof AppTrackingAuditLogsRoute
   AppTrackingBusinessGoalsRoute: typeof AppTrackingBusinessGoalsRoute
   AppTrackingConfigurationRoute: typeof AppTrackingConfigurationRoute
   AppTrackingConsentRoute: typeof AppTrackingConsentRoute
   AppTrackingContactFormsRoute: typeof AppTrackingContactFormsRoute
   AppTrackingConversionStrategyRoute: typeof AppTrackingConversionStrategyRoute
+  AppTrackingDeliveryLogsRoute: typeof AppTrackingDeliveryLogsRoute
   AppTrackingEventsRoute: typeof AppTrackingEventsRoute
+  AppTrackingFormBuilderRoute: typeof AppTrackingFormBuilderRoute
   AppTrackingKpiManagementRoute: typeof AppTrackingKpiManagementRoute
   AppTrackingMeasurementPlanRoute: typeof AppTrackingMeasurementPlanRoute
   AppTrackingOperationsRoute: typeof AppTrackingOperationsRoute
+  AppTrackingProvidersRoute: typeof AppTrackingProvidersRoute
+  AppTrackingRetryLogsRoute: typeof AppTrackingRetryLogsRoute
   AppTrackingRoutingRoute: typeof AppTrackingRoutingRoute
   AppTrackingSettingsRoute: typeof AppTrackingSettingsRoute
   AppTrackingSpamProtectionRoute: typeof AppTrackingSpamProtectionRoute
+  AppTrackingSubmissionsRoute: typeof AppTrackingSubmissionsRoute
   AppTrackingTestingRoute: typeof AppTrackingTestingRoute
+  AppTrackingVerificationRoute: typeof AppTrackingVerificationRoute
+  AppAuditIndexRoute: typeof AppAuditIndexRoute
+  AppBusinessKeywordCompetitorIndexRoute: typeof AppBusinessKeywordCompetitorIndexRoute
   AppBusinessProfileIndexRoute: typeof AppBusinessProfileIndexRoute
+  AppBusinessIndexRoute: typeof AppBusinessIndexRoute
   AppCompetitorsIndexRoute: typeof AppCompetitorsIndexRoute
+  AppFoundationIndexRoute: typeof AppFoundationIndexRoute
   AppGoogleProductsIndexRoute: typeof AppGoogleProductsIndexRoute
   AppKeywordsIndexRoute: typeof AppKeywordsIndexRoute
   AppMobileIndexRoute: typeof AppMobileIndexRoute
+  AppOnpageSeoIndexRoute: typeof AppOnpageSeoIndexRoute
   AppPerformanceIndexRoute: typeof AppPerformanceIndexRoute
   AppReportsIndexRoute: typeof AppReportsIndexRoute
   AppSeoAnalyzerIndexRoute: typeof AppSeoAnalyzerIndexRoute
+  AppSeoIndexRoute: typeof AppSeoIndexRoute
   AppSettingsIndexRoute: typeof AppSettingsIndexRoute
   AppTrackingIndexRoute: typeof AppTrackingIndexRoute
 }
@@ -2008,27 +2290,41 @@ const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppTrackingActivityLogsRoute: AppTrackingActivityLogsRoute,
   AppTrackingApprovalsRoute: AppTrackingApprovalsRoute,
+  AppTrackingAuditLogsRoute: AppTrackingAuditLogsRoute,
   AppTrackingBusinessGoalsRoute: AppTrackingBusinessGoalsRoute,
   AppTrackingConfigurationRoute: AppTrackingConfigurationRoute,
   AppTrackingConsentRoute: AppTrackingConsentRoute,
   AppTrackingContactFormsRoute: AppTrackingContactFormsRoute,
   AppTrackingConversionStrategyRoute: AppTrackingConversionStrategyRoute,
+  AppTrackingDeliveryLogsRoute: AppTrackingDeliveryLogsRoute,
   AppTrackingEventsRoute: AppTrackingEventsRoute,
+  AppTrackingFormBuilderRoute: AppTrackingFormBuilderRoute,
   AppTrackingKpiManagementRoute: AppTrackingKpiManagementRoute,
   AppTrackingMeasurementPlanRoute: AppTrackingMeasurementPlanRoute,
   AppTrackingOperationsRoute: AppTrackingOperationsRoute,
+  AppTrackingProvidersRoute: AppTrackingProvidersRoute,
+  AppTrackingRetryLogsRoute: AppTrackingRetryLogsRoute,
   AppTrackingRoutingRoute: AppTrackingRoutingRoute,
   AppTrackingSettingsRoute: AppTrackingSettingsRoute,
   AppTrackingSpamProtectionRoute: AppTrackingSpamProtectionRoute,
+  AppTrackingSubmissionsRoute: AppTrackingSubmissionsRoute,
   AppTrackingTestingRoute: AppTrackingTestingRoute,
+  AppTrackingVerificationRoute: AppTrackingVerificationRoute,
+  AppAuditIndexRoute: AppAuditIndexRoute,
+  AppBusinessKeywordCompetitorIndexRoute:
+    AppBusinessKeywordCompetitorIndexRoute,
   AppBusinessProfileIndexRoute: AppBusinessProfileIndexRoute,
+  AppBusinessIndexRoute: AppBusinessIndexRoute,
   AppCompetitorsIndexRoute: AppCompetitorsIndexRoute,
+  AppFoundationIndexRoute: AppFoundationIndexRoute,
   AppGoogleProductsIndexRoute: AppGoogleProductsIndexRoute,
   AppKeywordsIndexRoute: AppKeywordsIndexRoute,
   AppMobileIndexRoute: AppMobileIndexRoute,
+  AppOnpageSeoIndexRoute: AppOnpageSeoIndexRoute,
   AppPerformanceIndexRoute: AppPerformanceIndexRoute,
   AppReportsIndexRoute: AppReportsIndexRoute,
   AppSeoAnalyzerIndexRoute: AppSeoAnalyzerIndexRoute,
+  AppSeoIndexRoute: AppSeoIndexRoute,
   AppSettingsIndexRoute: AppSettingsIndexRoute,
   AppTrackingIndexRoute: AppTrackingIndexRoute,
 }

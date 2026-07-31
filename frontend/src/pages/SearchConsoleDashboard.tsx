@@ -1,0 +1,152 @@
+import { useState } from "react";
+import { useSearchConsoleProperties } from "@/hooks/useSearchConsole";
+import { useCreateSearchConsoleProperty } from "@/hooks/useSearchConsole";
+import { useDeleteSearchConsoleProperty } from "@/hooks/useSearchConsole";
+import { SearchConsolePropertyCard } from "@/components/search-console/property-card";
+import { SearchConsolePropertyDialog } from "@/components/search-console/property-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { Plus, Search, RefreshCw } from "lucide-react";
+
+function SearchConsoleDashboard() {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { data, isLoading, isError, refetch } = useSearchConsoleProperties({
+    page,
+    page_size: 10,
+    connection_status: statusFilter,
+  });
+
+  const connectProperty = useCreateSearchConsoleProperty({
+    onSuccess: () => {
+      toast.success("Property connected");
+      setDialogOpen(false);
+      refetch();
+    },
+    onError: () => toast.error("Failed to connect property"),
+  });
+
+  const deleteProperty = useDeleteSearchConsoleProperty({
+    onSuccess: () => toast.success("Property deleted"),
+    onError: () => toast.error("Failed to delete property"),
+  });
+
+  const filteredProperties = data?.items ?? [];
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <p className="text-destructive mb-4">Failed to load properties</p>
+        <Button onClick={() => refetch()}>Retry</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Google Search Console</h1>
+          <p className="text-sm text-muted-foreground">
+            Manage Search Console properties, monitor performance, and track indexing.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="flex items-center gap-1">
+            <RefreshCw className="size-3" /> Refresh
+          </Button>
+          <SearchConsolePropertyDialog onSubmit={(data) => connectProperty.mutate(data)}>
+            <Button size="sm" className="flex items-center gap-1">
+              <Plus className="size-3" /> Connect Property
+            </Button>
+          </SearchConsolePropertyDialog>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            placeholder="Search properties..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <select
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          value={statusFilter ?? ""}
+          onChange={(e) => setStatusFilter(e.target.value || undefined)}
+        >
+          <option value="">All Statuses</option>
+          <option value="connected">Connected</option>
+          <option value="disconnected">Disconnected</option>
+          <option value="pending-verification">Pending Verification</option>
+        </select>
+      </div>
+
+      {filteredProperties.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <p className="text-sm">No properties found.</p>
+          <p className="text-xs mt-1">Connect a Search Console property to get started.</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {filteredProperties.map((property) => (
+            <SearchConsolePropertyCard
+              key={property.id}
+              property={property}
+              onDelete={deleteProperty.mutate}
+            />
+          ))}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <span>
+          Showing {filteredProperties.length} of {data?.total ?? 0} properties
+        </span>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+            Previous
+          </Button>
+          <span className="px-2 py-1 text-xs">Page {page} of {data?.total_pages ?? 1}</span>
+          <Button variant="outline" size="sm" disabled={page >= (data?.total_pages ?? 1)} onClick={() => setPage((p) => p + 1)}>
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default SearchConsoleDashboard;

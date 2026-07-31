@@ -1,2 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router"; import { Workbench } from "@/modules/tracking-forms/components";
-export const Route=createFileRoute("/_app/tracking/approvals")({component:()=> <Workbench title="Approval Center" description="Review controlled changes before they affect consent, tracking or lead delivery." capabilities={["Consent, destination, tracking and event approval queues","Review, approve, reject and capture comments","Immutable history, decision owner and evidence reference"]} ai="Two consent changes are waiting on Legal; their planned publish date is within the next seven days."/>});
+import { createFileRoute } from "@tanstack/react-router";
+import { TrackingNav } from "@/modules/tracking/components";
+
+export const Route = createFileRoute("/_app/tracking/approvals")({
+  head: () => ({ meta: [{ title: "Approval Center — Nebula" }] }),
+  component: () => (
+    <div>
+      <TrackingNav />
+      <div className="rounded-3xl border border-border bg-card p-6">
+        <div className="text-lg font-semibold mb-4">Approval Center</div>
+        <p className="text-sm text-muted-foreground">Review and approve consent wording, tracking IDs, event definitions, and routing rules.</p>
+      </div>
+    </div>
+  ),
+});

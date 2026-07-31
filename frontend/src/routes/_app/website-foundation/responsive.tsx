@@ -1,140 +1,341 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Camera, Monitor, Tablet, Smartphone, ExternalLink, Eye, AlertTriangle, CheckCircle2, Accessibility } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Camera, Monitor, AlertTriangle, CheckCircle2, Accessibility, RefreshCw, Play, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { responsiveService } from "@/modules/website-foundation/services";
-import type { ResponsiveTest } from "@/modules/website-foundation/types";
-import { Pill } from "@/modules/website-foundation/components/status-pill";
+import { websiteApi } from "@/api/websiteApi";
+import { foundationApi } from "@/api/foundationApi";
+import { useResponsiveDiscovery } from "@/hooks/useFoundation";
+import { useRunDiscoveryScan } from "@/hooks/useFoundation";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { ResponsiveDiscoveryResponse } from "@/types/foundation";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/website-foundation/responsive")({
   head: () => ({ meta: [{ title: "Responsive — Nebula" }] }),
   component: ResponsiveCenter,
 });
 
-const viewportIcons: Record<ResponsiveTest["viewport"], React.ComponentType<{ className?: string }>> = {
-  desktop: Monitor,
-  laptop: Monitor,
-  tablet: Tablet,
-  mobile: Smartphone,
-  landscape: Monitor,
-  portrait: Smartphone,
-};
+function resolveScreenshotUrl(url: string | null | undefined, baseUrl?: string): string | null {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  const apiBase = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/$/, "");
+  return `${apiBase}${url}`;
+}
+
+function formatBytes(bytes?: number): string {
+  if (!bytes && bytes !== 0) return "—";
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+}
 
 function ResponsiveCenter() {
-  const [tests, setTests] = useState<ResponsiveTest[]>([]);
-  useEffect(() => { responsiveService.list().then(setTests); }, []);
+  const queryClient = useQueryClient();
+  const { data: website } = useQuery({
+    queryKey: ["website-list"],
+    queryFn: () => websiteApi.list(),
+    select: (res) => res.items?.[0],
+  });
+
+  const websiteId = website?.id;
+
+  const { data: responsive, isLoading: responsiveLoading, isError: responsiveError, refetch: refetchResponsive } =
+    useResponsiveDiscovery(websiteId || "");
+
+  const [scanId, setScanId] = useState<string | null>(null);
+  const [scanning, setScanning] = useState(false);
+
+  const { mutate: runScan } = useRunDiscoveryScan();
+
+  const { data: scanStatus } = useQuery({
+    queryKey: ["scan-status", websiteId, scanId],
+    queryFn: () => websiteApi.getScanStatus(websiteId!, scanId!),
+    enabled: !!websiteId && !!scanId,
+    refetchInterval: (query) => {
+      if (!query.state.data) return 2000;
+      if (query.state.data.status === "completed" || query.state.data.status === "failed") {
+        return false;
+      }
+      return 2000;
+    },
+  });
+
+  const isScanning = useMemo(() => {
+    if (!scanStatus) return scanning;
+    return scanStatus.status === "running" || scanStatus.status === "queued";
+  }, [scanStatus, scanning]);
+
+  if (scanStatus && (scanStatus.status === "completed" || scanStatus.status === "failed")) {
+    setScanning(false);
+    setScanId(null);
+    queryClient.invalidateQueries({ queryKey: ["website-list"] });
+    queryClient.invalidateQueries({ queryKey: ["foundation-responsive"] });
+    queryClient.invalidateQueries({ queryKey: ["foundation-screenshot"] });
+    queryClient.invalidateQueries({ queryKey: ["scan-status"] });
+    if (scanStatus.status === "completed") {
+      toast.success("Responsive audit updated");
+    } else if (scanStatus.error_message) {
+      toast.error(scanStatus.error_message);
+    }
+  }
+
+  const handleRunAudit = () => {
+    if (!websiteId) return;
+    setScanning(true);
+    runScan(
+      { id: websiteId, params: { force: true } },
+      {
+        onSuccess: (data: any) => {
+          const sid = data.scan_id;
+          if (sid) setScanId(sid);
+          else {
+            setScanning(false);
+            toast.error("Scan failed to start");
+          }
+        },
+        onError: (error: unknown) => {
+          setScanning(false);
+          toast.error(error instanceof Error ? error.message : "Scan failed");
+        },
+      }
+    );
+  };
+
+  const isLoading = responsiveLoading || isScanning;
+  const hasData = responsive && responsive.status !== "not_available";
+
+  const viewportInfo = useMemo(() => {
+    if (!responsive?.result) return null;
+    const vm = responsive.result.viewport_meta || "";
+    const hasTag = responsive.result.has_responsive_tag;
+    if (hasTag && vm) return vm;
+    if (hasTag) return "Responsive viewport detected";
+    if (vm) return vm;
+    return "No viewport meta tag detected";
+  }, [responsive]);
+
+  const screenshotUrl = useMemo(
+    () => resolveScreenshotUrl(responsive?.result?.screenshot_url, website?.url),
+    [responsive?.result?.screenshot_url, website?.url]
+  );
+
+  if (responsiveError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <p className="text-destructive mb-4">Failed to load responsive data</p>
+        <Button onClick={() => refetchResponsive()}>Retry</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {tests.map((t, i) => {
-          const Icon = viewportIcons[t.viewport] || Monitor;
-          const ratio =
-            t.viewport === "desktop" ? "16:9" :
-            t.viewport === "laptop" ? "16:10" :
-            t.viewport === "tablet" ? "3:4" :
-            t.viewport === "mobile" || t.viewport === "portrait" ? "9:19" :
-            t.viewport === "landscape" ? "19:9" : "16:9";
-          return (
-            <div key={t.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm font-semibold capitalize">
-                  <Icon className="size-4 text-primary" /> {t.viewport}
-                </div>
-                <Pill intent={t.pass ? "success" : "danger"}>{t.pass ? "Pass" : "Fail"}</Pill>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Responsive</h1>
+          <p className="text-sm text-muted-foreground">
+            {website?.url
+              ? `${website.url} · Mobile readiness, viewports, touch targets`
+              : "Mobile readiness, viewports, touch targets"}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              queryClient.invalidateQueries({ queryKey: ["foundation-responsive"] });
+              queryClient.invalidateQueries({ queryKey: ["foundation-screenshot"] });
+              queryClient.invalidateQueries({ queryKey: ["website-list"] });
+              toast.success("Refreshed");
+            }}
+            disabled={isScanning}
+          >
+            <RefreshCw className={cn("size-4", isScanning && "animate-spin")} />
+            Refresh
+          </Button>
+          <Button size="sm" onClick={handleRunAudit} disabled={isScanning || !websiteId}>
+            <Play className="size-3.5" /> {isScanning ? "Running Audit…" : "Run Audit"}
+          </Button>
+        </div>
+      </div>
+
+      {isScanning && (
+        <div className="rounded-2xl border border-border bg-card p-4 flex items-center gap-3">
+          <RefreshCw className="size-4 animate-spin text-primary" />
+          <div>
+            <div className="text-sm font-semibold">Audit in progress</div>
+            <div className="text-xs text-muted-foreground">
+              {scanStatus?.status === "queued" ? "Queued" : scanStatus?.status === "running" ? "Scanning…" : "Starting…"}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!hasData && !isLoading && (
+        <div className="rounded-2xl border border-border bg-card p-6 text-center">
+          <Monitor className="size-10 text-muted-foreground mx-auto mb-3" />
+          <p className="text-sm font-semibold mb-1">No responsive audit has been executed yet.</p>
+          <p className="text-xs text-muted-foreground mb-4">Run an audit to capture viewport, touch targets, and responsive metrics.</p>
+          <Button size="sm" onClick={handleRunAudit} disabled={!websiteId || isScanning}>
+            <Play className="size-3.5" /> Run Audit
+          </Button>
+        </div>
+      )}
+
+      {hasData && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="text-sm font-semibold flex items-center gap-2"><Monitor className="size-4 text-primary" /> Viewport & score</div>
+            <div className="mt-4 space-y-2">
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Responsive Score</div>
+                <div className="text-sm font-medium mt-0.5">{responsive.result.responsive_score ?? "—"} / 100</div>
               </div>
-              <div className="mt-3 rounded-xl border border-border bg-muted/30 relative overflow-hidden" style={{ aspectRatio: ratio.replace(":", " / ") }}>
-                <div className="absolute inset-0 grid place-items-center text-muted-foreground text-xs">
-                  {t.url} · {t.resolution}
-                </div>
-                <div className="absolute top-2 left-2 right-2 flex items-center justify-between">
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-background/80">{t.resolution}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-background/80 capitalize">{t.viewport}</span>
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Viewport Meta</div>
+                <div className="text-sm font-medium mt-0.5 break-all">{viewportInfo || "Not available"}</div>
+              </div>
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Responsive Tag</div>
+                <div className="text-sm font-medium mt-0.5 capitalize">
+                  {responsive.result.has_responsive_tag !== undefined ? (responsive.result.has_responsive_tag ? "Detected" : "Missing") : "Not available"}
                 </div>
               </div>
-              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                <div className="rounded-lg bg-muted/40 py-2">
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Issues</div>
-                  <div className="text-xs font-semibold mt-0.5">{t.issues}</div>
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Accessibility</div>
+                <div className="text-sm font-medium mt-0.5">
+                  {responsive.result.accessibility_score !== undefined && responsive.result.accessibility_score !== null
+                    ? `${responsive.result.accessibility_score} / 100`
+                    : "Not available"}
                 </div>
-                <div className="rounded-lg bg-muted/40 py-2">
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Touch</div>
-                  <div className="text-xs font-semibold mt-0.5">{t.touchTargets || "—"}px</div>
-                </div>
-                <div className="rounded-lg bg-muted/40 py-2">
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground">A11y</div>
-                  <div className="text-xs font-semibold mt-0.5">{t.accessibility}</div>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center gap-2">
-                <Button size="sm" variant="outline" className="rounded-lg flex-1"><Camera className="size-3.5" /> Screenshot</Button>
-                <Button size="sm" variant="ghost" className="rounded-lg"><Eye className="size-3.5" /></Button>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="text-sm font-semibold flex items-center gap-2"><AlertTriangle className="size-4 text-warning" /> Responsive issues</div>
-          <div className="mt-4 space-y-2">
-            {[
-              { title: "Hero CTA tap target 36px on mobile", viewport: "mobile", severity: "medium" },
-              { title: "Footer text wraps unexpectedly at 1280px", viewport: "laptop", severity: "low" },
-              { title: "Landscape nav overlaps hero copy", viewport: "landscape", severity: "medium" },
-              { title: "Image alt missing on /pricing hero", viewport: "tablet", severity: "low" },
-            ].map((i, idx) => (
-              <div key={idx} className="rounded-xl border border-border p-3 bg-muted/20">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium">{i.title}</div>
-                  <Pill intent={i.severity === "medium" ? "warning" : "info"}>{i.severity}</Pill>
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="text-sm font-semibold flex items-center gap-2"><AlertTriangle className="size-4 text-warning" /> Responsive issues</div>
+            <div className="mt-4 space-y-2">
+              {(responsive.result.errors && responsive.result.errors.length > 0) ? (
+                responsive.result.errors.map((err, idx) => (
+                  <div key={idx} className="rounded-xl border border-border p-3 bg-muted/20">
+                    <div className="text-sm font-medium">{err}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5 capitalize">scan error</div>
+                  </div>
+                ))
+              ) : (
+                <div className="rounded-xl border border-border p-3 bg-muted/20">
+                  <div className="text-sm font-medium">No responsive issues detected</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">All viewports passed</div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-0.5 capitalize">{i.viewport}</div>
+              )}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="text-sm font-semibold flex items-center gap-2"><Accessibility className="size-4 text-primary" /> Touch targets</div>
+            <div className="mt-4">
+              <div className="rounded-xl border border-border p-3 bg-muted/20 text-center">
+                <div className="text-xs text-muted-foreground">Touch target analysis</div>
+                <div className="text-sm font-medium mt-1">Not available from public scan</div>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Detailed touch target measurements require authenticated inspection.
+                </p>
               </div>
-            ))}
+            </div>
           </div>
         </div>
+      )}
 
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="text-sm font-semibold flex items-center gap-2"><Accessibility className="size-4 text-primary" /> Touch targets</div>
-          <div className="mt-4 space-y-3">
-            {[
-              { l: "Primary CTA", v: 48, target: 44 },
-              { l: "Nav links", v: 40, target: 44 },
-              { l: "Form inputs", v: 48, target: 44 },
-              { l: "Footer links", v: 36, target: 44 },
-            ].map((m) => (
-              <div key={m.l}>
-                <div className="flex justify-between text-xs mb-1"><span>{m.l}</span><span className={cn("font-semibold", m.v < m.target ? "text-warning" : "text-success")}>{m.v}px</span></div>
-                <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                  <div className={"h-full rounded-full " + (m.v < m.target ? "bg-warning" : "gradient-primary")} style={{ width: `${Math.min(100, (m.v / 60) * 100)}%` }} />
+      {hasData && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="text-sm font-semibold flex items-center gap-2"><CheckCircle2 className="size-4 text-success" /> Snapshot</div>
+            <div className="mt-4 space-y-2">
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Captured</div>
+                <div className="text-sm font-medium mt-0.5">
+                  {responsive.result.scanned_at ? new Date(responsive.result.scanned_at).toLocaleString() : "—"}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="text-sm font-semibold flex items-center gap-2"><CheckCircle2 className="size-4 text-success" /> Snapshot</div>
-          <div className="mt-4 space-y-2">
-            {[
-              { l: "Captured", v: "2026-07-28 09:14" },
-              { l: "Resolution", v: "1920×1080" },
-              { l: "Viewport", v: "Desktop" },
-              { l: "Navigation", v: "Functional" },
-              { l: "Accessibility", v: "90 / 100" },
-            ].map((c) => (
-              <div key={c.l} className="rounded-xl border border-border p-3 bg-muted/20">
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.l}</div>
-                <div className="text-sm font-medium mt-0.5">{c.v}</div>
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Resolution</div>
+                <div className="text-sm font-medium mt-0.5">
+                  {responsive.result.screenshot_width && responsive.result.screenshot_height
+                    ? `${responsive.result.screenshot_width}×${responsive.result.screenshot_height}`
+                    : "—"}
+                </div>
               </div>
-            ))}
-            <Button variant="outline" className="rounded-xl w-full"><ExternalLink className="size-4" /> Open in browser</Button>
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Viewport</div>
+                <div className="text-sm font-medium mt-0.5">{viewportInfo || "—"}</div>
+              </div>
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Navigation</div>
+                <div className="text-sm font-medium mt-0.5">Not available from public scan</div>
+              </div>
+              <div className="rounded-xl border border-border p-3 bg-muted/20">
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Accessibility</div>
+                <div className="text-sm font-medium mt-0.5">
+                  {responsive.result.accessibility_score !== undefined && responsive.result.accessibility_score !== null
+                    ? `${responsive.result.accessibility_score} / 100`
+                    : "Not available"}
+                </div>
+              </div>
+            </div>
+            {screenshotUrl && (
+              <div className="mt-4">
+                <div className="rounded-xl border border-border overflow-hidden bg-muted/30 relative" style={{ aspectRatio: "16 / 9" }}>
+                  <img
+                    src={screenshotUrl}
+                    alt={`Screenshot of ${website?.url || responsive.result.url}`}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
+                <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>
+                    {formatBytes(responsive.result.screenshot_file_size)} · {responsive.result.screenshot_width}×{responsive.result.screenshot_height}
+                  </span>
+                  <Button variant="ghost" size="sm" className="h-7 px-2">
+                    <ExternalLink className="size-3.5" /> Open
+                  </Button>
+                </div>
+              </div>
+            )}
+            {responsive.result.screenshot_status === "failed" && (
+              <div className="mt-4 rounded-xl border border-border bg-destructive/10 p-3">
+                <div className="text-xs font-semibold text-destructive">Screenshot Capture Failed</div>
+                <div className="text-[11px] text-destructive/80 mt-0.5">{responsive.result.screenshot_error || "Unknown error"}</div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-lg mt-2 w-full"
+                  onClick={async () => {
+                    if (!websiteId) return;
+                    try {
+                      await websiteApi.captureScreenshot(websiteId);
+                      queryClient.invalidateQueries({ queryKey: ["foundation-responsive"] });
+                      queryClient.invalidateQueries({ queryKey: ["foundation-screenshot"] });
+                      toast.success("Screenshot re-captured");
+                    } catch (error) {
+                      toast.error(error instanceof Error ? error.message : "Failed to capture screenshot");
+                    }
+                  }}
+                >
+                  <Camera className="size-3.5" /> Retry Screenshot
+                </Button>
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
+
+export default ResponsiveCenter;

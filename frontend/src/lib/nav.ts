@@ -12,6 +12,8 @@ import {
   FileBarChart,
   Settings,
   BookOpen,
+  Brain,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,6 +37,8 @@ export const navItems: NavItem[] = [
   { title: "Google Products", to: "/google-products", icon: Chrome },
   { title: "Search Console", to: "/search-console", icon: Search, badge: "New" },
   { title: "Search Knowledge", to: "/search-knowledge", icon: BookOpen, badge: "New" },
+  { title: "Business Intelligence", to: "/business-keyword-competitor", icon: Brain },
+  { title: "On-Page SEO", to: "/onpage-seo", icon: FileText },
   { title: "Reports", to: "/reports", icon: FileBarChart },
   { title: "Settings", to: "/settings", icon: Settings },
 ];
