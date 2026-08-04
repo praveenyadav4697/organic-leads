@@ -11,9 +11,15 @@ import type { ResponsiveDiscoveryResponse } from "@/types/foundation";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+import { ErrorBoundary } from "@/modules/website-foundation/components/error-boundary";
+
 export const Route = createFileRoute("/_app/website-foundation/responsive")({
   head: () => ({ meta: [{ title: "Responsive | Organic Leads" }] }),
-  component: ResponsiveCenter,
+  component: () => (
+    <ErrorBoundary name="Responsive">
+      <ResponsiveCenter />
+    </ErrorBoundary>
+  ),
 });
 
 function resolveScreenshotUrl(url: string | null | undefined, baseUrl?: string): string | null {

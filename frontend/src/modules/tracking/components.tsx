@@ -215,3 +215,155 @@ export function TrackingPage() {
     </div>
   );
 }
+
+export function FormSubmissionsTable() {
+  const [submissions, setSubmissions] = useState<any[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(50);
+
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        setLoading(true);
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
+        const params = new URLSearchParams({
+          page: page.toString(),
+          page_size: pageSize.toString(),
+        });
+        const response = await fetch(`${apiUrl}/tracking/submissions?${params}`);
+        const data = await response.json();
+        setSubmissions(data.items || []);
+        setTotal(data.total || 0);
+      } catch (error) {
+        console.error("Failed to fetch submissions:", error);
+        setSubmissions([]);
+        setTotal(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubmissions();
+  }, [page, pageSize]);
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    const statusColors: Record<string, string> = {
+      pending: "bg-yellow-500/10 text-yellow-600 border-yellow-200",
+      sent: "bg-blue-500/10 text-blue-600 border-blue-200",
+      delivered: "bg-green-500/10 text-green-600 border-green-200",
+      failed: "bg-red-500/10 text-red-600 border-red-200",
+      spamming: "bg-orange-500/10 text-orange-600 border-orange-200",
+    };
+    return statusColors[status] || "bg-muted text-muted-foreground border-border";
+  };
+
+  const totalPages = Math.ceil(total / pageSize);
+
+  return (
+    <div className="space-y-4 px-6 mb-6">
+      <div className="rounded-lg border border-border bg-card">
+        <div className="border-b border-border px-6 py-4">
+          <h2 className="text-lg font-semibold">Form Submissions</h2>
+          <p className="text-sm text-muted-foreground mt-1">Track form submissions with delivery status and visitor information</p>
+        </div>
+
+        {loading ? (
+          <div className="px-6 py-8 text-center">
+            <div className="text-sm text-muted-foreground">Loading submissions...</div>
+          </div>
+        ) : submissions.length === 0 ? (
+          <div className="px-6 py-8 text-center">
+            <div className="text-sm text-muted-foreground">No form submissions found</div>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border bg-muted/30">
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Form Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Plugin</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Destination</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Submitted</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">Visitor IP</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {submissions.map((submission: any) => (
+                    <tr key={submission.id} className="hover:bg-muted/30 transition-colors">
+                      <td className="px-6 py-4 text-sm font-medium">{submission.form_name}</td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground">{submission.plugin}</td>
+                      <td className="px-6 py-4 text-sm">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${getStatusColor(submission.status)}`}>
+                          <span className="size-1.5 rounded-full bg-current opacity-80" />
+                          {submission.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground truncate max-w-xs">{submission.destination_address || "—"}</td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground whitespace-nowrap">{formatDate(submission.submitted_at)}</td>
+                      <td className="px-6 py-4 text-sm font-mono text-muted-foreground">{submission.visitor_ip || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="border-t border-border px-6 py-4 flex items-center justify-between flex-wrap gap-4">
+              <div className="text-sm text-muted-foreground">
+                Showing {submissions.length === 0 ? 0 : (page - 1) * pageSize + 1} to {Math.min(page * pageSize, total)} of {total} submissions
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-3 py-1 rounded border border-border text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted transition-colors"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum = Math.max(1, page - 2) + i;
+                    if (pageNum > totalPages) return null;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => setPage(pageNum)}
+                        className={`px-2 py-1 rounded text-sm transition-colors ${
+                          page === pageNum
+                            ? "bg-primary text-primary-foreground"
+                            : "border border-border hover:bg-muted"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                  className="px-3 py-1 rounded border border-border text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-muted transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

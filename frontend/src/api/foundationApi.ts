@@ -11,8 +11,6 @@ import type {
   AuditResponse,
   BackupRequest,
   BackupResponse,
-  RollbackRequest,
-  RollbackResponse,
   ApproveRequest,
   ApproveResponse,
   PaginatedResponse,
@@ -34,8 +32,11 @@ import type { WebsiteRegistrationCreate, WebsiteRegistrationResponse } from "@/t
 
 function toFoundationProject(site: WebsiteRegistrationResponse): FoundationProject {
   const status: FoundationProject["status"] = site.status === "failed" ? "paused" : "active";
-  const verificationStatus: FoundationProject["verification_status"] = site.registrationStatus === "completed" ? "completed" : "pending";
-  const auditStatus: FoundationProject["audit_status"] = site.latestScanStatus ? "completed" : "pending";
+  const verificationStatus: FoundationProject["verification_status"] =
+    site.registrationStatus === "completed" ? "completed" : "pending";
+  const auditStatus: FoundationProject["audit_status"] = site.latestScanStatus
+    ? "completed"
+    : "pending";
 
   return {
     id: site.id,
@@ -56,8 +57,6 @@ function toFoundationProject(site: WebsiteRegistrationResponse): FoundationProje
     inventory_result: null,
     backup_status: "pending",
     backup_path: null,
-    rollback_status: "pending",
-    rollback_result: null,
     approval_status: "pending",
     approved_by: null,
     approval_notes: null,
@@ -160,14 +159,6 @@ export const foundationApi = {
       project_id: id,
       status: "completed",
       backup_path: `/backups/${id}.zip`,
-    };
-  },
-
-  runRollback: async (id: string, _params: RollbackRequest): Promise<RollbackResponse> => {
-    return {
-      project_id: id,
-      status: "completed",
-      result: { rollback: true },
     };
   },
 
@@ -331,7 +322,8 @@ export const foundationApi = {
           security_score: result.securityScore ?? result.security_score ?? 0,
           https_enabled: result.httpsEnabled ?? result.https_enabled,
           mixed_content_count: result.mixedContentCount ?? result.mixed_content_count ?? 0,
-          directory_listing_enabled: result.directoryListingEnabled ?? result.directory_listing_enabled ?? false,
+          directory_listing_enabled:
+            result.directoryListingEnabled ?? result.directory_listing_enabled ?? false,
           hsts_enabled: result.hstsEnabled ?? result.hsts_enabled ?? false,
           content_security_policy: result.contentSecurityPolicy ?? result.content_security_policy,
           x_frame_options: result.xFrameOptions ?? result.x_frame_options,
@@ -363,15 +355,15 @@ export const foundationApi = {
         project_id: id,
         status: "completed",
         result: {
-          performance_score: result.performanceScore ?? result.performance_score ?? 0,
-          response_time_ms: result.responseTimeMs ?? result.response_time_ms,
-          ttfb_ms: result.ttfbMs ?? result.ttfb_ms,
-          redirect_count: result.redirectCount ?? result.redirect_count ?? 0,
-          http_version: result.httpVersion ?? result.http_version,
-          content_encoding: result.contentEncoding ?? result.content_encoding,
-          compression_enabled: result.compressionEnabled ?? result.compression_enabled ?? false,
-          final_url: result.finalUrl ?? result.final_url,
-          status_code: result.statusCode ?? result.status_code,
+          performance_score: 0,
+          response_time_ms: result.response_time_ms ?? undefined,
+          ttfb_ms: result.ttfb_ms ?? undefined,
+          redirect_count: result.redirect_count ?? undefined,
+          http_version: result.http_version ?? undefined,
+          content_encoding: result.content_encoding ?? undefined,
+          compression_enabled: result.compression_enabled ?? false,
+          final_url: result.final_url ?? undefined,
+          status_code: result.status_code ?? undefined,
         },
       };
     } catch {
@@ -489,6 +481,15 @@ export const foundationApi = {
 
   getResponsiveDiscovery: async (id: string): Promise<ResponsiveDiscoveryResponse> => {
     const result = await websiteApi.getResponsive(id);
+    return {
+      project_id: id,
+      status: "completed",
+      result,
+    };
+  },
+
+  getDashboard: async (id: string): Promise<any> => {
+    const result = await websiteApi.getDashboard(id);
     return {
       project_id: id,
       status: "completed",

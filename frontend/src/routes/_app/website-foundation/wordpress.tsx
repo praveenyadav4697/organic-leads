@@ -12,9 +12,15 @@ import type { WordPressInfo } from "@/modules/website-foundation/types";
 import { Switch } from "@/modules/website-foundation/components/form-field";
 import { toast } from "sonner";
 
+import { ErrorBoundary } from "@/modules/website-foundation/components/error-boundary";
+
 export const Route = createFileRoute("/_app/website-foundation/wordpress")({
   head: () => ({ meta: [{ title: "WordPress | Organic Leads" }] }),
-  component: WordPressManagement,
+  component: () => (
+    <ErrorBoundary name="WordPress">
+      <WordPressManagement />
+    </ErrorBoundary>
+  ),
 });
 
 function WordPressManagement() {
