@@ -1,0 +1,1 @@
+from tests.modules.search_console import *  # noqa: F401

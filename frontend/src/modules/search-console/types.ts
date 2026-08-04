@@ -1,3 +1,9 @@
+export type PropertyType = "website" | "youtube_channel" | "app";
+export type PermissionLevel = "siteFull" | "siteRead" | "siteReadPrivate" | "siteOwner" | "accountFull" | "accountRead";
+export type SiteOwnership = "sole" | "partial" | "multiple" | "unverified";
+export type VerificationMethod = "dns" | "html" | "html_tag" | "google_analytics" | "google_tag_manager" | null;
+export type ConnectionStatus = "connected" | "disconnected" | "pending" | "pending-verification" | "error";
+
 export interface SearchConsoleProperty {
   id: string;
   property_id: string;
@@ -13,6 +19,9 @@ export interface SearchConsoleProperty {
   created_by: string;
   created_at: string;
   updated_at: string;
+  last_sync_at: string | null;
+  sync_status: string | null;
+  sync_error: string | null;
 }
 
 export interface UrlInspectionResult {
