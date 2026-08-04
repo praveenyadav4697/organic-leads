@@ -12,8 +12,6 @@ import type {
   AuditResponse,
   BackupRequest,
   BackupResponse,
-  RollbackRequest,
-  RollbackResponse,
   ApproveRequest,
   ApproveResponse,
   PaginatedResponse,
@@ -63,15 +61,13 @@ export function useCreateFoundationProject() {
 
 export function useUpdateFoundationProject() {
   const queryClient = useQueryClient();
-  return useMutation<FoundationProject, Error, { id: string; data: FoundationProjectUpdate }>(
-    {
-      mutationFn: ({ id, data }) => foundationApi.updateProject(id, data),
-      onSuccess: (_, variables) => {
-        queryClient.invalidateQueries({ queryKey: ["foundation-project"] });
-        queryClient.invalidateQueries({ queryKey: ["foundation-projects"] });
-      },
-    }
-  );
+  return useMutation<FoundationProject, Error, { id: string; data: FoundationProjectUpdate }>({
+    mutationFn: ({ id, data }) => foundationApi.updateProject(id, data),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["foundation-project"] });
+      queryClient.invalidateQueries({ queryKey: ["foundation-projects"] });
+    },
+  });
 }
 
 export function useDeleteFoundationProject() {
@@ -86,23 +82,17 @@ export function useDeleteFoundationProject() {
 
 export function useVerifyProject() {
   const queryClient = useQueryClient();
-  return useMutation<VerifyResponse, Error, { id: string; params?: VerifyRequest }>(
-    {
-      mutationFn: ({ id, params }) => foundationApi.verifyProject(id, params),
-      onSuccess: (_, variables) => {
-        queryClient.invalidateQueries({ queryKey: ["foundation-project", variables.id] });
-      },
-    }
-  );
+  return useMutation<VerifyResponse, Error, { id: string; params?: VerifyRequest }>({
+    mutationFn: ({ id, params }) => foundationApi.verifyProject(id, params),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["foundation-project", variables.id] });
+    },
+  });
 }
 
 export function useRunInventory() {
   const queryClient = useQueryClient();
-  return useMutation<
-    InventoryResponse,
-    Error,
-    { id: string; params?: InventoryRequest }
-  >({
+  return useMutation<InventoryResponse, Error, { id: string; params?: InventoryRequest }>({
     mutationFn: ({ id, params }) => foundationApi.runInventory(id, params),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["foundation-project", variables.id] });
@@ -122,26 +112,8 @@ export function useRunAudit() {
 
 export function useCreateBackup() {
   const queryClient = useQueryClient();
-  return useMutation<
-    BackupResponse,
-    Error,
-    { id: string; params?: BackupRequest }
-  >({
+  return useMutation<BackupResponse, Error, { id: string; params?: BackupRequest }>({
     mutationFn: ({ id, params }) => foundationApi.createBackup(id, params),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["foundation-project", variables.id] });
-    },
-  });
-}
-
-export function useRunRollback() {
-  const queryClient = useQueryClient();
-  return useMutation<
-    RollbackResponse,
-    Error,
-    { id: string; params: RollbackRequest }
-  >({
-    mutationFn: ({ id, params }) => foundationApi.runRollback(id, params),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["foundation-project", variables.id] });
     },
@@ -150,11 +122,7 @@ export function useRunRollback() {
 
 export function useApproveProject() {
   const queryClient = useQueryClient();
-  return useMutation<
-    ApproveResponse,
-    Error,
-    { id: string; params: ApproveRequest }
-  >({
+  return useMutation<ApproveResponse, Error, { id: string; params: ApproveRequest }>({
     mutationFn: ({ id, params }) => foundationApi.approveProject(id, params),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["foundation-project", variables.id] });

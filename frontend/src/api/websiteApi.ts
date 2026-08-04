@@ -9,19 +9,37 @@ import type {
   PluginScanEntry,
   ThemeScanEntry,
   ScanHistoryEntry,
+  WebsitePerformance,
 } from "@/types/website";
+import type {
+  Theme,
+  ThemeDetail,
+  ThemeInstallResponse,
+  ThemeActivateResponse,
+  ThemeDeleteResponse,
+  ThemeUpdateResponse,
+  Plugin,
+  PluginDetail,
+  PluginHealth,
+  PluginSearchResponse,
+  PluginOperationResult,
+  PluginLog,
+  PluginSecurityIssue,
+  FormManagerForm,
+  FormOperationResult,
+  FormManagerHealth,
+  FormLog,
+} from "@/modules/website-foundation/types";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000/api/v1";
 
-async function request<T>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
+async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE}${path}`;
   const hasBody = options.body !== undefined && options.body !== null;
+  const isFormData = options.body instanceof FormData;
   const res = await fetch(url, {
     headers: {
-      ...(hasBody ? { "Content-Type": "application/json" } : {}),
+      ...(hasBody && !isFormData ? { "Content-Type": "application/json" } : {}),
       ...options.headers,
     },
     ...options,
@@ -29,7 +47,7 @@ async function request<T>(
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    const message = body.detail || res.statusText || "An error occurred";
+    const message = body.message || body.detail || res.statusText || "An error occurred";
     throw new Error(message);
   }
 
@@ -45,7 +63,13 @@ export const websiteApi = {
     page?: number;
     page_size?: number;
     environment?: string;
-  }): Promise<{ items: WebsiteRegistrationResponse[]; total: number; page: number; page_size: number; total_pages: number }> => {
+  }): Promise<{
+    items: WebsiteRegistrationResponse[];
+    total: number;
+    page: number;
+    page_size: number;
+    total_pages: number;
+  }> => {
     const qs = new URLSearchParams();
     if (params?.page) qs.set("page", String(params.page));
     if (params?.page_size) qs.set("page_size", String(params.page_size));
@@ -68,7 +92,8 @@ export const websiteApi = {
       items: Array.isArray(response?.items) ? response.items : [],
       total: response?.total ?? (Array.isArray(response?.items) ? response.items.length : 0),
       page: response?.page ?? 1,
-      page_size: response?.page_size ?? (Array.isArray(response?.items) ? response.items.length : 0),
+      page_size:
+        response?.page_size ?? (Array.isArray(response?.items) ? response.items.length : 0),
       total_pages: response?.total_pages ?? 1,
     };
   },
@@ -84,7 +109,10 @@ export const websiteApi = {
     });
   },
 
-  update: async (id: string, data: Partial<WebsiteRegistrationCreate>): Promise<WebsiteRegistrationResponse> => {
+  update: async (
+    id: string,
+    data: Partial<WebsiteRegistrationCreate>,
+  ): Promise<WebsiteRegistrationResponse> => {
     return request<WebsiteRegistrationResponse>(`/websites/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
@@ -111,8 +139,13 @@ export const websiteApi = {
     });
   },
 
-  getScanHistory: async (id: string, limit = 50): Promise<{ items: ScanHistoryEntry[]; total: number }> => {
-    return request<{ items: ScanHistoryEntry[]; total: number }>(`/websites/${id}/scan-history?limit=${limit}`);
+  getScanHistory: async (
+    id: string,
+    limit = 50,
+  ): Promise<{ items: ScanHistoryEntry[]; total: number }> => {
+    return request<{ items: ScanHistoryEntry[]; total: number }>(
+      `/websites/${id}/scan-history?limit=${limit}`,
+    );
   },
 
   getScanStatus: async (id: string, scanId: string): Promise<any> => {
@@ -120,15 +153,21 @@ export const websiteApi = {
   },
 
   getSslDiagnostics: async (id: string): Promise<any> => request<any>(`/websites/${id}/ssl`),
-  getHostingDiagnostics: async (id: string): Promise<any> => request<any>(`/websites/${id}/hosting`),
-  getPluginScans: async (id: string): Promise<PluginScanEntry[]> => request<PluginScanEntry[]>(`/websites/${id}/plugin-scans`),
+  getHostingDiagnostics: async (id: string): Promise<any> =>
+    request<any>(`/websites/${id}/hosting`),
+  getPluginScans: async (id: string): Promise<PluginScanEntry[]> =>
+    request<PluginScanEntry[]>(`/websites/${id}/plugin-scans`),
 
-  getThemeScans: async (id: string): Promise<ThemeScanEntry[]> => request<ThemeScanEntry[]>(`/websites/${id}/theme-scans`),
+  getThemeScans: async (id: string): Promise<ThemeScanEntry[]> =>
+    request<ThemeScanEntry[]>(`/websites/${id}/theme-scans`),
 
   getHealthDiagnostics: async (id: string): Promise<any> => request<any>(`/websites/${id}/health`),
 
   getBrokenLinks: async (id: string): Promise<any> => request<any>(`/websites/${id}/broken-links`),
-  runWorkflow: async (id: string, params?: WebsiteWorkflowRequest): Promise<WebsiteWorkflowStatusResponse> => {
+  runWorkflow: async (
+    id: string,
+    params?: WebsiteWorkflowRequest,
+  ): Promise<WebsiteWorkflowStatusResponse> => {
     return request<WebsiteWorkflowStatusResponse>(`/websites/${id}/workflow`, {
       method: "POST",
       body: JSON.stringify(params || {}),
@@ -155,23 +194,34 @@ export const websiteApi = {
     return request<Theme[]>(`/websites/${id}/themes`);
   },
 
-  createTheme: async (id: string, data: any): Promise<Theme> => {
-    return request<Theme>(`/websites/${id}/themes`, {
+  uploadTheme: async (id: string, formData: FormData): Promise<ThemeInstallResponse> => {
+    return request<ThemeInstallResponse>(`/websites/${id}/themes/install`, {
+      method: "POST",
+      body: formData,
+    });
+  },
+
+  activateTheme: async (id: string, data: { slug: string }): Promise<ThemeActivateResponse> => {
+    return request<ThemeActivateResponse>(`/websites/${id}/themes/activate`, {
       method: "POST",
       body: JSON.stringify(data),
     });
   },
 
-  updateTheme: async (id: string, themeId: string, data: any): Promise<Theme> => {
-    return request<Theme>(`/websites/${id}/themes/${themeId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
+  deleteTheme: async (id: string, slug: string): Promise<ThemeDeleteResponse> => {
+    return request<ThemeDeleteResponse>(`/websites/${id}/themes/${slug}`, {
+      method: "DELETE",
     });
   },
 
-  deleteTheme: async (id: string, themeId: string): Promise<void> => {
-    return request<void>(`/websites/${id}/themes/${themeId}`, {
-      method: "DELETE",
+  getTheme: async (id: string, slug: string): Promise<ThemeDetail> => {
+    return request<ThemeDetail>(`/websites/${id}/themes/${slug}`);
+  },
+
+  updateTheme: async (id: string, data: { slug: string }): Promise<ThemeUpdateResponse> => {
+    return request<ThemeUpdateResponse>(`/websites/${id}/themes/update`, {
+      method: "POST",
+      body: JSON.stringify(data),
     });
   },
 
@@ -180,49 +230,149 @@ export const websiteApi = {
     return request<Plugin[]>(`/websites/${id}/plugins`);
   },
 
-  createPlugin: async (id: string, data: any): Promise<Plugin> => {
-    return request<Plugin>(`/websites/${id}/plugins`, {
+  getPlugin: async (id: string, slug: string): Promise<PluginDetail> => {
+    return request<PluginDetail>(`/websites/${id}/plugins/${slug}`);
+  },
+
+  installPluginFromRepo: async (id: string, slug: string): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/install`, {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify({ slug }),
     });
   },
 
-  updatePlugin: async (id: string, pluginId: string, data: any): Promise<Plugin> => {
-    return request<Plugin>(`/websites/${id}/plugins/${pluginId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
+  uploadPlugin: async (id: string, formData: FormData): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/upload`, {
+      method: "POST",
+      body: formData,
     });
   },
 
-  deletePlugin: async (id: string, pluginId: string): Promise<void> => {
-    return request<void>(`/websites/${id}/plugins/${pluginId}`, {
+  activatePlugin: async (id: string, slug: string): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/activate`, {
+      method: "POST",
+      body: JSON.stringify({ slug }),
+    });
+  },
+
+  deactivatePlugin: async (id: string, slug: string): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/deactivate`, {
+      method: "POST",
+      body: JSON.stringify({ slug }),
+    });
+  },
+
+  deletePlugin: async (id: string, slug: string): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/${slug}`, {
       method: "DELETE",
     });
+  },
+
+  updatePlugin: async (id: string, slug: string): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/update`, {
+      method: "POST",
+      body: JSON.stringify({ slug }),
+    });
+  },
+
+  rollbackPlugin: async (
+    id: string,
+    slug: string,
+    version: string,
+  ): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/rollback`, {
+      method: "POST",
+      body: JSON.stringify({ slug, version }),
+    });
+  },
+
+  setPluginAutoUpdate: async (
+    id: string,
+    slug: string,
+    enabled: boolean,
+  ): Promise<PluginOperationResult> => {
+    return request<PluginOperationResult>(`/websites/${id}/plugins/auto-update`, {
+      method: "POST",
+      body: JSON.stringify({ slug, enabled }),
+    });
+  },
+
+  searchPlugins: async (
+    id: string,
+    query: string,
+    perPage = 10,
+    page = 1,
+  ): Promise<PluginSearchResponse> => {
+    return request<PluginSearchResponse>(
+      `/websites/${id}/plugins/search?query=${encodeURIComponent(query)}&per_page=${perPage}&page=${page}`,
+    );
+  },
+
+  getPluginsHealth: async (id: string): Promise<PluginHealth> => {
+    return request<PluginHealth>(`/websites/${id}/plugins/health`);
+  },
+
+  getPluginsSecurity: async (id: string): Promise<PluginSecurityIssue[]> => {
+    return request<PluginSecurityIssue[]>(`/websites/${id}/plugins/security`);
+  },
+
+  getPluginLogs: async (id: string, limit = 50): Promise<PluginLog[]> => {
+    return request<PluginLog[]>(`/websites/${id}/plugin-logs?limit=${limit}`);
   },
 
   // Forms
-  listForms: async (id: string): Promise<Form[]> => {
-    return request<Form[]>(`/websites/${id}/forms`);
+  listForms: async (id: string): Promise<FormManagerForm[]> => {
+    const data = await request<any>(`/websites/${id}/forms`);
+    return data?.forms ?? data ?? [];
   },
 
-  createForm: async (id: string, data: any): Promise<Form> => {
-    return request<Form>(`/websites/${id}/forms`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+  getForm: async (id: string, formId: string): Promise<FormManagerForm> => {
+    const data = await request<any>(`/websites/${id}/forms/${formId}`);
+    return data?.data ?? data;
   },
 
-  updateForm: async (id: string, formId: string, data: any): Promise<Form> => {
-    return request<Form>(`/websites/${id}/forms/${formId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  },
-
-  deleteForm: async (id: string, formId: string): Promise<void> => {
-    return request<void>(`/websites/${id}/forms/${formId}`, {
+  deleteForm: async (id: string, formId: string): Promise<FormOperationResult> => {
+    return request<FormOperationResult>(`/websites/${id}/forms/${formId}`, {
       method: "DELETE",
     });
+  },
+
+  publishForm: async (id: string, formId: string): Promise<FormOperationResult> => {
+    return request<FormOperationResult>(`/websites/${id}/forms/publish`, {
+      method: "POST",
+      body: JSON.stringify({ id: formId }),
+    });
+  },
+
+  unpublishForm: async (id: string, formId: string): Promise<FormOperationResult> => {
+    return request<FormOperationResult>(`/websites/${id}/forms/unpublish`, {
+      method: "POST",
+      body: JSON.stringify({ id: formId }),
+    });
+  },
+
+  duplicateForm: async (id: string, formId: string): Promise<FormOperationResult> => {
+    return request<FormOperationResult>(`/websites/${id}/forms/duplicate`, {
+      method: "POST",
+      body: JSON.stringify({ id: formId }),
+    });
+  },
+
+  previewForm: async (id: string, formId: string): Promise<any> => {
+    const result = await request<any>(`/websites/${id}/forms/preview`, {
+      method: "POST",
+      body: JSON.stringify({ id: formId }),
+    });
+    return result?.data ?? result;
+  },
+
+  getFormsHealth: async (id: string): Promise<FormManagerHealth> => {
+    const result = await request<any>(`/websites/${id}/forms/health`);
+    return result?.data ?? result;
+  },
+
+  getFormLogs: async (id: string, limit = 50): Promise<FormLog[]> => {
+    return request<FormLog[]>(`/websites/${id}/form-logs?limit=${limit}`);
   },
 
   // Responsive tests
@@ -288,119 +438,6 @@ export const websiteApi = {
     });
   },
 
-  // Backlog issues
-  listBacklogIssues: async (id: string, params?: { page?: number; page_size?: number; status?: string; priority?: string }): Promise<any> => {
-    const qs = new URLSearchParams();
-    if (params?.page) qs.set("page", String(params.page));
-    if (params?.page_size) qs.set("page_size", String(params.page_size));
-    if (params?.status) qs.set("status", params.status);
-    if (params?.priority) qs.set("priority", params.priority);
-    const query = qs.toString();
-    return request<any>(`/websites/${id}/backlog${query ? `?${query}` : ""}`);
-  },
-
-  createBacklogIssue: async (id: string, data: any): Promise<any> => {
-    return request<any>(`/websites/${id}/backlog`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  updateBacklogIssue: async (id: string, issueId: string, data: any): Promise<any> => {
-    return request<any>(`/websites/${id}/backlog/${issueId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  },
-
-  deleteBacklogIssue: async (id: string, issueId: string): Promise<void> => {
-    return request<void>(`/websites/${id}/backlog/${issueId}`, {
-      method: "DELETE",
-    });
-  },
-
-  // Rollback entries
-  listRollbacks: async (id: string): Promise<RollbackEntry[]> => {
-    return request<RollbackEntry[]>(`/websites/${id}/rollbacks`);
-  },
-
-  createRollback: async (id: string, data: any): Promise<RollbackEntry> => {
-    return request<RollbackEntry>(`/websites/${id}/rollbacks`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Deployments
-  listDeployments: async (id: string): Promise<Deployment[]> => {
-    return request<Deployment[]>(`/websites/${id}/deployments`);
-  },
-
-  createDeployment: async (id: string, data: any): Promise<Deployment> => {
-    return request<Deployment>(`/websites/${id}/deployments`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  updateDeployment: async (id: string, deploymentId: string, data: any): Promise<Deployment> => {
-    return request<Deployment>(`/websites/${id}/deployments/${deploymentId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Approvals
-  listApprovals: async (id: string): Promise<Approval[]> => {
-    return request<Approval[]>(`/websites/${id}/approvals`);
-  },
-
-  createApproval: async (id: string, data: any): Promise<Approval> => {
-    return request<Approval>(`/websites/${id}/approvals`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  updateApproval: async (id: string, approvalId: string, data: any): Promise<Approval> => {
-    return request<Approval>(`/websites/${id}/approvals/${approvalId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Automation jobs
-  listJobs: async (id: string): Promise<AutomationJob[]> => {
-    return request<AutomationJob[]>(`/websites/${id}/jobs`);
-  },
-
-  createJob: async (id: string, data: any): Promise<AutomationJob> => {
-    return request<AutomationJob>(`/websites/${id}/jobs`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  updateJob: async (id: string, jobId: string, data: any): Promise<AutomationJob> => {
-    return request<AutomationJob>(`/websites/${id}/jobs/${jobId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Log entries
-  listLogs: async (id: string, limit?: number): Promise<LogEntry[]> => {
-    const qs = limit ? `?limit=${limit}` : "";
-    return request<LogEntry[]>(`/websites/${id}/logs${qs}`);
-  },
-
-  createLog: async (id: string, data: any): Promise<LogEntry> => {
-    return request<LogEntry>(`/websites/${id}/logs`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
   // AI insights
   listAiInsights: async (id: string, kind?: string): Promise<any[]> => {
     const qs = kind ? `?kind=${kind}` : "";
@@ -436,8 +473,8 @@ export const websiteApi = {
   },
 
   // Performance
-  getPerformance: async (id: string): Promise<any> => {
-    return request<any>(`/websites/${id}/performance`);
+  getPerformance: async (id: string): Promise<WebsitePerformance> => {
+    return request<WebsitePerformance>(`/websites/${id}/performance`);
   },
 
   // Robots.txt
@@ -458,5 +495,40 @@ export const websiteApi = {
   // Security
   getSecurity: async (id: string): Promise<any> => {
     return request<any>(`/websites/${id}/security`);
+  },
+
+  // WordPress settings
+  getSettings: async (id: string): Promise<any> => {
+    return request<any>(`/websites/${id}/settings`);
+  },
+
+  // Categories
+  getCategories: async (id: string): Promise<any> => {
+    return request<any>(`/websites/${id}/categories`);
+  },
+
+  // Tags
+  getTags: async (id: string): Promise<any> => {
+    return request<any>(`/websites/${id}/tags`);
+  },
+
+  // Post types
+  getTypes: async (id: string): Promise<any> => {
+    return request<any>(`/websites/${id}/types`);
+  },
+
+  // Shortcodes
+  getShortcodes: async (id: string): Promise<any> => {
+    return request<any>(`/websites/${id}/shortcodes`);
+  },
+
+  // Brand assets
+  getBrandAssets: async (id: string): Promise<any> => {
+    return request<any>(`/websites/${id}/brand-assets`);
+  },
+
+  // Consolidated dashboard
+  getDashboard: async (id: string): Promise<any> => {
+    return request<any>(`/websites/${id}/dashboard`);
   },
 };

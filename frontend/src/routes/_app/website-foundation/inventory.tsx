@@ -6,10 +6,15 @@ import { Button } from "@/components/ui/button";
 import { auditService } from "@/modules/website-foundation/services";
 import type { ComponentInventory } from "@/modules/website-foundation/types";
 import { toast } from "sonner";
+import { ErrorBoundary } from "@/modules/website-foundation/components/error-boundary";
 
 export const Route = createFileRoute("/_app/website-foundation/inventory")({
   head: () => ({ meta: [{ title: "Component Inventory | Organic Leads" }] }),
-  component: ComponentInventoryPage,
+  component: () => (
+    <ErrorBoundary name="Inventory">
+      <ComponentInventoryPage />
+    </ErrorBoundary>
+  ),
 });
 
 const items: { label: string; key: keyof ComponentInventory; icon: React.ComponentType<{ className?: string }>; hint: string }[] = [
@@ -60,7 +65,7 @@ function ComponentInventoryPage() {
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-muted-foreground">
               <it.icon className="size-3.5" /> {it.label}
             </div>
-            <div className="mt-2 text-2xl font-semibold">{inv[it.key].toLocaleString()}</div>
+            <div className="mt-2 text-2xl font-semibold">{(inv[it.key] ?? 0).toLocaleString()}</div>
             <div className="text-[11px] text-muted-foreground">{it.hint}</div>
           </motion.div>
         ))}

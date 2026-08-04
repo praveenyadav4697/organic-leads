@@ -12,9 +12,15 @@ import { websiteApi } from "@/api/websiteApi";
 import type { WebsiteRegistrationResponse } from "@/types/website";
 import { toast } from "sonner";
 
+import { ErrorBoundary } from "@/modules/website-foundation/components/error-boundary";
+
 export const Route = createFileRoute("/_app/website-foundation/overview")({
   head: () => ({ meta: [{ title: "Website Overview | Organic Leads" }] }),
-  component: WebsiteOverview,
+  component: () => (
+    <ErrorBoundary name="Overview">
+      <WebsiteOverview />
+    </ErrorBoundary>
+  ),
 });
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -176,8 +182,8 @@ function WebsiteOverview() {
             {[
               { l: "Environment", v: site.environment, intent: "primary" as const },
               { l: "Status", v: site.status, intent: site.status === "online" ? "success" as const : "warning" as const },
-              { l: "Last scan", v: site.last_scan ? new Date(site.last_scan).toLocaleString() : "Never" },
-              { l: "Next scheduled", v: site.next_scan ? new Date(site.next_scan).toLocaleString() : "Not scheduled" },
+              { l: "Last scan", v: site.lastScan ? new Date(site.lastScan).toLocaleString() : "Never" },
+              { l: "Next scheduled", v: site.nextScan ? new Date(site.nextScan).toLocaleString() : "Not scheduled" },
             ].map((c) => (
               <div key={c.l} className="rounded-xl border border-border p-3 bg-muted/30">
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.l}</div>
@@ -266,7 +272,7 @@ function WebsiteOverview() {
               { l: "Storage usage", v: site.storage },
               { l: "CPU usage", v: site.cpu },
               { l: "Memory usage", v: site.memory },
-              { l: "Disk usage", v: site.disk_usage },
+              { l: "Disk usage", v: site.diskUsage },
             ].map((m) => (
               <div key={m.l}>
                 <div className="flex justify-between text-xs mb-1"><span>{m.l}</span><span className="font-semibold">{m.v}%</span></div>

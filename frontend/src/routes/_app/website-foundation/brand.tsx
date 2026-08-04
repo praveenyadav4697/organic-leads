@@ -7,9 +7,15 @@ import { brandService } from "@/modules/website-foundation/services";
 import type { BrandAsset } from "@/modules/website-foundation/types";
 import { motion } from "framer-motion";
 
+import { ErrorBoundary } from "@/modules/website-foundation/components/error-boundary";
+
 export const Route = createFileRoute("/_app/website-foundation/brand")({
   head: () => ({ meta: [{ title: "Brand Assets | Organic Leads" }] }),
-  component: BrandAssets,
+  component: () => (
+    <ErrorBoundary name="Brand Assets">
+      <BrandAssets />
+    </ErrorBoundary>
+  ),
 });
 
 function BrandAssets() {
@@ -106,7 +112,7 @@ function BrandAssets() {
               </motion.div>
             ))}
           </div>
-          <div className="mt-3 text-xs text-muted-foreground">{asset.mediaCount.toLocaleString()} assets in library</div>
+          <div className="mt-3 text-xs text-muted-foreground">{(asset.mediaCount ?? 0).toLocaleString()} assets in library</div>
           <div className="mt-5">
             <Field label="Preview block">
               <TextAreaInput placeholder="Add a description for the brand kit…" />

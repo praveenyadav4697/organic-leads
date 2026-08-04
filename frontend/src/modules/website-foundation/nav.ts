@@ -12,12 +12,6 @@ import {
   ShieldCheck,
   LockKeyhole,
   Package,
-  ListChecks,
-  History,
-  Rocket,
-  CheckSquare,
-  Bot,
-  FileText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -38,13 +32,6 @@ export const foundationSubNav: SubNavItem[] = [
   { to: "/website-foundation/forms", label: "Forms", icon: FormInput },
   { to: "/website-foundation/responsive", label: "Responsive", icon: Monitor },
   { to: "/website-foundation/performance", label: "Performance", icon: Activity },
-  { to: "/website-foundation/audit", label: "Audit", icon: ShieldCheck },
   { to: "/website-foundation/ssl", label: "SSL & Hosting", icon: LockKeyhole },
   { to: "/website-foundation/inventory", label: "Inventory", icon: Package },
-  { to: "/website-foundation/backlog", label: "Issue Backlog", icon: ListChecks },
-  { to: "/website-foundation/rollback", label: "Rollback", icon: History },
-  { to: "/website-foundation/deployments", label: "Deployments", icon: Rocket },
-  { to: "/website-foundation/approvals", label: "Approvals", icon: CheckSquare },
-  { to: "/website-foundation/automation", label: "Automation", icon: Bot },
-  { to: "/website-foundation/logs", label: "Logs", icon: FileText },
 ];

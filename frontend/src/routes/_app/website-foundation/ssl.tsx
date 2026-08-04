@@ -7,9 +7,15 @@ import { websiteApi } from "@/api/websiteApi";
 import { SSLDashboard } from "@/components/diagnostics/ssl-dashboard";
 import { HostingDashboard } from "@/components/diagnostics/hosting-dashboard";
 
+import { ErrorBoundary } from "@/modules/website-foundation/components/error-boundary";
+
 export const Route = createFileRoute("/_app/website-foundation/ssl")({
-  head: () => ({ meta: [{ title: "SSL & Hosting Diagnostics | Organic Leads" }] }),
-  component: SslHostingPage,
+  head: () => ({ meta: [{ title: "SSL | Organic Leads" }] }),
+  component: () => (
+    <ErrorBoundary name="SSL">
+      <SslHostingPage />
+    </ErrorBoundary>
+  ),
 });
 
 function SslHostingPage() {

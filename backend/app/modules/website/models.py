@@ -101,6 +101,7 @@ class Website(Base):
     screenshots: Mapped[list["WebsiteScreenshot"]] = relationship("WebsiteScreenshot", back_populates="website", cascade="all, delete-orphan")
     wp_syncs: Mapped[list["WordPressSync"]] = relationship("WordPressSync", back_populates="website", cascade="all, delete-orphan")
     plugin_scan_logs: Mapped[list["PluginScanLog"]] = relationship("PluginScanLog", back_populates="website", cascade="all, delete-orphan")
+    plugin_logs: Mapped[list["PluginLog"]] = relationship("PluginLog", back_populates="website", cascade="all, delete-orphan")
     theme_scan_logs: Mapped[list["ThemeScanLog"]] = relationship("ThemeScanLog", back_populates="website", cascade="all, delete-orphan")
     whois_records: Mapped[list["WhoisInformation"]] = relationship("WhoisInformation", cascade="all, delete-orphan")
     robots_records: Mapped[list["RobotsInformation"]] = relationship("RobotsInformation", cascade="all, delete-orphan")
@@ -108,6 +109,14 @@ class Website(Base):
     performance_records: Mapped[list["PerformanceInformation"]] = relationship("PerformanceInformation", cascade="all, delete-orphan")
     mobile_records: Mapped[list["MobileInformation"]] = relationship("MobileInformation", cascade="all, delete-orphan")
     seo_records: Mapped[list["SEOInformation"]] = relationship("SEOInformation", cascade="all, delete-orphan")
+    tracking_scripts: Mapped[list["TrackingScript"]] = relationship("TrackingScript", back_populates="website", cascade="all, delete-orphan")
+    consent_configs: Mapped[list["ConsentConfiguration"]] = relationship("ConsentConfiguration", back_populates="website", cascade="all, delete-orphan")
+    form_validations: Mapped[list["FormValidation"]] = relationship("FormValidation", back_populates="website", cascade="all, delete-orphan")
+    submission_destinations: Mapped[list["SubmissionDestination"]] = relationship("SubmissionDestination", back_populates="website", cascade="all, delete-orphan")
+    event_tests: Mapped[list["EventTest"]] = relationship("EventTest", back_populates="website", cascade="all, delete-orphan")
+    audit_logs: Mapped[list["TrackingAuditLog"]] = relationship("TrackingAuditLog", back_populates="website", cascade="all, delete-orphan")
+    measurement_plans: Mapped[list["MeasurementPlan"]] = relationship("MeasurementPlan", back_populates="website", cascade="all, delete-orphan")
+    form_submissions: Mapped[list["FormSubmission"]] = relationship("FormSubmission", back_populates="website", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index("ix_websites_domain", "domain"),
@@ -165,6 +174,173 @@ class WordPressPlugin(Base):
     )
 
 
+class PluginSecurityStatusEnum(str, enum.Enum):
+    ok = "ok"
+    warning = "warning"
+    critical = "critical"
+    unknown = "unknown"
+
+
+class PluginOperationEnum(str, enum.Enum):
+    install = "install"
+    activate = "activate"
+    deactivate = "deactivate"
+    delete = "delete"
+    update = "update"
+    rollback = "rollback"
+    auto_update_enable = "auto_update_enable"
+    auto_update_disable = "auto_update_disable"
+    list = "list"
+    get_detail = "get_detail"
+    search = "search"
+    health = "health"
+    security = "security"
+
+
+class PluginLog(Base):
+    __tablename__ = "plugin_logs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    plugin_slug: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    plugin_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    operation: Mapped[PluginOperationEnum] = mapped_column(Enum(PluginOperationEnum), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    executed_by: Mapped[str | None] = mapped_column(String(100), default="system")
+    execution_time_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+
+    website: Mapped["Website"] = relationship("Website", back_populates="plugin_logs")
+
+    __table_args__ = (
+        Index("ix_plugin_logs_website_created", "website_id", "created_at"),
+        Index("ix_plugin_logs_slug", "plugin_slug"),
+    )
+
+
+class FormStatusEnum(str, enum.Enum):
+    published = "published"
+    draft = "draft"
+    archived = "archived"
+
+
+class FormHealthEnum(str, enum.Enum):
+    healthy = "healthy"
+    warning = "warning"
+    critical = "critical"
+    unknown = "unknown"
+
+
+class FormOperationEnum(str, enum.Enum):
+    list = "list"
+    get_detail = "get_detail"
+    create = "create"
+    update = "update"
+    delete = "delete"
+    publish = "publish"
+    unpublish = "unpublish"
+    duplicate = "duplicate"
+    preview = "preview"
+    health = "health"
+
+
+class WebsiteForm(Base):
+    __tablename__ = "website_forms"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    wordpress_form_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    plugin: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[FormStatusEnum] = mapped_column(Enum(FormStatusEnum), default=FormStatusEnum.draft)
+    shortcode: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    fields_count: Mapped[int] = mapped_column(Integer, default=0)
+    entries_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    health: Mapped[FormHealthEnum] = mapped_column(Enum(FormHealthEnum), default=FormHealthEnum.unknown)
+    responsive: Mapped[bool] = mapped_column(Boolean, default=False)
+    auto_update_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    website: Mapped["Website"] = relationship("Website")
+
+    __table_args__ = (
+        Index("ix_forms_website_created", "website_id", "created_at"),
+        Index("ix_forms_plugin", "plugin"),
+    )
+
+
+class FormField(Base):
+    __tablename__ = "form_fields"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    form_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("website_forms.id", ondelete="CASCADE"), nullable=False, index=True)
+    field_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    label: Mapped[str] = mapped_column(String(255), nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    placeholder: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    default_value: Mapped[str | None] = mapped_column(Text, nullable=True)
+    required: Mapped[bool] = mapped_column(Boolean, default=False)
+    readonly: Mapped[bool] = mapped_column(Boolean, default=False)
+    hidden: Mapped[bool] = mapped_column(Boolean, default=False)
+    validation: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    help_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    width: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    css_class: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    position: Mapped[int] = mapped_column(Integer, default=0)
+    config: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
+    form: Mapped["WebsiteForm"] = relationship("WebsiteForm", backref="form_fields")
+
+
+class FormHealth(Base):
+    __tablename__ = "form_health"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    form_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("website_forms.id", ondelete="CASCADE"), nullable=False, index=True)
+    plugin_installed: Mapped[bool] = mapped_column(Boolean, default=False)
+    plugin_active: Mapped[bool] = mapped_column(Boolean, default=False)
+    shortcode_valid: Mapped[bool] = mapped_column(Boolean, default=False)
+    has_required_fields: Mapped[bool] = mapped_column(Boolean, default=False)
+    has_submit_button: Mapped[bool] = mapped_column(Boolean, default=False)
+    no_broken_fields: Mapped[bool] = mapped_column(Boolean, default=False)
+    no_missing_assets: Mapped[bool] = mapped_column(Boolean, default=False)
+    no_js_errors: Mapped[bool] = mapped_column(Boolean, default=False)
+    no_css_errors: Mapped[bool] = mapped_column(Boolean, default=False)
+    overall_status: Mapped[FormHealthEnum] = mapped_column(Enum(FormHealthEnum), default=FormHealthEnum.unknown)
+    details: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    checked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+    website: Mapped["Website"] = relationship("Website")
+    form: Mapped["WebsiteForm"] = relationship("WebsiteForm")
+
+
+class FormLog(Base):
+    __tablename__ = "form_logs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    form_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    form_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    operation: Mapped[FormOperationEnum] = mapped_column(Enum(FormOperationEnum), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), nullable=False)
+    result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    executed_by: Mapped[str | None] = mapped_column(String(100), default="system")
+    execution_time_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
+
+    website: Mapped["Website"] = relationship("Website", backref="form_logs")
+
+    __table_args__ = (
+        Index("ix_form_logs_website_created", "website_id", "created_at"),
+    )
+
+
 class WordPressTheme(Base):
     __tablename__ = "wordpress_themes"
 
@@ -203,6 +379,8 @@ class WebsiteSSL(Base):
     hsts_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     mixed_content_count: Mapped[int] = mapped_column(Integer, default=0)
     security_rating: Mapped[str] = mapped_column(String(10), nullable=False, default="F")
+    is_expired: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_self_signed: Mapped[bool] = mapped_column(Boolean, default=False)
     certificate_chain: Mapped[list | None] = mapped_column(JSONB, nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     checked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
@@ -307,6 +485,15 @@ class WebsiteSecurity(Base):
     x_content_type_options: Mapped[str | None] = mapped_column(String(100), nullable=True)
     referrer_policy: Mapped[str | None] = mapped_column(String(100), nullable=True)
     permissions_policy: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    https_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    mixed_content_count: Mapped[int] = mapped_column(Integer, default=0)
+    directory_listing_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    cookies_total: Mapped[int] = mapped_column(Integer, default=0)
+    cookies_secure: Mapped[int] = mapped_column(Integer, default=0)
+    cookies_httponly: Mapped[int] = mapped_column(Integer, default=0)
+    cookies_samesite: Mapped[int] = mapped_column(Integer, default=0)
+    security_header_coverage_pct: Mapped[int] = mapped_column(Integer, default=0)
+    vulnerability_count: Mapped[int] = mapped_column(Integer, default=0)
     vulnerability_count: Mapped[int] = mapped_column(Integer, default=0)
     critical_count: Mapped[int] = mapped_column(Integer, default=0)
     high_count: Mapped[int] = mapped_column(Integer, default=0)
@@ -355,6 +542,7 @@ class WordPressSync(Base):
     security: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     performance: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     health: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    forms: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     error_message: Mapped[str | None] = mapped_column(String(500), nullable=True)
     duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
     synced_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
@@ -511,6 +699,43 @@ class PerformanceInformation(Base):
     compression_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     final_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
     status_code: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+    lcp_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    cls: Mapped[float | None] = mapped_column(Float, nullable=True)
+    inp_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    fid_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    fcp_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    speed_index_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    dns_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    tcp_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    tls_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    request_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    response_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    dom_processing_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    load_event_ms: Mapped[float | None] = mapped_column(Float, nullable=True)
+    page_size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    page_encoded_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    page_decoded_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    request_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    dom_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    js_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    css_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    image_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    font_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    video_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    xhr_fetch_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    other_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    third_party_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    third_party_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    js_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    css_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    image_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    font_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    video_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    xhr_fetch_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    other_requests: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    largest_resource: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+
     not_publicly_available: Mapped[bool] = mapped_column(Boolean, default=False)
     checked_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 

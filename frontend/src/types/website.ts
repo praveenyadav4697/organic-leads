@@ -65,6 +65,66 @@ export interface WebsiteRegistrationResponse {
   credentialStatus?: "configured" | "missing";
 }
 
+export interface WebsitePerformance {
+  response_time_ms: number | null;
+  ttfb_ms: number | null;
+  dns_ms: number | null;
+  tcp_ms: number | null;
+  tls_ms: number | null;
+  request_ms: number | null;
+  response_ms: number | null;
+  dom_processing_ms: number | null;
+  load_event_ms: number | null;
+  redirect_count: number | null;
+  http_version: string | null;
+  content_encoding: string | null;
+  compression_enabled: boolean;
+  final_url: string | null;
+  status_code: number | null;
+  lcp_ms: number | null;
+  cls: number | null;
+  inp_ms: number | null;
+  fid_ms: number | null;
+  fcp_ms: number | null;
+  speed_index_ms: number | null;
+  page_size_bytes: number | null;
+  page_encoded_bytes: number | null;
+  page_decoded_bytes: number | null;
+  request_count: number | null;
+  dom_size: number | null;
+  js_bytes: number | null;
+  css_bytes: number | null;
+  image_bytes: number | null;
+  font_bytes: number | null;
+  video_bytes: number | null;
+  audio_bytes: number | null;
+  xhr_fetch_bytes: number | null;
+  other_bytes: number | null;
+  third_party_bytes: number | null;
+  third_party_requests: number | null;
+  js_requests: number | null;
+  css_requests: number | null;
+  image_requests: number | null;
+  font_requests: number | null;
+  video_requests: number | null;
+  audio_requests: number | null;
+  xhr_fetch_requests: number | null;
+  other_requests: number | null;
+  largest_resource: Record<string, unknown> | null;
+  slowest_resource: Record<string, unknown> | null;
+  protocol: string | null;
+  not_publicly_available: boolean;
+}
+
+export interface CoreVitals {
+  lcp: number | null;
+  cls: number | null;
+  inp: number | null;
+  ttfb: number | null;
+  speedIndex: number | null;
+  pageSize: number | null;
+}
+
 export interface DiagnosticPlugin {
   plugin_key: string;
   name: string;

@@ -126,9 +126,9 @@ def _to_facts(payload: Dict[str, Any], source: str) -> WhoisFacts:
         registrar=registrar,
         registrant_name=registrant_name,
         registrant_email=registrant_email,
-        registration_date=events.get("registration"),
-        expiry_date=events.get("expiration"),
-        updated_date=events.get("last changed") or events.get("last update"),
+        registration_date=_parse_iso_datetime(events.get("registration")),
+        expiry_date=_parse_iso_datetime(events.get("expiration")),
+        updated_date=_parse_iso_datetime(events.get("last changed") or events.get("last update")),
         name_servers=nameservers or None,
         status=status or None,
         source=source,
@@ -139,6 +139,38 @@ def _to_facts(payload: Dict[str, Any], source: str) -> WhoisFacts:
         not_publicly_available=len(fields) == 0,
         fields=fields,
     )
+
+
+def _parse_iso_datetime(value: Any) -> Optional[datetime]:
+    """Parse an RDAP/WHOIS date value into a timezone-aware datetime.
+
+    RDAP ``eventDate`` values are ISO 8601 strings such as
+    ``1995-08-14T04:00:00Z``.  SQLAlchemy needs a ``datetime`` instance for
+    ``DateTime(timezone=True)`` columns, so we convert here.  If the value is
+    already a ``datetime`` it is returned as-is; otherwise ``None`` is
+    returned so the field is omitted.
+    """
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            return value.replace(tzinfo=datetime.timezone.utc)
+        return value
+    if not isinstance(value, str):
+        return None
+    text = value.strip()
+    if not text:
+        return None
+    text = text.replace("Z", "+00:00")
+    try:
+        return datetime.fromisoformat(text)
+    except (TypeError, ValueError):
+        pass
+    # Fallback for formats like "14-Aug-1995".
+    for fmt in ("%d-%b-%Y", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d"):
+        try:
+            return datetime.strptime(text, fmt).replace(tzinfo=datetime.timezone.utc)
+        except (TypeError, ValueError):
+            pass
+    return None
 
 
 def _extract_registrar(entities: List[Dict[str, Any]]) -> Optional[str]:

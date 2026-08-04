@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { Inbox, AlertTriangle, Loader2 } from "lucide-react";
+import { ReactNode, useState } from "react";
+import { Inbox, AlertTriangle, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 /**
@@ -144,6 +144,60 @@ export function PageLoading({ title, description }: PageLoadingProps) {
           />
         ))}
       </div>
+    </div>
+  );
+}
+
+interface WarningBannerProps {
+  title?: string;
+  description?: string;
+  actionLabel?: string;
+  onAction?: () => void;
+  dismissible?: boolean;
+  className?: string;
+}
+
+export function WarningBanner({
+  title = "Warning",
+  description,
+  actionLabel,
+  onAction,
+  dismissible = false,
+  className,
+}: WarningBannerProps) {
+  const [visible, setVisible] = useState(true);
+  if (!visible) return null;
+
+  return (
+    <div
+      className={
+        "flex items-start gap-2.5 rounded-xl border border-warning/30 bg-warning/5 p-3 text-sm " +
+        (className ?? "")
+      }
+      role="alert"
+    >
+      <AlertTriangle className="size-4 shrink-0 text-warning mt-0.5" />
+      <div className="flex-1">
+        <p className="font-medium text-foreground">{title}</p>
+        {description && (
+          <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+        )}
+      </div>
+      {actionLabel && onAction && (
+        <Button variant="ghost" size="sm" onClick={onAction} className="h-6 text-xs">
+          {actionLabel}
+        </Button>
+      )}
+      {dismissible && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setVisible(false)}
+          className="h-6 w-6 p-0"
+        >
+          <X className="size-3" />
+        </Button>
+      )}
     </div>
   );
 }

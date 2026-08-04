@@ -16,6 +16,10 @@ from app.modules.website.models import (
     WordPressSync,
     PluginScanLog,
     ThemeScanLog,
+    PluginLog,
+    WebsiteForm,
+    FormLog,
+    ThemeStatusEnum,
     WhoisInformation,
     RobotsInformation,
     SitemapInformation,
@@ -130,6 +134,13 @@ class WordPressThemeRepository(BaseRepository[WordPressTheme]):
 
     async def delete_by_website(self, website_id: Any) -> None:
         await self.db.execute(delete(WordPressTheme).where(WordPressTheme.website_id == website_id))
+
+    async def deactivate_all_for_website(self, website_id: Any) -> None:
+        await self.db.execute(
+            update(WordPressTheme)
+            .where(WordPressTheme.website_id == website_id)
+            .values(status=ThemeStatusEnum.inactive)
+        )
 
     async def create_theme(self, obj_in: WordPressThemeCreate) -> WordPressTheme:
         return await self.create(obj_in.model_dump())
@@ -297,6 +308,61 @@ class ThemeScanLogRepository(BaseRepository[ThemeScanLog]):
             select(ThemeScanLog)
             .where(ThemeScanLog.website_id == website_id)
             .order_by(ThemeScanLog.started_at.desc())
+            .limit(limit)
+        )
+        return result.scalars().all()
+
+
+class PluginLogRepository(BaseRepository[PluginLog]):
+    def __init__(self, db: AsyncSession):
+        super().__init__(PluginLog, db)
+
+    async def get_by_website(self, website_id: Any, limit: int = 50) -> List[PluginLog]:
+        result = await self.db.execute(
+            select(PluginLog)
+            .where(PluginLog.website_id == website_id)
+            .order_by(PluginLog.created_at.desc())
+            .limit(limit)
+        )
+        return result.scalars().all()
+
+
+class WebsiteFormRepository(BaseRepository[WebsiteForm]):
+    def __init__(self, db: AsyncSession):
+        super().__init__(WebsiteForm, db)
+
+    async def get_by_website(self, website_id: Any) -> List[WebsiteForm]:
+        result = await self.db.execute(
+            select(WebsiteForm)
+            .where(WebsiteForm.website_id == website_id)
+            .order_by(WebsiteForm.created_at.desc())
+        )
+        return result.scalars().all()
+
+    async def delete_by_website(self, website_id: Any) -> None:
+        await self.db.execute(delete(WebsiteForm).where(WebsiteForm.website_id == website_id))
+
+    async def create_website_form(self, obj_in: Dict[str, Any]) -> WebsiteForm:
+        return await self.create(obj_in)
+
+    async def bulk_create(self, forms: List[Dict[str, Any]]) -> List[WebsiteForm]:
+        db_objs = [WebsiteForm(**f) for f in forms]
+        self.db.add_all(db_objs)
+        await self.db.flush()
+        for obj in db_objs:
+            await self.db.refresh(obj)
+        return db_objs
+
+
+class FormLogRepository(BaseRepository[FormLog]):
+    def __init__(self, db: AsyncSession):
+        super().__init__(FormLog, db)
+
+    async def get_by_website(self, website_id: Any, limit: int = 50) -> List[FormLog]:
+        result = await self.db.execute(
+            select(FormLog)
+            .where(FormLog.website_id == website_id)
+            .order_by(FormLog.created_at.desc())
             .limit(limit)
         )
         return result.scalars().all()

@@ -39,7 +39,7 @@ from app.modules.website.seo_inspector import parse as parse_seo
 from app.modules.website.mobile_inspector import parse as parse_mobile
 from app.modules.website.robots_inspector import fetch as fetch_robots
 from app.modules.website.sitemap_inspector import fetch as fetch_sitemap
-from app.modules.website.performance_inspector import from_fetch as performance_from_fetch
+from app.modules.website.performance_inspector import from_fetch as performance_from_fetch, from_playwright as performance_from_playwright
 from app.modules.website.dns_scanner import scan as scan_dns
 from app.modules.website.whois_scanner import lookup as lookup_whois
 from app.modules.website.ssl import inspect as inspect_ssl
@@ -122,6 +122,22 @@ class WebsiteDiscoveryService:
             _safe(self._performance_async(homepage, final_url), PerformanceFacts(), "performance", errors),
             _safe(detect_wordpress(html, final_url, http), WordPressPublicFacts(), "wordpress", errors),
         )
+
+        # Browser-level performance metrics (Core Web Vitals, page weight) via
+        # Playwright / CDP.  This is fire-and-forget: if Playwright is missing
+        # or the page crashes, we keep the HTTP-level metrics above.
+        _browser_perf_facts, browser_metrics = await _safe(
+            performance_from_playwright(url),
+            PerformanceFacts(),
+            "performance_playwright",
+            errors,
+        )
+
+        # Merge browser metrics into the HTTP performance facts so downstream
+        # consumers (service layer / API) see a single unified payload.
+        if browser_metrics and not _browser_perf_facts.not_publicly_available:
+            result.performance.fields.update(_browser_perf_facts.fields)
+            result.performance.checked_at = _browser_perf_facts.checked_at
 
         # Network-bound inspectors — DNS, WHOIS, robots, sitemap, SSL — all
         # touch the wire and run independently.

@@ -15,8 +15,6 @@ export interface FoundationProject {
   inventory_result: Record<string, unknown> | null;
   backup_status: "pending" | "in_progress" | "completed" | "failed";
   backup_path: string | null;
-  rollback_status: "pending" | "in_progress" | "completed" | "failed";
-  rollback_result: Record<string, unknown> | null;
   approval_status:
     | "pending"
     | "approved"
@@ -47,7 +45,6 @@ export interface FoundationProjectUpdate {
   audit_result?: Record<string, unknown>;
   inventory_result?: Record<string, unknown>;
   backup_path?: string;
-  rollback_result?: Record<string, unknown>;
   approved_by?: string;
   approval_notes?: string;
   updated_by?: string;
@@ -92,16 +89,6 @@ export interface BackupResponse {
   project_id: string;
   status: string;
   backup_path: string;
-}
-
-export interface RollbackRequest {
-  backup_path: string;
-}
-
-export interface RollbackResponse {
-  project_id: string;
-  status: string;
-  result: Record<string, unknown>;
 }
 
 export interface ApproveRequest {

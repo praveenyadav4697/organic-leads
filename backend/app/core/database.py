@@ -4,6 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
+from contextlib import asynccontextmanager
 
 from app.core.config import settings
 
@@ -21,6 +22,13 @@ engine = create_async_engine(
 )
 
 AsyncSessionLocal = async_sessionmaker(
+    engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autoflush=False,
+)
+
+AuditSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
     expire_on_commit=False,
@@ -103,6 +111,18 @@ async def get_db() -> AsyncSession:
         except Exception:
             await session.rollback()
             raise
+        finally:
+            await session.close()
+
+
+@asynccontextmanager
+async def get_audit_db() -> AsyncSession:
+    async with AuditSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
         finally:
             await session.close()
 

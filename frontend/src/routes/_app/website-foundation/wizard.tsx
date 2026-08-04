@@ -7,9 +7,15 @@ import { Wizard, type WizardStep } from "@/modules/website-foundation/components
 import { useCreateWebsite } from "@/hooks/useWebsite";
 import { toast } from "sonner";
 
+import { ErrorBoundary } from "@/modules/website-foundation/components/error-boundary";
+
 export const Route = createFileRoute("/_app/website-foundation/wizard")({
   head: () => ({ meta: [{ title: "Website Wizard | Organic Leads" }] }),
-  component: WebsiteWizard,
+  component: () => (
+    <ErrorBoundary name="Website Wizard">
+      <WebsiteWizard />
+    </ErrorBoundary>
+  ),
 });
 
 function WebsiteWizard() {
