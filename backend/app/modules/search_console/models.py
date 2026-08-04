@@ -75,7 +75,7 @@ class SearchConsoleProperty(Base):
     __tablename__ = "search_console_properties"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[str] = mapped_column(String(500), nullable=False, index=True)
+    property_id: Mapped[str] = mapped_column(String(500), nullable=False)
     property_name: Mapped[str] = mapped_column(String(255), nullable=False)
     property_type: Mapped[PropertyTypeEnum] = mapped_column(Enum(PropertyTypeEnum), nullable=False)
     site_url: Mapped[str] = mapped_column(String(500), nullable=False)
@@ -83,7 +83,7 @@ class SearchConsoleProperty(Base):
     site_ownership: Mapped[SiteOwnershipEnum] = mapped_column(Enum(SiteOwnershipEnum), nullable=False)
     verification_method: Mapped[VerificationMethodEnum | None] = mapped_column(Enum(VerificationMethodEnum), nullable=True)
     connection_status: Mapped[ConnectionStatusEnum] = mapped_column(Enum(ConnectionStatusEnum), nullable=False, default=ConnectionStatusEnum.pending)
-    is_verified: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
+    is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     verified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_sync_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     sync_status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
@@ -114,7 +114,7 @@ class SearchConsoleCredential(Base):
     __tablename__ = "search_console_credentials"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     encrypted_access_token: Mapped[str | None] = mapped_column(Text, nullable=True)
     encrypted_refresh_token: Mapped[str | None] = mapped_column(Text, nullable=True)
     token_type: Mapped[str] = mapped_column(String(50), nullable=False, default="Bearer")
@@ -138,7 +138,7 @@ class UrlInspectionResult(Base):
     __tablename__ = "search_console_url_inspections"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     inspected_url: Mapped[str] = mapped_column(String(2000), nullable=False)
     coverage_status: Mapped[str] = mapped_column(String(100), nullable=False, default="unknown")
     last_crawl_time: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -165,7 +165,7 @@ class SearchConsoleSitemap(Base):
     __tablename__ = "search_console_sitemaps"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     site_url: Mapped[str] = mapped_column(String(500), nullable=False)
     type: Mapped[str] = mapped_column(String(50), nullable=False, default="sitemap")
     is_pending_sitemap: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -191,7 +191,7 @@ class SearchConsoleManualAction(Base):
     __tablename__ = "search_console_manual_actions"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     action_type: Mapped[str] = mapped_column(String(100), nullable=False)
     action_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
     sites_affected: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
@@ -212,7 +212,7 @@ class SearchConsoleCrawlError(Base):
     __tablename__ = "search_console_crawl_errors"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     platform: Mapped[str] = mapped_column(String(50), nullable=False, default="web")
     error_type: Mapped[str] = mapped_column(String(100), nullable=False)
     error_sub_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
@@ -236,7 +236,7 @@ class SearchConsoleEnhancement(Base):
     __tablename__ = "search_console_enhancements"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     enhancement_type: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False)
     items_count: Mapped[int] = mapped_column(Integer, default=0)
@@ -256,7 +256,7 @@ class SearchConsolePerformanceReport(Base):
     __tablename__ = "search_console_performance_reports"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     start_date: Mapped[str] = mapped_column(String(20), nullable=False)
     end_date: Mapped[str] = mapped_column(String(20), nullable=False)
     dimensions: Mapped[list[str] | None] = mapped_column(JSONB, nullable=True)
@@ -278,7 +278,7 @@ class SearchConsoleAuditLog(Base):
     __tablename__ = "search_console_audit_logs"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="SET NULL"), nullable=True, index=True)
+    property_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="SET NULL"), nullable=True)
     action: Mapped[str] = mapped_column(String(100), nullable=False)
     actor: Mapped[str] = mapped_column(String(255), nullable=False, default="system")
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="success")
@@ -299,9 +299,9 @@ class SearchConsoleSyncJob(Base):
     __tablename__ = "search_console_sync_jobs"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False, index=True)
+    property_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="CASCADE"), nullable=False)
     sync_type: Mapped[str] = mapped_column(String(50), nullable=False)
-    status: Mapped[SyncStatusEnum] = mapped_column(Enum(SyncStatusEnum), nullable=False, default=SyncStatusEnum.queued, index=True)
+    status: Mapped[SyncStatusEnum] = mapped_column(Enum(SyncStatusEnum), nullable=False, default=SyncStatusEnum.queued)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, default=datetime.utcnow)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)

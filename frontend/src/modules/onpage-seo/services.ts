@@ -78,6 +78,7 @@ export const onpageSeoApi = {
 
   listPages: (filters?: SEOFilters & { page?: number; page_size?: number; sortBy?: string; sortOrder?: string; search?: string }) => {
     const qs = buildQueryString({
+      website: filters?.website,
       search: filters?.search,
       sortBy: filters?.sortBy,
       sortOrder: filters?.sortOrder,
@@ -108,7 +109,10 @@ export const onpageSeoApi = {
 
   deletePage: (pageId: string) => request<void>(`/onpage/pages/${pageId}`, { method: "DELETE" }),
 
-  getAudit: (pageId: string) => request<SEOAuditFinding[]>(`/onpage/pages/${pageId}/audit`),
+  getAudit: (pageId: string) =>
+    request<{ items: SEOAuditFinding[]; total: number; page: number; page_size: number; total_pages: number }>(
+      `/onpage/pages/${pageId}/audit`
+    ),
 
   getKeywords: (pageId: string) => request<SEOKeyword[]>(`/onpage/pages/${pageId}/keywords`),
 
@@ -143,6 +147,8 @@ export const onpageSeoApi = {
 
   getLogs: (filters?: SEOFilters & { page?: number; page_size?: number }) => {
     const qs = buildQueryString({
+      website: filters?.website,
+      page_id: filters?.page,
       page: filters?.page,
       page_size: filters?.page_size,
       type: filters?.status,

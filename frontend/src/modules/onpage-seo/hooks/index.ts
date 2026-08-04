@@ -82,10 +82,11 @@ export function useDeleteSEOPage() {
 }
 
 export function useSEOAudit(pageId: string) {
-  return useQuery<SEOAuditFinding[]>({
+  return useQuery<{ items: SEOAuditFinding[]; total: number; page: number; page_size: number; total_pages: number }>({
     queryKey: ["onpage-seo-audit", pageId],
     queryFn: () => onpageSeoApi.getAudit(pageId),
     enabled: !!pageId,
+    select: (data) => data.items,
   });
 }
 

@@ -26,13 +26,13 @@ setup_logging()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Ensure every model table exists before the first request lands.
+    # We log the error loudly but don't crash boot — that lets /health
+    # return and operators see the real error in the logs.
     try:
         await init_db()
     except Exception as exc:  # noqa: BLE001
-        # Don't crash boot if the DB is briefly unavailable — let /health
-        # return and let operators see the real error in the logs.
         import logging
-        logging.getLogger("app.startup").warning(
+        logging.getLogger("app.startup").exception(
             "init_db failed at startup: %s", exc
         )
     try:

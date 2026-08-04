@@ -53,10 +53,10 @@ class Website(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     url: Mapped[str] = mapped_column(String(500), nullable=False)
-    domain: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
+    domain: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     protocol: Mapped[str] = mapped_column(String(10), default="https")
-    environment: Mapped[EnvironmentEnum] = mapped_column(Enum(EnvironmentEnum), default=EnvironmentEnum.production, index=True)
-    status: Mapped[WebsiteStatusEnum] = mapped_column(Enum(WebsiteStatusEnum), default=WebsiteStatusEnum.online, index=True)
+    environment: Mapped[EnvironmentEnum] = mapped_column(Enum(EnvironmentEnum), default=EnvironmentEnum.production)
+    status: Mapped[WebsiteStatusEnum] = mapped_column(Enum(WebsiteStatusEnum), default=WebsiteStatusEnum.online)
     health: Mapped[int] = mapped_column(Integer, default=0)
     performance: Mapped[int] = mapped_column(Integer, default=0)
     seo: Mapped[int] = mapped_column(Integer, default=0)
@@ -120,9 +120,9 @@ class WebsiteScanHistory(Base):
     __tablename__ = "website_scan_history"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_type: Mapped[str] = mapped_column(String(20), nullable=False)
-    status: Mapped[ScanStatusEnum] = mapped_column(Enum(ScanStatusEnum), nullable=False, index=True)
+    status: Mapped[ScanStatusEnum] = mapped_column(Enum(ScanStatusEnum), nullable=False)
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
@@ -145,7 +145,7 @@ class WordPressPlugin(Base):
     __tablename__ = "wordpress_plugins"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     version: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[PluginStatusEnum] = mapped_column(Enum(PluginStatusEnum), default=PluginStatusEnum.disabled)
@@ -169,7 +169,7 @@ class WordPressTheme(Base):
     __tablename__ = "wordpress_themes"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     version: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[ThemeStatusEnum] = mapped_column(Enum(ThemeStatusEnum), default=ThemeStatusEnum.inactive)
@@ -191,7 +191,7 @@ class WebsiteSSL(Base):
     __tablename__ = "website_ssl"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
     https_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False)
     valid: Mapped[bool] = mapped_column(Boolean, nullable=False)
@@ -218,7 +218,7 @@ class HostingInformation(Base):
     __tablename__ = "hosting_information"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
     hosting_provider: Mapped[str | None] = mapped_column(String(255), nullable=True)
     cloud_provider: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -249,7 +249,7 @@ class WebsiteHealth(Base):
     __tablename__ = "website_health"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     audit_type: Mapped[str] = mapped_column(String(100), nullable=False)
     overall_score: Mapped[float | None] = mapped_column(Float, nullable=True)
     performance_score: Mapped[float | None] = mapped_column(Float, nullable=True)
@@ -272,7 +272,7 @@ class WebsiteDNS(Base):
     __tablename__ = "website_dns"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
     nameservers: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
     a_records: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
@@ -296,7 +296,7 @@ class WebsiteSecurity(Base):
     __tablename__ = "website_security"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
     security_headers: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     xss_protection: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -326,7 +326,7 @@ class WebsiteScreenshot(Base):
     __tablename__ = "website_screenshots"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     file_path: Mapped[str] = mapped_column(String(500), nullable=False)
     width: Mapped[int] = mapped_column(Integer, nullable=False, default=1440)
     height: Mapped[int] = mapped_column(Integer, nullable=False, default=900)
@@ -346,7 +346,7 @@ class WordPressSync(Base):
     __tablename__ = "wordpress_sync"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     sync_type: Mapped[str] = mapped_column(String(50), nullable=False, default="full")
     status: Mapped[str] = mapped_column(String(50), nullable=False, default="completed")
     system_info: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
@@ -377,7 +377,7 @@ class PluginScanLog(Base):
     __tablename__ = "plugin_scan_logs"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
     status: Mapped[PluginScanStatusEnum] = mapped_column(Enum(PluginScanStatusEnum), nullable=False, default=PluginScanStatusEnum.queued)
     total_plugins: Mapped[int] = mapped_column(Integer, default=0)
@@ -412,7 +412,7 @@ class ThemeScanLog(Base):
     __tablename__ = "theme_scan_logs"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
     status: Mapped[ThemeScanStatusEnum] = mapped_column(Enum(ThemeScanStatusEnum), nullable=False, default=ThemeScanStatusEnum.queued)
     total_themes: Mapped[int] = mapped_column(Integer, default=0)
@@ -447,7 +447,7 @@ class WhoisInformation(Base):
     __tablename__ = "whois_information"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
 
     registrar: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -469,7 +469,7 @@ class RobotsInformation(Base):
     __tablename__ = "robots_information"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
 
     url: Mapped[str | None] = mapped_column(String(500), nullable=True)
@@ -484,7 +484,7 @@ class SitemapInformation(Base):
     __tablename__ = "sitemap_information"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
 
     url: Mapped[str | None] = mapped_column(String(500), nullable=True)
@@ -500,7 +500,7 @@ class PerformanceInformation(Base):
     __tablename__ = "performance_information"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
 
     response_time_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -519,7 +519,7 @@ class MobileInformation(Base):
     __tablename__ = "mobile_information"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
 
     viewport_meta: Mapped[str | None] = mapped_column(String(500), nullable=True)
@@ -532,7 +532,7 @@ class SEOInformation(Base):
     __tablename__ = "seo_information"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False, index=True)
+    website_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("websites.id", ondelete="CASCADE"), nullable=False)
     scan_history_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("website_scan_history.id", ondelete="SET NULL"), nullable=True)
 
     title: Mapped[str | None] = mapped_column(String(500), nullable=True)
