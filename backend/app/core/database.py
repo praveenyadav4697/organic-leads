@@ -39,8 +39,27 @@ async def get_db() -> AsyncSession:
 
 
 async def init_db() -> None:
+    """Create every model table that isn't already present.
+
+    Imports are kept inside the function to avoid import-order cycles
+    (modules import ``Base`` from here at module-load time).
+    """
+    # Import model modules so their tables register on Base.metadata.
+    from app.modules.search_console import models as _sc  # noqa: F401
+    from app.modules.website import models as _ws  # noqa: F401
+
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        # ``checkfirst=True`` makes CREATE TABLE idempotent but does NOT
+        # prevent a second CREATE INDEX on the same name. We swallow the
+        # specific "already exists" race so ``init_db`` is safe to call on
+        # every boot.
+        try:
+            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+        except Exception as exc:  # noqa: BLE001
+            msg = str(exc).lower()
+            if "already exists" in msg or "duplicate" in msg:
+                return
+            raise
 
 
 async def close_db() -> None:

@@ -69,6 +69,23 @@ class Settings(BaseSettings):
 
     CREDENTIAL_ENCRYPTION_KEY: str = ""
 
+    GOOGLE_CLIENT_ID: str = ""
+    GOOGLE_CLIENT_SECRET: str = ""
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/search-console/oauth/callback"
+    GOOGLE_PROJECT_ID: str = ""
+    GOOGLE_ANALYTICS_VIEW_ID: str = ""
+    GOOGLE_OAUTH_SCOPES: str = "https://www.googleapis.com/auth/webmasters https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics.readonly"
+
+    SEARCH_CONSOLE_SYNC_INTERVAL_MINUTES: int = 60
+    SEARCH_CONSOLE_MAX_RETRIES: int = 3
+    SEARCH_CONSOLE_API_TIMEOUT: int = 30
+    SEARCH_CONSOLE_SCHEDULE_ENABLED: bool = False
+
+    @field_validator("SEARCH_CONSOLE_SCHEDULE_ENABLED", mode="before")
+    @classmethod
+    def coerce_sc_schedule(cls, v: object) -> bool:
+        return _bool_from_env(v)
+
 
 @lru_cache
 def get_settings() -> Settings:

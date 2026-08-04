@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 
 from app.core.config import settings
-from app.core.database import close_db
+from app.core.database import close_db, init_db
 from app.core.logging import setup_logging
 from app.core.exceptions import AppException
 from app.router import router
@@ -25,6 +25,16 @@ setup_logging()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Ensure every model table exists before the first request lands.
+    try:
+        await init_db()
+    except Exception as exc:  # noqa: BLE001
+        # Don't crash boot if the DB is briefly unavailable — let /health
+        # return and let operators see the real error in the logs.
+        import logging
+        logging.getLogger("app.startup").warning(
+            "init_db failed at startup: %s", exc
+        )
     try:
         yield
     finally:
