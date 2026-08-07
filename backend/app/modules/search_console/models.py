@@ -62,6 +62,26 @@ class SyncStatusEnum(str, enum.Enum):
     partial = "partial"
 
 
+class AlertTypeEnum(str, enum.Enum):
+    sync_failed = "sync_failed"
+    sync_dead_job = "sync_dead_job"
+    credential_expiring = "credential_expiring"
+    credential_revoked = "credential_revoked"
+    data_stale = "data_stale"
+
+
+class AlertSeverityEnum(str, enum.Enum):
+    info = "info"
+    warning = "warning"
+    critical = "critical"
+
+
+class AlertStatusEnum(str, enum.Enum):
+    open = "open"
+    acknowledged = "acknowledged"
+    resolved = "resolved"
+
+
 class CoverageStatusEnum(str, enum.Enum):
     indexed = "indexed"
     not_indexed = "not_indexed"
@@ -101,6 +121,7 @@ class SearchConsoleProperty(Base):
     performance_reports: Mapped[list["SearchConsolePerformanceReport"]] = relationship("SearchConsolePerformanceReport", back_populates="property", cascade="all, delete-orphan")
     audit_logs: Mapped[list["SearchConsoleAuditLog"]] = relationship("SearchConsoleAuditLog", back_populates="property", cascade="all, delete-orphan")
     sync_jobs: Mapped[list["SearchConsoleSyncJob"]] = relationship("SearchConsoleSyncJob", back_populates="property", cascade="all, delete-orphan")
+    alerts: Mapped[list["SearchConsoleAlert"]] = relationship("SearchConsoleAlert", back_populates="property", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index("ix_sc_properties_property_id", "property_id"),
@@ -307,6 +328,8 @@ class SearchConsoleSyncJob(Base):
     duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
     retry_count: Mapped[int] = mapped_column(Integer, default=0)
     max_retries: Mapped[int] = mapped_column(Integer, default=3)
+    next_retry_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_dead: Mapped[bool] = mapped_column(Boolean, default=False)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
@@ -317,4 +340,41 @@ class SearchConsoleSyncJob(Base):
         Index("ix_sc_sync_jobs_property_id", "property_id"),
         Index("ix_sc_sync_jobs_status", "status"),
         Index("ix_sc_sync_jobs_started_at", "started_at"),
+        Index("ix_sc_sync_jobs_next_retry_at", "next_retry_at"),
+    )
+
+
+class SearchConsoleAlert(Base):
+    """Monitoring alert raised for Sync/credential/staleness conditions.
+
+    Alerts are deduplicated by ``(property_id, alert_type)`` while open:
+    re-raising the same condition updates the existing open alert instead of
+    creating duplicates. Operators acknowledge/resolve them through the API.
+    """
+
+    __tablename__ = "search_console_alerts"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    property_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("search_console_properties.id", ondelete="SET NULL"), nullable=True)
+    alert_type: Mapped[AlertTypeEnum] = mapped_column(Enum(AlertTypeEnum), nullable=False)
+    severity: Mapped[AlertSeverityEnum] = mapped_column(Enum(AlertSeverityEnum), nullable=False)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[AlertStatusEnum] = mapped_column(Enum(AlertStatusEnum), nullable=False, default=AlertStatusEnum.open)
+    occurrence_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    details: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    acknowledged_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    acknowledged_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    property: Mapped["SearchConsoleProperty"] = relationship("SearchConsoleProperty", back_populates="alerts")
+
+    __table_args__ = (
+        Index("ix_sc_alerts_property_id", "property_id"),
+        Index("ix_sc_alerts_type", "alert_type"),
+        Index("ix_sc_alerts_status", "status"),
+        Index("ix_sc_alerts_created_at", "created_at"),
+        Index("ix_sc_alerts_open_type_property", "status", "alert_type", "property_id"),
     )

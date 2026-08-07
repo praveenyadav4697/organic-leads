@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -6,12 +7,16 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
+from app.core.cache import cache
 from app.core.config import settings
+from app.core.correlation import CorrelationIdMiddleware
 from app.core.database import close_db, init_db
 from app.core.logging import setup_logging
 from app.core.exceptions import AppException
+from app.core.metrics import registry
+from app.core.scheduler import start_scheduler, shutdown_scheduler
 from app.router import router
 
 if sys.platform == "win32":
@@ -21,6 +26,7 @@ if sys.platform == "win32":
         pass
 
 setup_logging()
+logger = logging.getLogger("app.startup")
 
 
 @asynccontextmanager
@@ -31,13 +37,24 @@ async def lifespan(app: FastAPI):
     try:
         await init_db()
     except Exception as exc:  # noqa: BLE001
-        import logging
-        logging.getLogger("app.startup").exception(
-            "init_db failed at startup: %s", exc
-        )
+        logger.exception("init_db failed at startup: %s", exc)
+
+    # Start the APScheduler and register the module schedulers' jobs.
+    try:
+        start_scheduler()
+        from app.modules.search_console.scheduler import register_search_console_jobs
+        from app.modules.onpage_seo.crawler.scheduler import register_onpage_crawl_jobs
+
+        register_search_console_jobs()
+        register_onpage_crawl_jobs()
+    except Exception as exc:  # noqa: BLE001
+        logger.exception("scheduler startup failed: %s", exc)
+
     try:
         yield
     finally:
+        shutdown_scheduler()
+        await cache.close()
         await close_db()
 
 
@@ -64,6 +81,9 @@ async def app_exception_handler(request: Request, exc: AppException):
     )
 
 
+# Correlation IDs flow through every request, including background tasks.
+app.add_middleware(CorrelationIdMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -78,10 +98,37 @@ screenshots_dir = Path(__file__).resolve().parent.parent.parent / "storage" / "s
 screenshots_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/api/v1/screenshots", StaticFiles(directory=str(screenshots_dir)), name="screenshots")
 
+# Exports directory used by the F06 export engine.
+exports_dir = Path(__file__).resolve().parent.parent.parent / "storage" / "exports"
+exports_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/api/v1/exports", StaticFiles(directory=str(exports_dir)), name="exports")
+
 
 @app.get("/health")
 async def health_check():
+    """Liveness probe. Returns 200 when the process is up."""
     return {"status": "healthy", "service": settings.APP_NAME}
+
+
+@app.get("/api/v1/health/ready")
+async def ready_check():
+    """Readiness probe — verifies the cache and reports basic status."""
+    from app.core.scheduler import scheduler_running
+
+    redis_ok = await cache.ping()
+    return {
+        "status": "ready" if redis_ok else "degraded",
+        "cache": "ok" if redis_ok else "unavailable",
+        "scheduler": "running" if scheduler_running() else "stopped",
+    }
+
+
+@app.get("/api/v1/metrics", response_class=PlainTextResponse)
+async def metrics_endpoint():
+    """Prometheus-formatted application metrics."""
+    if not settings.METRICS_ENABLED:
+        return PlainTextResponse("metrics disabled", status_code=404)
+    return registry.render_text()
 
 
 @app.get("/")

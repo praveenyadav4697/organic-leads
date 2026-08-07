@@ -269,3 +269,54 @@ class OAuthCallbackResponse(BaseModel):
     connection_status: str
     is_verified: bool
     message: str
+
+
+class AlertTypeEnum(str, enum.Enum):
+    sync_failed = "sync_failed"
+    sync_dead_job = "sync_dead_job"
+    credential_expiring = "credential_expiring"
+    credential_revoked = "credential_revoked"
+    data_stale = "data_stale"
+
+
+class AlertSeverityEnum(str, enum.Enum):
+    info = "info"
+    warning = "warning"
+    critical = "critical"
+
+
+class AlertStatusEnum(str, enum.Enum):
+    open = "open"
+    acknowledged = "acknowledged"
+    resolved = "resolved"
+
+
+class AlertResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True, use_enum_values=True)
+
+    id: uuid.UUID
+    property_id: Optional[str] = None
+    alert_type: str
+    severity: str
+    title: str
+    message: str
+    status: str
+    occurrence_count: int
+    details: Optional[Dict[str, Any]] = None
+    acknowledged_by: Optional[str] = None
+    acknowledged_at: Optional[datetime] = None
+    resolved_at: Optional[datetime] = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class AlertActionRequest(BaseModel):
+    actor: str = "system"
+
+
+class AlertStatsResponse(BaseModel):
+    total: int
+    open: int
+    acknowledged: int
+    resolved: int
+    open_by_type: Dict[str, int]

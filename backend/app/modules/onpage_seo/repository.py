@@ -22,6 +22,7 @@ from app.modules.onpage_seo.models import (
     SERecommendation,
     SEOHistoryEntry,
     SEOLogsEntry,
+    SEOCrawlJob,
 )
 
 
@@ -308,3 +309,47 @@ class SEOLogsRepository(BaseRepository[SEOLogsEntry]):
         result = await self.db.execute(query.offset(skip).limit(limit))
         total_result = await self.db.execute(count_query)
         return result.scalars().all(), total_result.scalar_one()
+
+
+class SEOCrawlJobRepository(BaseRepository[SEOCrawlJob]):
+    def __init__(self, db: AsyncSession):
+        super().__init__(SEOCrawlJob, db)
+
+    async def get_by_website(
+        self, website_id: str, skip: int = 0, limit: int = 50, status: Optional[str] = None
+    ) -> Tuple[List[SEOCrawlJob], int]:
+        query = select(SEOCrawlJob).where(SEOCrawlJob.website_id == website_id)
+        count_query = select(func.count()).select_from(SEOCrawlJob).where(SEOCrawlJob.website_id == website_id)
+
+        if status:
+            query = query.where(SEOCrawlJob.status == status)
+            count_query = count_query.where(SEOCrawlJob.status == status)
+
+        query = query.order_by(desc(SEOCrawlJob.started_at)).offset(skip).limit(limit)
+
+        result = await self.db.execute(query)
+        total_result = await self.db.execute(count_query)
+        return result.scalars().all(), total_result.scalar_one()
+
+    async def get_latest_by_website(self, website_id: str) -> Optional[SEOCrawlJob]:
+        result = await self.db.execute(
+            select(SEOCrawlJob)
+            .where(SEOCrawlJob.website_id == website_id)
+            .order_by(desc(SEOCrawlJob.started_at))
+            .limit(1)
+        )
+        return result.scalar_one_or_none()
+
+    async def get_running_jobs(self, limit: int = 20) -> List[SEOCrawlJob]:
+        from app.modules.onpage_seo.models import CrawlStatusEnum
+
+        result = await self.db.execute(
+            select(SEOCrawlJob)
+            .where(SEOCrawlJob.status.in_([CrawlStatusEnum.queued, CrawlStatusEnum.running]))
+            .order_by(SEOCrawlJob.started_at)
+            .limit(limit)
+        )
+        return result.scalars().all()
+
+    async def create_job(self, obj_in: Dict[str, Any]) -> SEOCrawlJob:
+        return await self.create(obj_in)

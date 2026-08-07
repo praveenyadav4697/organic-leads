@@ -33,6 +33,7 @@ from app.modules.search_console.schemas import (
     PerformanceRow,
     ConnectRequest,
     VerifyRequest,
+    AlertActionRequest,
 )
 from app.modules.search_console.service import SearchConsoleService
 from app.modules.search_console.dependencies import get_search_console_service
@@ -484,3 +485,120 @@ async def revoke_credentials_route(
     prop = await service.get_property(property_id)
     success = await service.revoke_credentials(prop.id)
     return {"property_id": str(prop.id), "revoked": success}
+
+
+# ── Incremental sync ────────────────────────────────────────────────────────
+
+@router.post("/properties/{property_id}/sync/incremental")
+async def sync_incremental_route(
+    property_id: str,
+    service: SearchConsoleService = Depends(get_search_console_service),
+):
+    """Incremental sync — fetch only data that changed since the last sync."""
+    return await service.sync_property_incremental(property_id)
+
+
+# ── Parallel sync (multiple properties) ─────────────────────────────────────
+
+@router.post("/sync-all")
+async def sync_all_route(
+    payload: dict = Body(default=None),
+):
+    """Trigger a parallel sync for the given property IDs (or all connected).
+
+    Body: ``{"property_ids": ["..."], "sync_type": "full"}`` — when
+    ``property_ids`` is omitted, every connected property is synced.
+    """
+    from app.modules.search_console.scheduler import sync_properties_parallel
+
+    property_ids = (payload or {}).get("property_ids") or None
+    sync_type = (payload or {}).get("sync_type", "full")
+
+    if property_ids:
+        return await sync_properties_parallel(property_ids, sync_type)
+    from app.modules.search_console.scheduler import sync_all_connected_properties
+    return await sync_all_connected_properties()
+
+
+# ── Monitoring ──────────────────────────────────────────────────────────────
+
+@router.get("/metrics")
+async def search_console_metrics_route(
+    service: SearchConsoleService = Depends(get_search_console_service),
+):
+    """Execution statistics for Search Console sync jobs."""
+    return await service.get_sync_stats()
+
+
+@router.get("/health")
+async def search_console_health_route(
+    service: SearchConsoleService = Depends(get_search_console_service),
+):
+    """Module health probe."""
+    return await service.get_module_health()
+
+
+@router.get("/jobs")
+async def search_console_jobs_route():
+    """List the module's registered APScheduler jobs."""
+    from app.core.scheduler import get_scheduled_jobs
+
+    jobs = get_scheduled_jobs()
+    return {
+        "jobs": [j for j in jobs if j["id"].startswith("search-console")],
+        "total": len([j for j in jobs if j["id"].startswith("search-console")]),
+    }
+
+
+# ── Alerts ──────────────────────────────────────────────────────────────────
+
+@router.get("/alerts")
+async def list_alerts_route(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=100),
+    status: Optional[str] = Query(None, description="open | acknowledged | resolved"),
+    alert_type: Optional[str] = Query(None, description="sync_failed | sync_dead_job | credential_expiring | credential_revoked | data_stale"),
+    property_id: Optional[str] = Query(None),
+    service: SearchConsoleService = Depends(get_search_console_service),
+):
+    """List monitoring alerts with optional filters."""
+    skip = (page - 1) * page_size
+    items, total = await service.list_alerts(
+        skip=skip, limit=page_size, status=status, alert_type=alert_type, property_id=property_id
+    )
+    total_pages = (total + page_size - 1) // page_size if page_size > 0 else 0
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": total_pages,
+    }
+
+
+@router.get("/alerts/stats")
+async def alert_stats_route(
+    service: SearchConsoleService = Depends(get_search_console_service),
+):
+    """Aggregate alert counts by status and type."""
+    return await service.get_alert_stats()
+
+
+@router.post("/alerts/{alert_id}/acknowledge")
+async def acknowledge_alert_route(
+    alert_id: uuid.UUID,
+    payload: AlertActionRequest = Body(default=AlertActionRequest()),
+    service: SearchConsoleService = Depends(get_search_console_service),
+):
+    """Acknowledge an alert (stops it counting as open)."""
+    return await service.acknowledge_alert(alert_id, actor=payload.actor)
+
+
+@router.post("/alerts/{alert_id}/resolve")
+async def resolve_alert_route(
+    alert_id: uuid.UUID,
+    payload: AlertActionRequest = Body(default=AlertActionRequest()),
+    service: SearchConsoleService = Depends(get_search_console_service),
+):
+    """Resolve an alert (issue considered fixed)."""
+    return await service.resolve_alert(alert_id, actor=payload.actor)

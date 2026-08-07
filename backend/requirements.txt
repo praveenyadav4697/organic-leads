@@ -15,4 +15,15 @@ playwright==1.61.0
 dnspython==2.6.1
 python-whois==0.9.4
 redis==5.0.5
+apscheduler==3.10.4
+python-json-logger==2.0.7
+openpyxl==3.1.4
+reportlab==4.2.0
+langchain==0.2.14
+langchain-openai==0.1.22
+
+# Test dependencies
+pytest==8.2.2
+pytest-asyncio==0.23.7
+aiosqlite==0.20.0
 

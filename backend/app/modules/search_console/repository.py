@@ -1,4 +1,5 @@
 from typing import Optional, List, Dict, Any
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, delete, desc, asc
 import uuid
@@ -15,6 +16,10 @@ from app.modules.search_console.models import (
     SearchConsolePerformanceReport,
     SearchConsoleAuditLog,
     SearchConsoleSyncJob,
+    SearchConsoleAlert,
+    AlertStatusEnum,
+    AlertTypeEnum,
+    AlertSeverityEnum,
 )
 
 
@@ -390,3 +395,123 @@ class SearchConsoleSyncJobRepository(BaseRepository[SearchConsoleSyncJob]):
 
     async def create_job(self, obj_in: Dict[str, Any]) -> SearchConsoleSyncJob:
         return await self.create(obj_in)
+
+
+class SearchConsoleAlertRepository(BaseRepository[SearchConsoleAlert]):
+    def __init__(self, db: AsyncSession):
+        super().__init__(SearchConsoleAlert, db)
+
+    async def get_open_by_type(
+        self,
+        alert_type: Any,
+        property_id: Any = None,
+    ) -> Optional[SearchConsoleAlert]:
+        """Return the open alert for a type/property pair (dedup key)."""
+        query = (
+            select(SearchConsoleAlert)
+            .where(SearchConsoleAlert.alert_type == alert_type)
+            .where(SearchConsoleAlert.status == AlertStatusEnum.open)
+        )
+        if property_id is not None:
+            query = query.where(SearchConsoleAlert.property_id == property_id)
+        result = await self.db.execute(query.order_by(desc(SearchConsoleAlert.created_at)).limit(1))
+        return result.scalar_one_or_none()
+
+    async def create_alert(
+        self,
+        alert_type: AlertTypeEnum,
+        severity: AlertSeverityEnum,
+        title: str,
+        message: str,
+        property_id: Any = None,
+        details: Optional[Dict[str, Any]] = None,
+    ) -> SearchConsoleAlert:
+        """Dedup-aware alert creation.
+
+        While an alert with the same ``(property_id, alert_type)`` is still
+        ``open``, the existing alert is refreshed (message + occurrence
+        count) instead of inserting a duplicate row.
+        """
+        now = datetime.utcnow()
+        existing = await self.get_open_by_type(alert_type, property_id)
+        if existing is not None:
+            existing.alert_type = alert_type
+            existing.severity = severity
+            existing.title = title
+            existing.message = message
+            existing.occurrence_count += 1
+            if details:
+                existing.details = {**(existing.details or {}), **details}
+            existing.updated_at = now
+            await self.db.commit()
+            await self.db.refresh(existing)
+            return existing
+
+        alert = await self.create({
+            "property_id": property_id,
+            "alert_type": alert_type,
+            "severity": severity,
+            "title": title,
+            "message": message,
+            "status": AlertStatusEnum.open,
+            "occurrence_count": 1,
+            "details": details or {},
+        })
+        await self.db.commit()
+        await self.db.refresh(alert)
+        return alert
+
+    async def list_alerts(
+        self,
+        skip: int = 0,
+        limit: int = 50,
+        status: Optional[str] = None,
+        alert_type: Optional[str] = None,
+        property_id: Any = None,
+    ) -> tuple[List[SearchConsoleAlert], int]:
+        query = select(SearchConsoleAlert).order_by(desc(SearchConsoleAlert.created_at))
+        count_query = select(func.count()).select_from(SearchConsoleAlert)
+        if status:
+            query = query.where(SearchConsoleAlert.status == status)
+            count_query = count_query.where(SearchConsoleAlert.status == status)
+        if alert_type:
+            query = query.where(SearchConsoleAlert.alert_type == alert_type)
+            count_query = count_query.where(SearchConsoleAlert.alert_type == alert_type)
+        if property_id is not None:
+            query = query.where(SearchConsoleAlert.property_id == property_id)
+            count_query = count_query.where(SearchConsoleAlert.property_id == property_id)
+        query = query.offset(skip).limit(limit)
+        result = await self.db.execute(query)
+        total_result = await self.db.execute(count_query)
+        return result.scalars().all(), total_result.scalar_one()
+
+    async def list_open(self, limit: int = 100) -> List[SearchConsoleAlert]:
+        result = await self.db.execute(
+            select(SearchConsoleAlert)
+            .where(SearchConsoleAlert.status == AlertStatusEnum.open)
+            .order_by(desc(SearchConsoleAlert.created_at))
+            .limit(limit)
+        )
+        return result.scalars().all()
+
+    async def update_status(
+        self,
+        alert_id: Any,
+        status: AlertStatusEnum,
+        actor: str,
+        resolved: bool = False,
+    ) -> Optional[SearchConsoleAlert]:
+        alert = await self.get(alert_id)
+        if alert is None:
+            return None
+        alert.status = status
+        if resolved:
+            alert.resolved_at = datetime.utcnow()
+        else:
+            from app.modules.search_console.models import AlertStatusEnum as _ASE
+            if status == _ASE.acknowledged:
+                alert.acknowledged_by = actor
+                alert.acknowledged_at = datetime.utcnow()
+        await self.db.commit()
+        await self.db.refresh(alert)
+        return alert

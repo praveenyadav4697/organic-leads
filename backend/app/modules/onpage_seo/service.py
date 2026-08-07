@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
@@ -5,6 +6,8 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
+
+logger = logging.getLogger("app.modules.onpage_seo.service")
 from app.modules.onpage_seo.models import (
     SEOPage,
     SEOAuditFinding,
@@ -23,6 +26,7 @@ from app.modules.onpage_seo.models import (
     SERecommendation,
     SEOHistoryEntry,
     SEOLogsEntry,
+    SEOCrawlJob,
     SEOStatusEnum,
     AuditSeverityEnum,
     AuditStatusEnum,
@@ -32,6 +36,7 @@ from app.modules.onpage_seo.models import (
     RecommendationDifficulty,
     RecommendationStatus,
     ScanStatusEnum,
+    CrawlStatusEnum,
     LogTypeEnum,
 )
 from app.modules.onpage_seo.repository import (
@@ -52,6 +57,7 @@ from app.modules.onpage_seo.repository import (
     SERecommendationRepository,
     SEOHistoryRepository,
     SEOLogsRepository,
+    SEOCrawlJobRepository,
 )
 from app.modules.onpage_seo.exceptions import (
     OnPageSEOException,
@@ -84,6 +90,7 @@ class OnPageSEOService:
         self.recommendation_repo = SERecommendationRepository(db)
         self.history_repo = SEOHistoryRepository(db)
         self.logs_repo = SEOLogsRepository(db)
+        self.crawl_job_repo = SEOCrawlJobRepository(db)
 
     async def _log(self, page_id: UUID, log_type: LogTypeEnum, message: str,
                    details: Optional[Dict[str, Any]] = None, correlation_id: Optional[str] = None) -> None:
@@ -739,3 +746,319 @@ class OnPageSEOService:
                          log_type: Optional[str] = None) -> Tuple[List[SEOLogsEntry], int]:
         page = await self.get_page(page_id)
         return await self.logs_repo.get_by_page(page.id, skip, limit, log_type)
+
+    # --- Crawl engine ----------------------------------------------------
+
+    async def run_crawl(
+        self,
+        website_id: str,
+        start_url: Optional[str] = None,
+        strategy: str = "bfs",
+        max_depth: Optional[int] = None,
+        max_pages: Optional[int] = None,
+        respect_robots_txt: bool = True,
+        use_sitemap: bool = False,
+    ) -> Dict[str, Any]:
+        """Crawl a website, persist every page's extracted SEO data, run the
+        audit pipeline, and generate recommendations.
+
+        ``website_id`` doubles as the crawl seed when ``start_url`` is not
+        given (consistent with how the module identifies sites).
+        """
+        from app.core.correlation import get_correlation_id
+        from app.modules.onpage_seo.crawler.crawler import CrawlerService, CrawlOptions
+
+        seed = start_url or website_id
+        seed = validate_url(seed)
+        depth = max_depth if max_depth is not None else settings.ONPAGE_CRAWLER_DEFAULT_DEPTH
+        pages_limit = max_pages if max_pages is not None else settings.ONPAGE_CRAWLER_DEFAULT_MAX_PAGES
+
+        job = await self.crawl_job_repo.create_job({
+            "website_id": website_id,
+            "start_url": seed,
+            "strategy": strategy,
+            "status": CrawlStatusEnum.running,
+            "depth": depth,
+            "max_pages": pages_limit,
+            "max_concurrency": settings.ONPAGE_CRAWLER_MAX_CONCURRENCY,
+            "respect_robots_txt": respect_robots_txt,
+            "started_at": datetime.now(timezone.utc),
+            "max_retries": 3,
+            "correlation_id": get_correlation_id() or None,
+        })
+        await self.db.commit()
+        await self.db.refresh(job)
+        started = datetime.now(timezone.utc)
+
+        try:
+            crawler = CrawlerService()
+            options = CrawlOptions(
+                start_url=seed,
+                strategy=strategy,
+                max_depth=depth,
+                max_pages=pages_limit,
+                respect_robots_txt=respect_robots_txt,
+                use_sitemap=use_sitemap,
+            )
+            result = await crawler.crawl(options)
+
+            pages_persisted = 0
+            for page_data in result.pages:
+                try:
+                    await self._persist_crawl_page(website_id, page_data)
+                    pages_persisted += 1
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("Crawl persist failed for %s: %s", page_data.get("url"), exc)
+
+            completed = datetime.now(timezone.utc)
+            duration = (completed - started).total_seconds()
+            await self.crawl_job_repo.update(job.id, {
+                "status": CrawlStatusEnum.completed,
+                "completed_at": completed,
+                "duration_seconds": duration,
+                "urls_discovered": result.urls_discovered,
+                "urls_crawled": result.urls_crawled,
+                "urls_failed": result.urls_failed,
+                "result": {
+                    "pages_persisted": pages_persisted,
+                    "strategy": strategy,
+                    "depth": depth,
+                    "max_pages": pages_limit,
+                },
+            })
+            await self.db.commit()
+            logger.info(
+                "Crawl job %s completed: %d crawled, %d persisted",
+                job.id, result.urls_crawled, pages_persisted,
+            )
+            return {
+                "crawl_job_id": str(job.id),
+                "website_id": website_id,
+                "status": "completed",
+                "urls_discovered": result.urls_discovered,
+                "urls_crawled": result.urls_crawled,
+                "urls_failed": result.urls_failed,
+                "pages_persisted": pages_persisted,
+                "duration_seconds": round(duration, 2),
+            }
+        except Exception as exc:  # noqa: BLE001
+            completed = datetime.now(timezone.utc)
+            duration = (completed - started).total_seconds()
+            await self.crawl_job_repo.update(job.id, {
+                "status": CrawlStatusEnum.failed,
+                "completed_at": completed,
+                "duration_seconds": duration,
+                "error_message": str(exc),
+            })
+            await self.db.commit()
+            raise CrawlFailedException(str(exc))
+
+    async def _persist_crawl_page(self, website_id: str, page_data: Dict[str, Any]) -> None:
+        """Upsert a crawled page and all of its extracted child rows."""
+        from app.modules.onpage_seo.crawler.extractor import ExtractorService
+        from app.modules.onpage_seo.crawler.parser import PageParseResult
+        from app.modules.onpage_seo.nlp import NLPService
+
+        parsed = PageParseResult.from_dict(page_data["parsed"])
+        page_fields = page_data.get("page_fields") or self._fallback_page_fields(parsed, website_id)
+
+        page = await self.page_repo.get_by_url(website_id, parsed.url)
+        if page is None:
+            page = await self.page_repo.create({
+                "website_id": website_id,
+                "url": parsed.url,
+                "path": (page_fields.get("path") or "").rstrip("/") or "/",
+                "status": SEOStatusEnum.pending,
+            })
+            await self.db.commit()
+        await self.db.refresh(page)
+
+        # NLP readability for the page + content row.
+        readability = NLPService.analyze_readability(parsed.text_content)
+        grade_label = NLPService.grade_label(readability["flesch_kincaid_grade"])
+        page_fields["readability_score"] = readability["flesch_reading_ease"]
+        await self.page_repo.update(page.id, page_fields)
+        await self.db.commit()
+        await self.db.refresh(page)
+
+        await self._delete_page_children(page.id)
+        extractor = ExtractorService()
+
+        for meta in extractor.build_meta_tags(parsed, page.id):
+            await self.meta_tag_repo.create(meta)
+        for heading in extractor.build_headings(parsed, page.id):
+            await self.heading_repo.create(heading)
+        for img in extractor.build_images(parsed, page.id):
+            await self.image_repo.create(img)
+
+        links = extractor.build_links(parsed, page.id)
+        for link in links["internal"]:
+            await self.internal_link_repo.create(link)
+        for link in links["external"]:
+            await self.external_link_repo.create(link)
+
+        await self.canonical_repo.create(extractor.build_canonical(parsed, page.id, parsed.url))
+        await self.robots_repo.create(extractor.build_robots(parsed, page.id))
+        for schema in extractor.build_schema(parsed, page.id):
+            await self.schema_repo.create(schema)
+
+        content = extractor.build_content(parsed, page.id)
+        content["readability_score"] = readability["flesch_reading_ease"]
+        content["readability_grade"] = grade_label
+        await self.content_repo.create(content)
+        await self.db.commit()
+
+        # Run the audit + recommendation pipeline for this page.
+        await self.run_audit(str(page.id))
+
+    @staticmethod
+    def _fallback_page_fields(parsed, website_id: str) -> Dict[str, Any]:
+        from app.modules.onpage_seo.crawler.extractor import ExtractorService
+
+        return ExtractorService().build_page_payload(parsed, website_id)
+
+    async def _delete_page_children(self, page_id: UUID) -> None:
+        from sqlalchemy import delete
+
+        for model in (SEMetaTag, SEHeading, SEImage, SEInternalLink, SEExternalLink,
+                      SECanonical, SERobots, SESitemap, SESchema, SEContent):
+            await self.db.execute(delete(model).where(model.page_id == page_id))
+        await self.db.commit()
+
+    # --- Recommendation generation ----------------------------------------
+
+    async def generate_recommendations_for_page(self, page_id: str) -> Dict[str, Any]:
+        """Generate (and persist) recommendations for a single page.
+
+        Combines the rule-based engine with the AI engine when configured.
+        """
+        from app.modules.onpage_seo.recommendations import RecommendationService
+        from app.modules.onpage_seo.ai import AIService
+
+        page = await self.get_page(page_id)
+        findings, _ = await self.finding_repo.get_by_page(page.id, limit=500)
+        finding_dicts = [
+            {
+                "severity": f.severity.value if hasattr(f.severity, "value") else str(f.severity),
+                "category": f.category,
+                "check_name": f.check_name,
+                "message": f.message,
+                "recommendation": f.recommendation,
+            }
+            for f in findings
+        ]
+
+        ai = AIService()
+        recs = await ai.generate_recommendations({"findings": finding_dicts, "url": page.url})
+
+        # Replace existing recommendations.
+        from sqlalchemy import delete
+
+        await self.db.execute(delete(SERecommendation).where(SERecommendation.page_id == page.id))
+        await self.db.commit()
+
+        persisted = []
+        for rec in recs:
+            obj = await self.recommendation_repo.create({
+                "page_id": page.id,
+                "title": rec.get("title", "Improve page"),
+                "description": rec.get("description", ""),
+                "priority": rec.get("priority", "medium"),
+                "impact": rec.get("impact", "medium"),
+                "difficulty": rec.get("difficulty", "moderate"),
+                "recommended_action": rec.get("recommended_action", ""),
+                "status": RecommendationStatus.pending,
+                "category": rec.get("category", "general"),
+            })
+            persisted.append(str(obj.id))
+        await self.db.commit()
+        return {"page_id": str(page.id), "generated": len(persisted), "recommendation_ids": persisted}
+
+    # --- Crawl job queries -------------------------------------------------
+
+    async def get_crawl_jobs(
+        self, website_id: str, skip: int = 0, limit: int = 50, status: Optional[str] = None
+    ) -> Tuple[List[SEOCrawlJob], int]:
+        return await self.crawl_job_repo.get_by_website(website_id, skip=skip, limit=limit, status=status)
+
+    async def get_crawl_job(self, job_id: str) -> SEOCrawlJob:
+        try:
+            job = await self.crawl_job_repo.get(UUID(job_id))
+        except (ValueError, TypeError):
+            job = None
+        if job is None:
+            raise CrawlJobNotFoundException(job_id)
+        return job
+
+    # --- Export ------------------------------------------------------------
+
+    async def export_data(self, website_id: str, fmt: str = "csv", scope: str = "pages") -> Dict[str, Any]:
+        """Export a website's page audit data as CSV / XLSX / PDF."""
+        from app.modules.onpage_seo.export import ExportService
+
+        pages, _ = await self.page_repo.get_by_website(website_id)
+        rows = [self._page_to_export_row(p) for p in pages]
+        return await ExportService().export_pages(rows, fmt, scope)
+
+    @staticmethod
+    def _page_to_export_row(page: SEOPage) -> Dict[str, Any]:
+        return {
+            "url": page.url,
+            "path": page.path,
+            "seo_score": page.seo_score,
+            "status": page.status.value if hasattr(page.status, "value") else str(page.status),
+            "word_count": page.word_count,
+            "readability_score": page.readability_score,
+            "meta_title": page.meta_title,
+            "meta_description": page.meta_description,
+            "h1_count": page.h1_count,
+            "h2_count": page.h2_count,
+            "h3_count": page.h3_count,
+            "image_count": page.image_count,
+            "images_missing_alt": page.images_missing_alt,
+            "internal_links_count": page.internal_links_count,
+            "external_links_count": page.external_links_count,
+            "broken_links_count": page.broken_links_count,
+            "has_canonical": page.has_canonical,
+            "has_schema": page.has_schema,
+            "content_quality_score": page.content_quality_score,
+            "created_at": page.created_at.isoformat() if page.created_at else None,
+        }
+
+    # --- Monitoring --------------------------------------------------------
+
+    async def get_crawl_stats(self) -> Dict[str, Any]:
+        """Aggregate crawl-job statistics for the monitoring endpoint."""
+        from sqlalchemy import func, select
+
+        total_result = await self.db.execute(select(func.count()).select_from(SEOCrawlJob))
+        total = total_result.scalar_one()
+
+        status_rows = await self.db.execute(
+            select(SEOCrawlJob.status, func.count()).group_by(SEOCrawlJob.status)
+        )
+        by_status = {str(s.value if hasattr(s, "value") else s): c for s, c in status_rows.all()}
+
+        dead_result = await self.db.execute(
+            select(func.count()).select_from(SEOCrawlJob).where(SEOCrawlJob.is_dead.is_(True))
+        )
+        return {
+            "total_crawl_jobs": total,
+            "by_status": by_status,
+            "dead_jobs": dead_result.scalar_one(),
+        }
+
+    async def get_module_health(self) -> Dict[str, Any]:
+        """Module health probe used by ``GET /onpage/health``."""
+        from app.core.cache import cache
+
+        pages_result = await self.page_repo.count()
+        crawl_status = await self.get_crawl_stats()
+        cache_ok = await cache.ping()
+        return {
+            "status": "healthy",
+            "pages": pages_result,
+            "crawl_jobs": crawl_status,
+            "cache": "ok" if cache_ok else "unavailable",
+            "service": "onpage-seo",
+        }

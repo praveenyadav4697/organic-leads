@@ -503,3 +503,96 @@ async def get_logs_route(
         "page_size": page_size,
         "total_pages": total_pages,
     }
+
+
+# --- Crawl (F06) ---------------------------------------------------------
+
+@router.post("/crawl", status_code=status.HTTP_202_ACCEPTED)
+async def run_crawl_route(
+    website_id: str = Query(..., description="Website ID or seed URL"),
+    start_url: Optional[str] = Query(None),
+    strategy: str = Query("bfs"),
+    max_depth: Optional[int] = Query(None, ge=0),
+    max_pages: Optional[int] = Query(None, ge=1),
+    respect_robots_txt: bool = Query(True),
+    use_sitemap: bool = Query(False),
+    service: OnPageSEOService = Depends(get_onpage_seo_service),
+):
+    """Run a website crawl (BFS/DFS) and persist extracted SEO data."""
+    return await service.run_crawl(
+        website_id,
+        start_url=start_url,
+        strategy=strategy,
+        max_depth=max_depth,
+        max_pages=max_pages,
+        respect_robots_txt=respect_robots_txt,
+        use_sitemap=use_sitemap,
+    )
+
+
+@router.get("/crawl/jobs")
+async def list_crawl_jobs_route(
+    website_id: str = Query(..., description="Website ID"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    status: Optional[str] = Query(None),
+    service: OnPageSEOService = Depends(get_onpage_seo_service),
+):
+    skip = (page - 1) * page_size
+    items, total = await service.get_crawl_jobs(website_id, skip=skip, limit=page_size, status=status)
+    total_pages = (total + page_size - 1) // page_size if page_size > 0 else 0
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": total_pages,
+    }
+
+
+@router.get("/crawl/jobs/{job_id}")
+async def get_crawl_job_route(
+    job_id: str,
+    service: OnPageSEOService = Depends(get_onpage_seo_service),
+):
+    return await service.get_crawl_job(job_id)
+
+
+@router.get("/crawl/stats")
+async def crawl_stats_route(
+    service: OnPageSEOService = Depends(get_onpage_seo_service),
+):
+    return await service.get_crawl_stats()
+
+
+# --- Recommendation generation (F06) -------------------------------------
+
+@router.post("/pages/{page_id}/recommendations/generate")
+async def generate_recommendations_route(
+    page_id: str,
+    service: OnPageSEOService = Depends(get_onpage_seo_service),
+):
+    """(Re)generate recommendations for a page from its audit findings."""
+    return await service.generate_recommendations_for_page(page_id)
+
+
+# --- Export (F06) --------------------------------------------------------
+
+@router.post("/export")
+async def export_data_route(
+    website_id: str = Query(..., description="Website ID"),
+    format: str = Query("csv", pattern="^(csv|xlsx|pdf)$"),
+    scope: str = Query("pages"),
+    service: OnPageSEOService = Depends(get_onpage_seo_service),
+):
+    """Export a website's page audit data as CSV / XLSX / PDF."""
+    return await service.export_data(website_id, fmt=format, scope=scope)
+
+
+# --- Monitoring (F06) -----------------------------------------------------
+
+@router.get("/health")
+async def onpage_health_route(
+    service: OnPageSEOService = Depends(get_onpage_seo_service),
+):
+    return await service.get_module_health()

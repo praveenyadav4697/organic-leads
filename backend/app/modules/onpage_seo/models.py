@@ -70,6 +70,14 @@ class ScanStatusEnum(str, enum.Enum):
     failed = "failed"
 
 
+class CrawlStatusEnum(str, enum.Enum):
+    queued = "queued"
+    running = "running"
+    completed = "completed"
+    failed = "failed"
+    cancelled = "cancelled"
+
+
 class LogTypeEnum(str, enum.Enum):
     audit = "audit"
     api = "api"
@@ -77,6 +85,44 @@ class LogTypeEnum(str, enum.Enum):
     processing = "processing"
     error = "error"
     warning = "warning"
+
+
+class SEOCrawlJob(Base):
+    """A website crawl run (F06 crawler)."""
+
+    __tablename__ = "onpage_seo_crawl_jobs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    website_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    start_url: Mapped[str] = mapped_column(String(2000), nullable=False)
+    strategy: Mapped[str] = mapped_column(String(20), nullable=False, default="bfs")
+    status: Mapped[CrawlStatusEnum] = mapped_column(Enum(CrawlStatusEnum), nullable=False, default=CrawlStatusEnum.queued)
+    depth: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    max_pages: Mapped[int] = mapped_column(Integer, nullable=False, default=500)
+    max_concurrency: Mapped[int] = mapped_column(Integer, nullable=False, default=8)
+    respect_robots_txt: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    urls_discovered: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    urls_crawled: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    urls_failed: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    duration_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
+    retry_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    max_retries: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    next_retry_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    is_dead: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+    result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    correlation_id: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        Index("ix_onpage_crawl_jobs_website", "website_id"),
+        Index("ix_onpage_crawl_jobs_status", "status"),
+        Index("ix_onpage_crawl_jobs_started", "started_at"),
+        Index("ix_onpage_crawl_jobs_next_retry", "next_retry_at"),
+    )
 
 
 class SEOPage(Base):

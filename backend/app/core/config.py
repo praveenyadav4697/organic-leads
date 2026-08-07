@@ -81,11 +81,75 @@ class Settings(BaseSettings):
     SEARCH_CONSOLE_MAX_RETRIES: int = 3
     SEARCH_CONSOLE_API_TIMEOUT: int = 30
     SEARCH_CONSOLE_SCHEDULE_ENABLED: bool = False
+    SEARCH_CONSOLE_INCREMENTAL_LOOKBACK_DAYS: int = 28
+    SEARCH_CONSOLE_ALERT_SWEEP_INTERVAL_MINUTES: int = 60
+    SEARCH_CONSOLE_CREDENTIAL_WARN_HOURS: int = 24
 
     @field_validator("SEARCH_CONSOLE_SCHEDULE_ENABLED", mode="before")
     @classmethod
     def coerce_sc_schedule(cls, v: object) -> bool:
         return _bool_from_env(v)
+
+    # --- Redis -----------------------------------------------------------------
+    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_CACHE_ENABLED: bool = True
+    REDIS_CACHE_TTL_SECONDS: int = 300
+    REDIS_PREFIX: str = "organic-leads"
+
+    @field_validator("REDIS_CACHE_ENABLED", mode="before")
+    @classmethod
+    def coerce_redis_enabled(cls, v: object) -> bool:
+        return _bool_from_env(v)
+
+    # --- Scheduler -------------------------------------------------------------
+    SCHEDULER_ENABLED: bool = True
+    SCHEDULER_MISSED_FIRE_GRACE_SECONDS: int = 300
+    SCHEDULER_JOB_COALESCE: bool = True
+    SCHEDULER_JOB_MAX_INSTANCES: int = 1
+
+    @field_validator("SCHEDULER_ENABLED", mode="before")
+    @classmethod
+    def coerce_scheduler_enabled(cls, v: object) -> bool:
+        return _bool_from_env(v)
+
+    # --- Monitoring / metrics ---------------------------------------------------
+    METRICS_ENABLED: bool = True
+
+    @field_validator("METRICS_ENABLED", mode="before")
+    @classmethod
+    def coerce_metrics_enabled(cls, v: object) -> bool:
+        return _bool_from_env(v)
+
+    # --- On-Page SEO crawler ----------------------------------------------------
+    ONPAGE_CRAWLER_DEFAULT_DEPTH: int = 3
+    ONPAGE_CRAWLER_DEFAULT_MAX_PAGES: int = 500
+    ONPAGE_CRAWLER_TIMEOUT_SECONDS: int = 15
+    ONPAGE_CRAWLER_USER_AGENT: str = (
+        "OrganicLeadsBot/1.0 (+https://organicleads.local/bot; onpage-seo crawler)"
+    )
+    ONPAGE_CRAWLER_MAX_CONCURRENCY: int = 8
+    ONPAGE_CRAWLER_SCHEDULE_ENABLED: bool = False
+    ONPAGE_CRAWLER_SCHEDULE_INTERVAL_MINUTES: int = 1440
+
+    @field_validator("ONPAGE_CRAWLER_SCHEDULE_ENABLED", mode="before")
+    @classmethod
+    def coerce_crawler_schedule(cls, v: object) -> bool:
+        return _bool_from_env(v)
+
+    # --- AI engine --------------------------------------------------------------
+    OPENAI_API_KEY: str = ""
+    AI_ENGINE_ENABLED: bool = True
+    AI_MODEL: str = "gpt-4o-mini"
+    AI_TEMPERATURE: float = 0.2
+
+    @field_validator("AI_ENGINE_ENABLED", mode="before")
+    @classmethod
+    def coerce_ai_enabled(cls, v: object) -> bool:
+        return _bool_from_env(v)
+
+    # --- Export -----------------------------------------------------------------
+    EXPORT_BASE_DIR: str = "storage/exports"
+    EXPORT_URL_TTL_HOURS: int = 24
 
 
 @lru_cache

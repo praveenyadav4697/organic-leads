@@ -7,6 +7,7 @@ Follows the same dependency pattern as ``website/service.py``:
 from __future__ import annotations
 
 import json
+import logging
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
@@ -14,7 +15,11 @@ from urllib.parse import urlparse
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+logger = logging.getLogger("app.modules.search_console.service")
+
 from app.core.config import settings
+from app.core.cache import cache
+from app.core.metrics import registry
 from app.shared.utils.encryption import encrypt_value, decrypt_value
 from app.modules.search_console.models import (
     SearchConsoleProperty,
@@ -27,12 +32,16 @@ from app.modules.search_console.models import (
     SearchConsolePerformanceReport,
     SearchConsoleAuditLog,
     SearchConsoleSyncJob,
+    SearchConsoleAlert,
     ConnectionStatusEnum,
     SyncStatusEnum,
     PropertyTypeEnum,
     PermissionLevelEnum,
     SiteOwnershipEnum,
     VerificationMethodEnum,
+    AlertTypeEnum,
+    AlertSeverityEnum,
+    AlertStatusEnum,
 )
 from app.modules.search_console.repository import (
     SearchConsolePropertyRepository,
@@ -45,6 +54,7 @@ from app.modules.search_console.repository import (
     SearchConsolePerformanceReportRepository,
     SearchConsoleAuditLogRepository,
     SearchConsoleSyncJobRepository,
+    SearchConsoleAlertRepository,
 )
 from app.modules.search_console.google_client import (
     GoogleOAuthClient,
@@ -74,6 +84,7 @@ class SearchConsoleService:
         self.performance_repo = SearchConsolePerformanceReportRepository(db)
         self.audit_log_repo = SearchConsoleAuditLogRepository(db)
         self.sync_job_repo = SearchConsoleSyncJobRepository(db)
+        self.alert_repo = SearchConsoleAlertRepository(db)
         self._oauth_client: Optional[GoogleOAuthClient] = None
         self._api_client: Optional[SearchConsoleApiClient] = None
 
@@ -388,14 +399,44 @@ class SearchConsoleService:
         })
         await self.db.commit()
         await self.db.refresh(result)
+        # A fresh inspection invalidates cached inspection lists for the property.
+        await cache.delete_pattern("search-console:inspections", f"{prop.id}:*")
+        registry.increment("search_console_inspections_total")
         await self._log_audit("url_inspect", actor, "success", {"url": inspected_url}, prop.id)
         return result
 
     async def get_url_inspections(
         self, property_id: str, skip: int = 0, limit: int = 100
-    ) -> Tuple[List[UrlInspectionResult], int]:
+    ) -> Tuple[List[Dict[str, Any]], int]:
         prop = await self.get_property(property_id)
-        return await self.inspection_repo.get_by_property(prop.id, limit=limit)
+        cache_key = f"{prop.id}:{skip}:{limit}"
+        cached = await cache.get("search-console:inspections", cache_key)
+        if cached is not None:
+            registry.increment("search_console_cache_hits", labels={"kind": "inspections"})
+            return cached["items"], cached["total"]
+        items, total = await self.inspection_repo.get_by_property(prop.id, limit=limit)
+        serialized = [self._inspection_to_dict(i) for i in items]
+        await cache.set("search-console:inspections", cache_key, {"items": serialized, "total": total})
+        return serialized, total
+
+    @staticmethod
+    def _inspection_to_dict(insp: UrlInspectionResult) -> Dict[str, Any]:
+        return {
+            "id": str(insp.id),
+            "property_id": str(insp.property_id),
+            "inspected_url": insp.inspected_url,
+            "coverage_status": insp.coverage_status,
+            "last_crawl_time": insp.last_crawl_time.isoformat() if insp.last_crawl_time else None,
+            "crawl_error_code": insp.crawl_error_code,
+            "canonical_url": insp.canonical_url,
+            "page_is_indexable": insp.page_is_indexable,
+            "has_json_ld": insp.has_json_ld,
+            "has_microdata": insp.has_microdata,
+            "is_roboted": insp.is_roboted,
+            "is_noindex": insp.is_noindex,
+            "is_unreachable": insp.is_unreachable,
+            "inspected_at": insp.inspected_at.isoformat() if insp.inspected_at else None,
+        }
 
     # --- Sitemaps ------------------------------------------------------------
 
@@ -521,11 +562,35 @@ class SearchConsoleService:
 
     async def get_crawl_errors(
         self, property_id: str, skip: int = 0, limit: int = 100, error_type: Optional[str] = None
-    ) -> Tuple[List[SearchConsoleCrawlError], int]:
+    ) -> Tuple[List[Dict[str, Any]], int]:
         prop = await self.get_property(property_id)
-        return await self.crawl_error_repo.get_by_property(
+        cache_key = f"{prop.id}:{skip}:{limit}:{error_type or 'all'}"
+        cached = await cache.get("search-console:crawl-errors", cache_key)
+        if cached is not None:
+            registry.increment("search_console_cache_hits", labels={"kind": "crawl_errors"})
+            return cached["items"], cached["total"]
+        items, total = await self.crawl_error_repo.get_by_property(
             prop.id, skip=skip, limit=limit, error_type=error_type
         )
+        serialized = [self._crawl_error_to_dict(e) for e in items]
+        await cache.set("search-console:crawl-errors", cache_key, {"items": serialized, "total": total})
+        return serialized, total
+
+    @staticmethod
+    def _crawl_error_to_dict(err: SearchConsoleCrawlError) -> Dict[str, Any]:
+        return {
+            "id": str(err.id),
+            "property_id": str(err.property_id),
+            "platform": err.platform,
+            "error_type": err.error_type,
+            "error_sub_type": err.error_sub_type,
+            "page_url": err.page_url,
+            "referring_url": err.referring_url,
+            "status_code": err.status_code,
+            "detected_at": err.detected_at.isoformat() if err.detected_at else None,
+            "resolved": err.resolved,
+            "resolved_at": err.resolved_at.isoformat() if err.resolved_at else None,
+        }
 
     async def sync_crawl_errors(self, property_id: uuid.UUID) -> List[SearchConsoleCrawlError]:
         prop = await self.property_repo.get(property_id)
@@ -536,6 +601,13 @@ class SearchConsoleService:
         self.api_client.set_access_token(access_token)
 
         errors: List[SearchConsoleCrawlError] = []
+        # Load existing unresolved errors so we can upsert (deduplication /
+        # conflict resolution) instead of inserting duplicates.
+        existing_list, _ = await self.crawl_error_repo.get_by_property(prop.id, limit=10000)
+        existing_by_key = {
+            (e.page_url, e.error_type, e.error_sub_type): e
+            for e in existing_list if not e.resolved
+        }
         try:
             crawl_stats = await self.api_client.get_crawl_stats(prop.site_url)
             for day_data in crawl_stats.get("crawlDiagnostics", {}).get("webCrawl", {}).get("timeSeries", {}).get("crawlablePages", {}).get("all", {}).get("results", []):
@@ -553,31 +625,68 @@ class SearchConsoleService:
                         resolved_at = datetime.fromisoformat(resolved_at_str.replace("Z", "+00:00"))
                     except (ValueError, TypeError):
                         pass
+                page_url = day_data.get("pageUrl", "")
+                error_type = day_data.get("errorType", "unknown")
+                error_sub_type = day_data.get("errorSubType")
+                dedup_key = (page_url, error_type, error_sub_type)
+
                 obj_in = {
                     "property_id": prop.id,
                     "platform": day_data.get("platform", "web"),
-                    "error_type": day_data.get("errorType", "unknown"),
-                    "error_sub_type": day_data.get("errorSubType"),
-                    "page_url": day_data.get("pageUrl", ""),
+                    "error_type": error_type,
+                    "error_sub_type": error_sub_type,
+                    "page_url": page_url,
                     "referring_url": day_data.get("referringUrl"),
                     "status_code": day_data.get("statusCode"),
                     "detected_at": detected_at or datetime.now(timezone.utc),
                     "resolved": day_data.get("resolved", False),
                     "resolved_at": resolved_at,
                 }
-                error = await self.crawl_error_repo.create(obj_in)
-                errors.append(error)
+
+                if dedup_key in existing_by_key:
+                    # Conflict resolution: last sync wins — update the existing
+                    # row rather than inserting a duplicate.
+                    existing = existing_by_key[dedup_key]
+                    await self.crawl_error_repo.update(existing.id, obj_in)
+                    await self.db.refresh(existing)
+                    errors.append(existing)
+                else:
+                    error = await self.crawl_error_repo.create(obj_in)
+                    errors.append(error)
+                    existing_by_key[dedup_key] = error
         except GoogleOAuthException:
             pass
 
         await self.db.commit()
+        await cache.delete_pattern("search-console:crawl-errors", f"{prop.id}:*")
+        registry.increment("search_console_crawl_errors_synced", value=len(errors))
         return errors
 
     # --- Enhancements --------------------------------------------------------
 
-    async def get_enhancements(self, property_id: str) -> List[SearchConsoleEnhancement]:
+    async def get_enhancements(self, property_id: str) -> List[Dict[str, Any]]:
         prop = await self.get_property(property_id)
-        return await self.enhancement_repo.get_by_property(prop.id)
+        cache_key = str(prop.id)
+        cached = await cache.get("search-console:enhancements", cache_key)
+        if cached is not None:
+            registry.increment("search_console_cache_hits", labels={"kind": "enhancements"})
+            return cached
+        items = await self.enhancement_repo.get_by_property(prop.id)
+        serialized = [self._enhancement_to_dict(e) for e in items]
+        await cache.set("search-console:enhancements", cache_key, serialized)
+        return serialized
+
+    @staticmethod
+    def _enhancement_to_dict(enh: SearchConsoleEnhancement) -> Dict[str, Any]:
+        return {
+            "id": str(enh.id),
+            "property_id": str(enh.property_id),
+            "enhancement_type": enh.enhancement_type,
+            "status": enh.status,
+            "items_count": enh.items_count,
+            "details": enh.details,
+            "created_at": enh.created_at.isoformat() if enh.created_at else None,
+        }
 
     async def sync_enhancements(self, property_id: uuid.UUID) -> List[SearchConsoleEnhancement]:
         prop = await self.property_repo.get(property_id)
@@ -711,6 +820,9 @@ class SearchConsoleService:
                 pass
 
         await self.db.commit()
+        # Sync invalidates the cached enhancement list for the property.
+        await cache.delete_pattern("search-console:enhancements", f"{prop.id}")
+        registry.increment("search_console_enhancements_synced", value=len(results))
         return results
 
     # --- Performance ---------------------------------------------------------
@@ -724,22 +836,81 @@ class SearchConsoleService:
         row_limit: int = 1000,
         start_row: int = 0,
         actor: str = "system",
+        use_cache: bool = True,
     ) -> Dict[str, Any]:
         prop = await self.get_property(property_id)
+
+        cache_key = self._perf_cache_key(prop.id, start_date, end_date, dimensions)
+        if use_cache:
+            cached = await cache.get("search-console:performance", cache_key)
+            if cached is not None:
+                registry.increment("search_console_cache_hits", labels={"kind": "performance"})
+                return cached
+
         access_token = await self._get_valid_access_token(prop.id)
         self.api_client.set_access_token(access_token)
 
         try:
-            raw = await self.api_client.get_performance(
-                prop.site_url, start_date, end_date, dimensions, row_limit, start_row
-            )
+            with registry.timed("search_console_api_duration_seconds", labels={"op": "performance"}):
+                raw = await self.api_client.get_performance(
+                    prop.site_url, start_date, end_date, dimensions, row_limit, start_row
+                )
         except GoogleOAuthException as e:
             await self._log_audit("performance_query", actor, "failed", {"error": str(e)}, prop.id)
             raise
 
         rows = raw.get("rows", [])
-        report = await self.performance_repo.create({
-            "property_id": prop.id,
+        # Deduplicate rows that share the same dimension tuple.
+        rows = self._dedup_dimension_rows(rows)
+        # Replace any previously stored report for the same range/dimensions
+        # (last-write-wins conflict resolution).
+        await self._replace_performance_report(prop.id, start_date, end_date, dimensions, rows, raw, row_limit)
+        registry.increment("search_console_queries", labels={"kind": "performance"})
+
+        result = {
+            "rows": rows,
+            "total_rows": raw.get("totalRows", len(rows)),
+            "date_range": {"start": start_date, "end": end_date},
+        }
+        await cache.set("search-console:performance", cache_key, result)
+        await self._log_audit("performance_query", actor, "success", {"rows": len(rows)}, prop.id)
+        return result
+
+    @staticmethod
+    def _perf_cache_key(property_uuid, start_date: str, end_date: str, dimensions: Optional[List[str]]) -> str:
+        dims = ",".join(sorted(dimensions)) if dimensions else "default"
+        return f"{property_uuid}:{start_date}:{end_date}:{dims}"
+
+    @staticmethod
+    def _dedup_dimension_rows(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Remove duplicate rows that share the same dimension tuple.
+
+        Google can return the same key on a paginated boundary; the last
+        occurrence wins (it carries the accumulated metrics).
+        """
+        seen: Dict[str, Dict[str, Any]] = {}
+        for row in rows:
+            keys = row.get("keys") or []
+            dedup_key = "|".join(str(k) for k in keys)
+            seen[dedup_key] = row
+        return list(seen.values())
+
+    async def _replace_performance_report(self, property_uuid, start_date: str, end_date: str,
+                                          dimensions: Optional[List[str]], rows: List[Dict[str, Any]],
+                                          raw: Dict[str, Any], row_limit: int) -> None:
+        """Delete older reports for the same (property, range, dimensions) and
+        store a single fresh snapshot (last-write-wins)."""
+        from sqlalchemy import delete
+
+        await self.db.execute(
+            delete(self.performance_repo.model).where(
+                self.performance_repo.model.property_id == property_uuid,
+                self.performance_repo.model.start_date == start_date,
+                self.performance_repo.model.end_date == end_date,
+            )
+        )
+        await self.performance_repo.create({
+            "property_id": property_uuid,
             "start_date": start_date,
             "end_date": end_date,
             "dimensions": dimensions,
@@ -749,14 +920,7 @@ class SearchConsoleService:
             "row_limit": row_limit,
         })
         await self.db.commit()
-        await self.db.refresh(report)
-        await self._log_audit("performance_query", actor, "success", {"rows": len(rows)}, prop.id)
-
-        return {
-            "rows": rows,
-            "total_rows": raw.get("totalRows", len(rows)),
-            "date_range": {"start": start_date, "end": end_date},
-        }
+        await cache.delete_pattern("search-console:performance", f"{property_uuid}:*")
 
     async def get_search_queries(
         self,
@@ -894,10 +1058,15 @@ class SearchConsoleService:
                 "completed_at": completed,
                 "duration_seconds": duration,
                 "error_message": str(e),
-                "retry_count": job.retry_count + 1,
             })
             await self.db.commit()
             await self.db.refresh(job)
+
+            # Retry scheduling / dead-job detection (exponential backoff).
+            from app.modules.search_console.retry import schedule_job_retry
+            await schedule_job_retry(self.db, job, str(e))
+            await self.db.refresh(job)
+            registry.increment("search_console_sync_failures", labels={"sync_type": sync_type})
 
             prop.last_sync_at = completed
             prop.sync_status = "failed"
@@ -912,6 +1081,110 @@ class SearchConsoleService:
                 "status": job.status.value,
                 "started_at": job.started_at.isoformat(),
                 "message": f"Sync failed: {str(e)}",
+            }
+
+    # --- Incremental sync -----------------------------------------------------
+
+    async def sync_property_incremental(
+        self, property_id: str, actor: str = "system"
+    ) -> Dict[str, Any]:
+        """Incremental sync — only fetches data that changed since the last
+        successful sync.
+
+        * Performance rows are fetched for the window
+          ``[last_sync_at, today]`` (capped at
+          ``SEARCH_CONSOLE_INCREMENTAL_LOOKBACK_DAYS``).
+        * The cheap replace-style datasets (sitemaps, manual actions,
+          crawl errors, enhancements) are always refreshed — they replace
+          their rows so there is no growth.
+        """
+        prop = await self.get_property(property_id)
+        if prop.connection_status != ConnectionStatusEnum.connected:
+            raise PropertyNotConnectedException(property_id)
+
+        job = await self.sync_job_repo.create({
+            "property_id": prop.id,
+            "sync_type": "incremental",
+            "status": SyncStatusEnum.running,
+            "started_at": datetime.now(timezone.utc),
+            "max_retries": settings.SEARCH_CONSOLE_MAX_RETRIES,
+        })
+        await self.db.commit()
+        await self.db.refresh(job)
+        started = datetime.now(timezone.utc)
+
+        try:
+            from datetime import timedelta as td
+
+            lookback = settings.SEARCH_CONSOLE_INCREMENTAL_LOOKBACK_DAYS
+            if prop.last_sync_at is not None:
+                since = prop.last_sync_at.date().isoformat()
+            else:
+                since = (datetime.now(timezone.utc) - td(days=lookback)).strftime("%Y-%m-%d")
+            end_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+            # Performance is the only expensive dataset — use the window.
+            await self.get_performance(str(prop.id), since, end_date, dimensions=["query"], use_cache=False)
+
+            # Replace-style datasets are always refreshed (dedup + last-write-wins).
+            await self.sync_sitemaps(prop.id)
+            await self.sync_manual_actions(prop.id)
+            await self.sync_crawl_errors(prop.id)
+            await self.sync_enhancements(prop.id)
+
+            completed = datetime.now(timezone.utc)
+            duration = (completed - started).total_seconds()
+            await self.sync_job_repo.update(job.id, {
+                "status": SyncStatusEnum.completed,
+                "completed_at": completed,
+                "duration_seconds": duration,
+            })
+            await self.db.commit()
+            await self.db.refresh(job)
+
+            prop.last_sync_at = completed
+            prop.sync_status = "synced"
+            prop.sync_error = None
+            await self.db.commit()
+            await self._log_audit("sync_completed", actor, "success",
+                                  {"sync_type": "incremental", "duration": duration}, prop.id)
+
+            return {
+                "job_id": str(job.id),
+                "property_id": str(prop.id),
+                "sync_type": "incremental",
+                "status": job.status.value,
+                "started_at": job.started_at.isoformat(),
+                "message": "Incremental sync completed",
+            }
+        except Exception as e:
+            completed = datetime.now(timezone.utc)
+            duration = (completed - started).total_seconds()
+            await self.sync_job_repo.update(job.id, {
+                "status": SyncStatusEnum.failed,
+                "completed_at": completed,
+                "duration_seconds": duration,
+                "error_message": str(e),
+            })
+            await self.db.commit()
+            await self.db.refresh(job)
+
+            from app.modules.search_console.retry import schedule_job_retry
+            await schedule_job_retry(self.db, job, str(e))
+            await self.db.refresh(job)
+
+            prop.sync_status = "failed"
+            prop.sync_error = str(e)
+            await self.db.commit()
+            await self._log_audit("sync_failed", actor, "failed",
+                                  {"sync_type": "incremental", "error": str(e)}, prop.id)
+            return {
+                "job_id": str(job.id),
+                "property_id": str(prop.id),
+                "sync_type": "incremental",
+                "status": job.status.value,
+                "started_at": job.started_at.isoformat(),
+                "message": f"Incremental sync failed: {str(e)}",
             }
 
     # --- Status --------------------------------------------------------------
@@ -954,3 +1227,216 @@ class SearchConsoleService:
     ) -> Tuple[List[SearchConsoleSyncJob], int]:
         prop = await self.get_property(property_id)
         return await self.sync_job_repo.get_by_property(prop.id, skip=skip, limit=limit, status=status)
+
+    # --- Monitoring -----------------------------------------------------------
+
+    async def get_sync_stats(self) -> Dict[str, Any]:
+        """Aggregate execution statistics across all sync jobs.
+
+        Used by the monitoring component: counts by status, dead jobs,
+        retries, and average duration over the last 100 jobs.
+        """
+        from sqlalchemy import func, select
+
+        total_result = await self.db.execute(select(func.count()).select_from(SearchConsoleSyncJob))
+        total = total_result.scalar_one()
+
+        status_rows = await self.db.execute(
+            select(SearchConsoleSyncJob.status, func.count())
+            .group_by(SearchConsoleSyncJob.status)
+        )
+        by_status = {str(s.value): c for s, c in status_rows.all()}
+
+        dead_result = await self.db.execute(
+            select(func.count()).select_from(SearchConsoleSyncJob).where(SearchConsoleSyncJob.is_dead.is_(True))
+        )
+        dead = dead_result.scalar_one()
+
+        retries_result = await self.db.execute(
+            select(func.sum(SearchConsoleSyncJob.retry_count))
+        )
+        total_retries = retries_result.scalar() or 0
+
+        avg_result = await self.db.execute(
+            select(func.avg(SearchConsoleSyncJob.duration_seconds))
+            .where(SearchConsoleSyncJob.duration_seconds.isnot(None))
+        )
+        avg_duration = avg_result.scalar()
+
+        return {
+            "total_jobs": total,
+            "by_status": by_status,
+            "dead_jobs": dead,
+            "total_retries": total_retries,
+            "avg_duration_seconds": round(avg_duration, 2) if avg_duration is not None else None,
+        }
+
+    async def get_module_health(self) -> Dict[str, Any]:
+        """Module health: connected properties, sync freshness, cache status."""
+        from sqlalchemy import func, select
+
+        connected_result = await self.db.execute(
+            select(func.count())
+            .select_from(SearchConsoleProperty)
+            .where(SearchConsoleProperty.connection_status == ConnectionStatusEnum.connected)
+        )
+        connected = connected_result.scalar_one()
+
+        stale_result = await self.db.execute(
+            select(func.count())
+            .select_from(SearchConsoleProperty)
+            .where(SearchConsoleProperty.connection_status == ConnectionStatusEnum.connected)
+            .where(SearchConsoleProperty.last_sync_at.is_(None))
+        )
+        never_synced = stale_result.scalar_one()
+
+        cache_ok = await cache.ping()
+        return {
+            "status": "healthy",
+            "connected_properties": connected,
+            "never_synced": never_synced,
+            "cache": "ok" if cache_ok else "unavailable",
+            "service": "search-console",
+        }
+
+    # --- Alerts ----------------------------------------------------------------
+
+    async def raise_alert(
+        self,
+        alert_type: AlertTypeEnum,
+        severity: AlertSeverityEnum,
+        title: str,
+        message: str,
+        property_id: Optional[uuid.UUID] = None,
+        details: Optional[Dict[str, Any]] = None,
+    ) -> SearchConsoleAlert:
+        """Raise (or refresh) an alert.
+
+        Deduplication: while an alert with the same ``(property_id,
+        alert_type)`` is still ``open``, the existing alert is updated
+        (message + occurrence count) rather than creating a duplicate.
+        """
+        existing = await self.alert_repo.get_open_by_type(alert_type, property_id)
+        action = "refresh" if existing is not None else "created"
+        alert = await self.alert_repo.create_alert(
+            alert_type, severity, title, message, property_id, details
+        )
+        registry.increment("search_console_alerts_total", labels={"type": alert_type.value, "action": action})
+        if action == "created":
+            logger.warning("Alert raised: %s — %s (property=%s)", alert_type.value, title, property_id)
+        return alert
+
+    async def list_alerts(
+        self,
+        skip: int = 0,
+        limit: int = 50,
+        status: Optional[str] = None,
+        alert_type: Optional[str] = None,
+        property_id: Optional[str] = None,
+    ) -> Tuple[List[SearchConsoleAlert], int]:
+        prop_uuid = None
+        if property_id:
+            prop = await self.property_repo.get(property_id)
+            if prop is None:
+                raise PropertyNotFoundException(property_id)
+            prop_uuid = prop.id
+        return await self.alert_repo.list_alerts(
+            skip=skip, limit=limit, status=status, alert_type=alert_type, property_id=prop_uuid
+        )
+
+    async def acknowledge_alert(self, alert_id: str, actor: str = "system") -> SearchConsoleAlert:
+        alert = await self.alert_repo.update_status(alert_id, AlertStatusEnum.acknowledged, actor)
+        if alert is None:
+            from app.modules.search_console.exceptions import SearchConsoleException
+            raise SearchConsoleException(f"Alert {alert_id} not found", status_code=404)
+        registry.increment("search_console_alerts_total", labels={"type": alert.alert_type.value, "action": "acknowledged"})
+        await self._log_audit("alert_acknowledged", actor, "success", {"alert_id": str(alert.id)}, alert.property_id)
+        return alert
+
+    async def resolve_alert(self, alert_id: str, actor: str = "system") -> SearchConsoleAlert:
+        alert = await self.alert_repo.update_status(alert_id, AlertStatusEnum.resolved, actor, resolved=True)
+        if alert is None:
+            from app.modules.search_console.exceptions import SearchConsoleException
+            raise SearchConsoleException(f"Alert {alert_id} not found", status_code=404)
+        registry.increment("search_console_alerts_total", labels={"type": alert.alert_type.value, "action": "resolved"})
+        await self._log_audit("alert_resolved", actor, "success", {"alert_id": str(alert.id)}, alert.property_id)
+        return alert
+
+    async def get_alert_stats(self) -> Dict[str, Any]:
+        """Alert metrics for monitoring."""
+        from sqlalchemy import func as sa_func, select as sa_select
+
+        rows = await self.db.execute(
+            sa_select(SearchConsoleAlert.status, sa_func.count())
+            .group_by(SearchConsoleAlert.status)
+        )
+        by_status = {str(s.value): c for s, c in rows.all()}
+
+        type_rows = await self.db.execute(
+            sa_select(SearchConsoleAlert.alert_type, sa_func.count())
+            .where(SearchConsoleAlert.status == AlertStatusEnum.open)
+            .group_by(SearchConsoleAlert.alert_type)
+        )
+        open_by_type = {str(t.value): c for t, c in type_rows.all()}
+
+        return {
+            "total": sum(by_status.values()) if by_status else 0,
+            "open": by_status.get("open", 0),
+            "acknowledged": by_status.get("acknowledged", 0),
+            "resolved": by_status.get("resolved", 0),
+            "open_by_type": open_by_type,
+        }
+
+    async def run_alert_sweep(self) -> Dict[str, Any]:
+        """Periodic alert sweep (credentials expiring, data staleness).
+
+        Called by the scheduler every
+        ``SEARCH_CONSOLE_ALERT_SWEEP_INTERVAL_MINUTES`` minutes.
+        """
+        from sqlalchemy import select as sa_select
+        from datetime import timedelta as td
+
+        raised = []
+
+        # 1. Credentials expiring soon (within the lookahead window).
+        lookahead_hours = settings.SEARCH_CONSOLE_CREDENTIAL_WARN_HOURS
+        expiry_cutoff = datetime.now(timezone.utc) + td(hours=lookahead_hours)
+        creds = await self.db.execute(
+            sa_select(SearchConsoleCredential)
+            .where(SearchConsoleCredential.is_revoked.is_(False))
+            .where(SearchConsoleCredential.expires_at.isnot(None))
+            .where(SearchConsoleCredential.expires_at <= expiry_cutoff)
+        )
+        for cred in creds.scalars().all():
+            if cred.expires_at and cred.expires_at >= datetime.now(timezone.utc):
+                alert = await self.raise_alert(
+                    AlertTypeEnum.credential_expiring,
+                    AlertSeverityEnum.warning,
+                    f"Search Console credentials expiring for property {cred.property_id}",
+                    f"Access token expires at {cred.expires_at.isoformat()}.",
+                    property_id=cred.property_id,
+                    details={"expires_at": cred.expires_at.isoformat()},
+                )
+                if alert:
+                    raised.append({"type": alert.alert_type.value, "property_id": str(cred.property_id)})
+
+        # 2. Connected properties that have never synced (data stale).
+        props = await self.db.execute(
+            sa_select(SearchConsoleProperty).where(
+                SearchConsoleProperty.connection_status == ConnectionStatusEnum.connected
+            ).where(SearchConsoleProperty.last_sync_at.is_(None))
+        )
+        for prop in props.scalars().all():
+            alert = await self.raise_alert(
+                AlertTypeEnum.data_stale,
+                AlertSeverityEnum.info,
+                f"No sync data for {prop.property_name}",
+                "Property is connected but has never been synchronised.",
+                property_id=prop.id,
+                details={"site_url": prop.site_url},
+            )
+            if alert:
+                raised.append({"type": alert.alert_type.value, "property_id": str(prop.id)})
+
+        logger.info("Alert sweep finished: %d alerts evaluated", len(raised))
+        return {"alert_count": len(raised), "alerts": raised}

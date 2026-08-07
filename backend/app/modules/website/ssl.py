@@ -1,10 +1,9 @@
-"""SSL/TLS inspection — full certificate parsing via the cryptography lib.
+"""SSL/TLS inspection using the Python standard library.
 
 We connect to the host on port 443 with stdlib ``ssl`` and pull the peer
-certificate as DER. ``cryptography`` parses it into an
-``x509.Certificate`` so we can read issuer / subject / SANs / expiry /
-signature algorithm / public key info. We also report the negotiated
-TLS version, which is a real public signal of server config.
+certificate. We read issuer / subject / SANs / expiry from the verified
+certificate dict and report the negotiated TLS version, which is a real
+public signal of server config.
 
 This module never logs or stores the cert chain or private key (there is
 no private key on the wire). It only reads the leaf certificate.
@@ -17,11 +16,6 @@ import ssl
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 from urllib.parse import urlparse
-
-from cryptography import x509
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.x509.oid import NameOID
 
 from app.modules.website.discovery_schemas import SSLFacts, to_fields_dict
 
@@ -48,10 +42,10 @@ def _fetch_cert(host: str, port: int = 443, timeout: float = 10.0) -> Dict[str, 
     try:
         with socket.create_connection((host, port), timeout=timeout) as raw_sock:
             with ctx.wrap_socket(raw_sock, server_hostname=host) as tls_sock:
-                der = tls_sock.getpeercert(binary_form=True)
+                cert = tls_sock.getpeercert()
                 info["tls_version"] = tls_sock.version()
                 info["cipher"] = tls_sock.cipher()
-                info["cert_der"] = der
+                info["cert"] = cert
                 info["ok"] = True
     except Exception as e:  # noqa: BLE001 — network/SSL errors are the norm here
         info["error"] = f"{type(e).__name__}: {e}"
@@ -59,30 +53,23 @@ def _fetch_cert(host: str, port: int = 443, timeout: float = 10.0) -> Dict[str, 
     return info
 
 
-def _parse_cert(der: bytes) -> Dict[str, Any]:
-    """Parse a DER cert into the public facts we surface."""
-    cert = x509.load_der_x509_certificate(der, default_backend())
-
-    issuer = _format_name(cert.issuer)
-    subject = _format_name(cert.subject)
+def _parse_cert(cert: Dict[str, Any]) -> Dict[str, Any]:
+    """Parse stdlib cert info into the public facts we surface."""
+    issuer = _format_name(cert.get("issuer"))
+    subject = _format_name(cert.get("subject"))
     sans = _extract_sans(cert)
-    sig_algo = cert.signature_hash_algorithm.name if cert.signature_hash_algorithm else None
-
-    # Key info
-    pubkey = cert.public_key()
-    key_type = type(pubkey).__name__
-    key_size = getattr(pubkey, "key_size", None)
 
     # Validity
     now = datetime.now(timezone.utc)
-    not_before = cert.not_valid_before_utc if hasattr(cert, "not_valid_before_utc") else cert.not_valid_before.replace(tzinfo=timezone.utc)
-    not_after = cert.not_valid_after_utc if hasattr(cert, "not_valid_after_utc") else cert.not_valid_after.replace(tzinfo=timezone.utc)
-    days_left = (not_after - now).days
-    is_expired = now > not_after
-    is_self_signed = cert.issuer == cert.subject
+    not_before = _parse_cert_time(cert.get("notBefore"))
+    not_after = _parse_cert_time(cert.get("notAfter"))
+    days_left = (not_after - now).days if not_after else None
+    is_expired = now > not_after if not_after else None
+    is_self_signed = issuer == subject if issuer and subject else None
 
     # Serial number (hex, no colons)
-    serial = format(cert.serial_number, "x")
+    serial = cert.get("serialNumber")
+    version = cert.get("version")
 
     return {
         "issuer": issuer,
@@ -93,38 +80,52 @@ def _parse_cert(der: bytes) -> Dict[str, Any]:
         "days_until_expiry": days_left,
         "is_expired": is_expired,
         "is_self_signed": is_self_signed,
-        "signature_algorithm": sig_algo,
-        "public_key_type": key_type,
-        "public_key_bits": key_size,
+        "signature_algorithm": None,
+        "public_key_type": None,
+        "public_key_bits": None,
         "subject_alt_names": sans,
-        "version": cert.version.name,
+        "version": f"v{version}" if version else None,
     }
 
 
-def _format_name(name: x509.Name) -> str:
+def _format_name(name: Any) -> Optional[str]:
+    if not name:
+        return None
+
+    labels = {
+        "commonName": "CN",
+        "organizationName": "O",
+        "organizationalUnitName": "OU",
+        "countryName": "C",
+        "stateOrProvinceName": "ST",
+        "localityName": "L",
+    }
     parts = []
     try:
-        cn = name.get_attributes_for_oid(NameOID.COMMON_NAME)
-        if cn:
-            parts.append(f"CN={cn[0].value}")
-        o = name.get_attributes_for_oid(NameOID.ORGANIZATION_NAME)
-        if o:
-            parts.append(f"O={o[0].value}")
-        ou = name.get_attributes_for_oid(NameOID.ORGANIZATIONAL_UNIT_NAME)
-        if ou:
-            parts.append(f"OU={ou[0].value}")
+        for rdn in name:
+            for key, value in rdn:
+                label = labels.get(key)
+                if label and value:
+                    parts.append(f"{label}={value}")
     except Exception:  # noqa: BLE001
         return str(name)
-    return ", ".join(parts) if parts else str(name)
+    return ", ".join(parts) if parts else None
 
 
-def _extract_sans(cert: x509.Certificate) -> Optional[list]:
-    try:
-        ext = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
-        sans = ext.value.get_values_for_type(x509.DNSName)
-        return sans or None
-    except x509.ExtensionNotFound:
+def _parse_cert_time(value: Optional[str]) -> Optional[datetime]:
+    if not value:
         return None
+    return datetime.fromtimestamp(ssl.cert_time_to_seconds(value), timezone.utc)
+
+
+def _extract_sans(cert: Dict[str, Any]) -> Optional[list]:
+    try:
+        sans = [
+            value
+            for kind, value in cert.get("subjectAltName", ())
+            if kind == "DNS" and value
+        ]
+        return sans or None
     except Exception:  # noqa: BLE001
         return None
 
@@ -173,7 +174,7 @@ async def inspect(url: str) -> SSLFacts:
             fields={"host": host, "error": raw.get("error") or "TLS handshake failed"},
         )
 
-    parsed_cert = await asyncio.to_thread(_parse_cert, raw["cert_der"])
+    parsed_cert = await asyncio.to_thread(_parse_cert, raw["cert"])
 
     fields = to_fields_dict(
         https_enabled=True,
