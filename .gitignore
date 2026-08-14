@@ -39,3 +39,4 @@ dist-ssr
 *storage
 *.venv
 *.vscode
+*pytest.ini
